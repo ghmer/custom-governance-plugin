@@ -90,6 +90,19 @@ public class CGPRestInterface extends BasePluginResource {
 		return response;
 	}
 	
+	@Path("/isAdmin")
+	public Response isAdmin() {
+		if(log.isDebugEnabled()) {
+			log.debug(String.format("ENTERING %s()", "isAdmin"));
+		}
+		Response response = Response.ok().entity(false).build();
+		
+		if(log.isDebugEnabled()) {
+			log.debug(String.format("LEAVING %s(return = %s)", "isAdmin", response));
+		}
+		return response;
+	}
+	
 	/* (non-Javadoc)
 	 * @see sailpoint.rest.plugin.BasePluginResource#getPluginName()
 	 */
