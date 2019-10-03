@@ -1,0 +1,22 @@
+<div id="CustomGovernancePluginManagePartialDiv">
+	<custom-governance-navigation activelink="manage"></custom-governance-navigation>
+	<h3>
+		<small>Custom Governance</small> 
+	</h3>
+	<h4>
+		{{headline}} 
+	</h4>
+	<p>
+		This is the <i>Custom Governance</i> page. This plugin lets you manage <i>Approval Levels</i> that can be assigned to Entitlements and Roles. 
+	</p>
+	<apply-changes-button></apply-changes-button>
+	<div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
+		{{infoMessage}}
+	</div>
+	<custom-governance-approval-rules></custom-governance-approval-rules>
+	<custom-governance-approval-levels></custom-governance-approval-levels>
+	<div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
+		{{infoMessage}}
+	</div>
+	<apply-changes-button></apply-changes-button>
+</div>

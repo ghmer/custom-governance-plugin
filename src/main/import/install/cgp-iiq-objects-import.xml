@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE sailpoint PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<sailpoint>
+
+  <SPRight name="CGPPluginAccess" displayName="Custom Governance Plugin Access">
+    <Description>The SPRight to access the Custom Governance Plugin</Description>
+  </SPRight>
+
+  <Capability name="CGPPluginAccess" displayName="Custom Governance Plugin Access">
+    <Description>The capability to access the Custom Governance Plugin</Description>
+    <RightRefs>
+      <Reference class="sailpoint.object.SPRight" name="CGPPluginAccess" />
+    </RightRefs>
+  </Capability>
+
+</sailpoint>

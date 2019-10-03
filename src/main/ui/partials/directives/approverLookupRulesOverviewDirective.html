@@ -1,0 +1,23 @@
+<div id="ApproverLookupRuleDiv">
+	<h5 data-ng-click="controller.toggleView('showApprovalRules')">
+		</i>Approver&nbsp;<i data-ng-class="showApprovalRules ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i> 
+	</h5>
+	<hr data-ng-hide="showApprovalRules"></hr>
+	<div data-ng-show="showApprovalRules">
+		<table id="CustomGovernancePluginRulesTable" class="table table-hover table-sm">
+			<thead class="thead-light">
+				<tr>
+					<th scope="col">Approver</th>
+					<th scope="col">Approver Lookup Rule</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="clickable" data-ng-click="controller.showApproverLookupModal(key, value)" data-ng-repeat="(key, value) in configObject.approverLookupRules">
+					<td>{{key}}</td>
+					<td>{{value}}</td>
+				</tr>
+			</tbody>
+		</table>
+		<a class="btn btn-primary btn-sm" role="button" data-ng-click="controller.showAddNewApproverLookupModal()">add new Approver</a> 
+	</div>
+</div>

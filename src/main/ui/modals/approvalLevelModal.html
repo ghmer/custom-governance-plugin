@@ -1,0 +1,55 @@
+<div data-ng-controller="ApprovalLevelModalController as controller">
+  <form name="approvalLevelForm">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" data-ng-click="controller.close()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">
+			Editing approvalLevel {{user.name}} 
+		</h4>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
+        {{infoMessage}}
+      </div>
+    
+        <input class="form-control" id="approvalLevelName" type="text" data-ng-model="user.name" placeholder="insert approval level name" data-ng-required="true"></input>
+        <h5>
+			list of approvers 
+		</h5>
+        <table class="table table-hover table-sm">
+            <thead>
+                <tr>
+                    <th>approver</th>
+                    <th>action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr data-ng-repeat="entry in user.approval">
+                    <td>{{entry}}</td>
+                    <td width="100px"><i class="fa fa-trash-o" aria-hidden="true" data-ng-click="controller.deleteApprover($index)"></i> <i class="fa fa-arrow-up" aria-hidden="true" data-ng-show="$index > 0" data-ng-click="controller.raise($index)"></i> <i class="fa fa-arrow-down" aria-hidden="true" data-ng-show="$index &lt; user.approval.length - 1" data-ng-click="controller.lower($index)"></i></td>
+                </tr>
+                <tbody>
+        </table>
+        <div id="addApprover" data-ng-show="showAddApprover">
+            <span>Add Approver:&nbsp;</span>
+            <select name="repeatSelect" id="repeatSelect" data-ng-model="newApprover">
+                <option data-ng-repeat="approver in approvers" value="{{approver}}">{{approver}}</option>
+            </select>
+            <input class="btn btn-primary btn-sm" type="submit" value="add" data-ng-click="controller.addApprover()" />
+        </div>
+        <div class="modal-footer">
+            <input class="btn btn-primary btn-sm" type="submit" value="{{showAddApprover ? btnMessages.addApprover.cancel : btnMessages.addApprover.add}}" data-ng-click="controller.toggleShowAddApprover()" />
+        </div>
+        <div>
+            <h5>
+						notification options 
+					</h5>
+            <label data-ng-repeat="notification in approvalLevel.notification">
+                <input type="checkbox" data-checklist-model="user.notification" data-checklist-value="notification">&nbsp;{{notification}}&nbsp;</input>
+            </label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <input class="btn btn-primary btn-sm" type="submit" value="save Approval Level" data-ng-click="controller.saveApprovalLevel()" />
+    </div>
+     </form>
+</div>

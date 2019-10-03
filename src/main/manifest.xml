@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<!DOCTYPE Plugin PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Plugin name="custom_governance_plugin" displayName="Custom Governance Plugin"
+  version="1.0" disabled="false" certificationLevel="None"
+  minSystemVersion="8.0" maxSystemVersion="8.0">
+  <Attributes>
+    <Map>
+      <entry key="minUpgradableVersion" value="1.0" />
+      <entry key="settings">
+        <value>
+          <List>
+            <!-- <Setting  name="issuerDomain" 
+                      dataType="string"
+                      defaultValue="sailpoint.labs"
+                      helpText="define the domainname that gets appended to the account. This is for convinience of the user and does not have any effects on token calculation"
+                      label="issuer domain" /> 
+            -->
+          </List>
+        </value>
+      </entry>
+      <entry key="fullPage">
+        <value>
+          <FullPage title="Custom Governance Plugin" />
+        </value>
+      </entry>
+      <entry key="snippets">
+        <value>
+          <List>
+            <Snippet regexPattern=".*" rightRequired="CGPPluginAccess">
+              <Scripts>
+                <String>ui/js/buttonInject.js</String>
+              </Scripts>
+            </Snippet>
+          </List>
+        </value>
+      </entry>
+      <entry key="restResources">
+        <value>
+          <List>
+            <String>de.whisperedshouts.identityiq.rest.CGPRestInterface</String>
+          </List>
+        </value>
+      </entry>
+    </Map>
+  </Attributes>
+</Plugin>
