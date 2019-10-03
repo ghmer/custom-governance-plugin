@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -41,6 +42,7 @@ public class CGPRestInterface extends BasePluginResource {
 	public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
 	public static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
 	
+	@GET
 	@Path("getGovernanceModel")
 	public Response getGovernanceModel() {
 		if(log.isDebugEnabled()) {
@@ -63,6 +65,7 @@ public class CGPRestInterface extends BasePluginResource {
 		return response;
 	}
 	
+	@GET
 	@Path("getRuleNames")
 	public Response getRuleNames() {
 		if(log.isDebugEnabled()) {
@@ -90,6 +93,7 @@ public class CGPRestInterface extends BasePluginResource {
 		return response;
 	}
 	
+	@GET
 	@Path("isAdmin")
 	public Response isAdmin() {
 		if(log.isDebugEnabled()) {
