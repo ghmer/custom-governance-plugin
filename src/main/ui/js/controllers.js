@@ -116,7 +116,7 @@
         notificationConfig, availableApprovers, usedApprovalLevelNames, $scope, $uibModal) {
         var modalScope = $scope.$new();
         var modalInstance = $uibModal.open({
-          templateUrl: 'modals/approvalLevelModal.html',
+        	templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/modals/approvalLevelModal.html'),
           controller: 'ApprovalLevelModalController',
           windowClass: 'app-modal-window',
           scope: modalScope
@@ -152,7 +152,7 @@
       controller.approverLookupModal = function(approverName, approverNames, ruleName, rules, $scope, $uibModal) {
         var modalScope = $scope.$new();
         var modalInstance = $uibModal.open({
-          templateUrl: 'modals/approverLookupModal.html',
+          templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/modals/approverLookupModal.html'),
           controller: 'ApproverLookupModalController',
           windowClass: 'app-modal-window',
           scope: modalScope
