@@ -20,7 +20,7 @@
       controller: 'HomeController',
       controllerAs: 'controller',
       restrict: 'E',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'partials/directives/approvalLevelOverviewDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/approvalLevelOverviewDirective.html')
     };
   });
 
@@ -29,7 +29,7 @@
       controller: 'HomeController',
       controllerAs: 'controller',
       restrict: 'E',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'partials/directives/approverLookupRulesOverviewDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/approverLookupRulesOverviewDirective.html')
     };
   });
 
@@ -38,7 +38,7 @@
       controller: 'HomeController',
       controllerAs: 'controller',
       restrict: 'E',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'partials/directives/applyChangesButtonDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/applyChangesButtonDirective.html')
     };
   });
 

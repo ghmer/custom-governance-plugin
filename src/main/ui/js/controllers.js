@@ -13,7 +13,7 @@
           withCredentials: true,
           xsrfHeaderName: "X-XSRF-TOKEN",
           xsrfCookieName: "CSRF-TOKEN",
-          url: '/isAdmin'
+          url: PluginHelper.getPluginRestUrl('custom-governance') + '/isAdmin'
         }).then(function mySuccess(response) {
         	console.log(response);
           if (response.data === "true") {
