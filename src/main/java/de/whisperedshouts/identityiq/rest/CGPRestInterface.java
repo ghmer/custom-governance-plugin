@@ -41,7 +41,7 @@ public class CGPRestInterface extends BasePluginResource {
 	public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
 	public static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
 	
-	@Path("/getGovernanceModel")
+	@Path("getGovernanceModel")
 	public Response getGovernanceModel() {
 		if(log.isDebugEnabled()) {
 			log.debug(String.format("ENTERING %s()", "getGovernanceModel"));
@@ -63,7 +63,7 @@ public class CGPRestInterface extends BasePluginResource {
 		return response;
 	}
 	
-	@Path("/getRuleNames")
+	@Path("getRuleNames")
 	public Response getRuleNames() {
 		if(log.isDebugEnabled()) {
 			log.debug(String.format("ENTERING %s()", "getRuleNames"));
@@ -90,7 +90,7 @@ public class CGPRestInterface extends BasePluginResource {
 		return response;
 	}
 	
-	@Path("/isAdmin")
+	@Path("isAdmin")
 	public Response isAdmin() {
 		if(log.isDebugEnabled()) {
 			log.debug(String.format("ENTERING %s()", "isAdmin"));
