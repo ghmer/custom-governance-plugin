@@ -15,14 +15,11 @@
           xsrfCookieName: "CSRF-TOKEN",
           url: PluginHelper.getPluginRestUrl('custom-governance') + '/isAdmin'
         }).then(function mySuccess(response) {
-        	console.log(response);
-          if (response.data === "true") {
+          if (response.data === true) {
             $scope.admin = true;
-            console.log("admin equals TRUE");
           }
         }, function myError(response) {
           $scope.admin = false;
-          console.log(response);
         });
       };
 
@@ -53,8 +50,6 @@
 
       controller.getGovernanceModel = function() {
         GovernancePluginService.getGovernanceModel().then(function(result) {
-          console.log("get configuration result");
-          console.log(result);
           $scope.configObject = result;
           $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
             return key;
@@ -64,8 +59,6 @@
 
       controller.getAvailableRules = function() {
         GovernancePluginService.getAvailableRules().then(function(result) {
-          console.log("get available rules result");
-          console.log(result);
           $scope.rules = result;
         });
       };
@@ -166,17 +159,13 @@
       };
 
       controller.applyChanges = function() {
-        alert("changes applied");
         GovernancePluginService.saveGovernanceModel($scope.configObject);
         $scope.showApplyChangesButton = false;
-        console.log($scope.configObject);
       };
 
       controller.revertChanges = function() {
-        alert("changes reverted");
         controller.getGovernanceModel();
         $scope.showApplyChangesButton = false;
-        console.log($scope.configObject);
       };
 
       /* Events from Modals */
@@ -190,15 +179,12 @@
 
         if (name === originalName || !GovernancePluginService.isInList($scope.approvalLevelArray, originalName)) {
           // simple push
-          console.log("simple push");
           $scope.configObject.approvalLevels[name] = {
             notification: [...notification],
             approval: [...approval]
           };
         } else {
-          console.log("deleting existing node " + originalName);
           delete $scope.configObject.approvalLevels[originalName];
-          console.log("add new node " + name);
           $scope.configObject.approvalLevels[name] = {
             notification: [...notification],
             approval: [...approval]
@@ -209,8 +195,6 @@
         $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
           return key;
         });
-
-        console.log($scope.configObject);
       });
 
       $scope.$on('saveApproverLookupEvent', function(event, args) {
@@ -221,12 +205,9 @@
         if (approverName === originalName ||
           !GovernancePluginService.isInList(Object.keys($scope.configObject.approverLookupRules), originalName)) {
           // simple push
-          console.log("simple push");
           $scope.configObject.approverLookupRules[approverName] = ruleName;
         } else {
-          console.log("deleting existing node " + originalName);
           delete $scope.configObject.approverLookupRules[originalName];
-          console.log("add new node " + approverName);
           $scope.configObject.approverLookupRules[approverName] = ruleName;
         }
 
