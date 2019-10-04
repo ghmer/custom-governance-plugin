@@ -288,8 +288,8 @@ public class CGPRestInterface extends BasePluginResource {
         }
         if(!found) {
           Workflow workflowRef = step.getWorkflow();
-          if(workflowRef.getName().equals("Provisioning Approval Subprocess") ||
-             workflowRef.getName().equals("Approve and Provision Subprocess")) {
+          if(workflowRef.getName().contains("Provisioning Approval Subprocess") ||
+             workflowRef.getName().contains("Approve and Provision Subprocess")) {
             stepNames.add(step.getName());
           }
         }   
