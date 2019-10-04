@@ -33,6 +33,7 @@ import sailpoint.object.Rule;
 import sailpoint.object.Workflow;
 import sailpoint.object.Workflow.Arg;
 import sailpoint.object.Workflow.Step;
+import sailpoint.object.Workflow.Variable;
 import sailpoint.plugin.PluginBaseHelper;
 import sailpoint.plugin.PluginsUtil;
 import sailpoint.rest.plugin.BasePluginResource;
@@ -259,7 +260,14 @@ public class CGPRestInterface extends BasePluginResource {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(workflow = %s)", "getSetupInformation", workflow));
     }
-    List<String> stepNames = new ArrayList<>();
+    Map<String, Object> result  = new HashMap<>();
+    List<String> stepNames      = new ArrayList<>();
+    
+    Variable approvalModeVar    = workflow.getVariableDefinition("approvalMode");
+    String approvalMode         = approvalModeVar.getInitializer();
+    
+    result.put("approvalMode", approvalMode);
+    
     if(workflow.getSteps() == null || workflow.getSteps().isEmpty()) {
       throw new GeneralException("Workflow does not contain any Step");
     }
@@ -289,7 +297,6 @@ public class CGPRestInterface extends BasePluginResource {
       throw new GeneralException("Workflow did not contain any modifiable Steps");
     }
     
-    Map<String, Object> result = new HashMap<>();
     result.put("steps", stepNames);
     
     if(log.isDebugEnabled()) {
