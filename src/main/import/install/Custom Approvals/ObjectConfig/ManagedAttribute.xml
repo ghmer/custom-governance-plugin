@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE sailpoint PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<sailpoint>
+<ImportAction name="merge">
+  <ObjectConfig name="ManagedAttribute">
+    <ObjectAttribute defaultValue="manager" displayName="governanceApprovalLevel" editMode="Permanent" name="governanceApprovalLevel">
+      <AllowedValues>
+        <String>none</String>
+        <String>manager</String>
+        <String>owner</String>
+        <String>applicationowner</String>
+        <String>manager+owner</String>
+        <String>manager+applicationowner</String>
+        <String>owner+applicationowner</String>
+        <String>manager+owner+applicationowner</String>
+      </AllowedValues>
+    </ObjectAttribute>
+  </ObjectConfig>
+</ImportAction>
+</sailpoint>

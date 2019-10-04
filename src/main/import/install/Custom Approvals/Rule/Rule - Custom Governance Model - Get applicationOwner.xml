@@ -1,0 +1,103 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="Custom Governance Model - Get applicationOwner">
+	<Description></Description>
+	<Signature returnType="String">
+		<Inputs>
+		  <Argument name="log">
+				<Description>
+					a log4j logger
+				</Description>
+			</Argument>
+			<Argument name="identityName" type="String">
+				<Description>
+					the target identityName
+				</Description>
+			</Argument>
+			<Argument name="identityDisplayName" type="String">
+				<Description>
+					the target identityDisplayName
+				</Description>
+			</Argument>
+			<Argument name="launcher" type="String">
+				<Description>
+					the launcher identityName
+				</Description>
+			</Argument>
+			<Argument name="approvalItem" type="ApprovalItem">
+				<Description>
+					the approval item being processed
+				</Description>
+			</Argument>
+			<Argument name="requestObjectAttributes" type="Attributes">
+				<Description>
+					the attributes of the requested object (ManagedAttribute/Bundle)
+				</Description>
+			</Argument>
+			<Argument name="owner" type="Identity">
+				<Description>
+					the owner of the requested object
+				</Description>
+			</Argument>
+			<Argument name="fallbackApprover" type="String">
+				<Description>
+					the fallbackApprover defined on the workflow
+				</Description>
+			</Argument>
+		</Inputs>
+		<Returns>
+			<Argument name="approverName" type="String">
+				<Description>
+					The refreshed account group object.
+				</Description>
+			</Argument>
+		</Returns>
+	</Signature>
+	<Source>
+<![CDATA[
+import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+
+import sailpoint.api.SailPointContext;
+import sailpoint.object.Application;
+import sailpoint.object.ApprovalItem;
+import sailpoint.object.Filter;
+import sailpoint.object.QueryOptions;
+import sailpoint.tools.GeneralException;
+import sailpoint.tools.Util;
+
+String applicationName = approvalItem.getApplication();
+String approverName    = null;
+Iterator iterator      = null;
+
+if(applicationName != null) {
+  try {
+    iterator      = context.search(Application.class, new QueryOptions(new Filter[]{Filter.eq("name", applicationName)}), "owner.name");
+    if(iterator.hasNext()) {
+      Object[] obj  = (Object[]) iterator.next();
+      approverName  = (String) obj[0];
+    }
+  }
+  catch(GeneralException ge) {
+    log.error("Exception caught while retriving SailPoint Application object with the name: " + applicationName);
+
+  } finally {
+    if(iterator != null) {
+      Util.flushIterator(iterator);
+    }
+  }
+}
+
+if(Util.isNullOrEmpty(approverName)) {
+  log.warn("Could not determine approver name for application " + applicationName);
+  if(!Util.isNullOrEmpty(fallbackApprover)) {
+    log.warn("using fallback Approver");
+    approverName = fallbackApprover;
+  }
+}
+
+return approverName;
+]]>
+  </Source>
+</Rule>

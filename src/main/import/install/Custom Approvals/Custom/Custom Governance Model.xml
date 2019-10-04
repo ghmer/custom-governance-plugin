@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Custom PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Custom name="Custom Governance Model">
+	<Attributes>
+		<Map>
+			<entry key="approverLookupRules">
+				<value>
+					<Map>
+						<entry key="none" value="Custom Governance Model - Get Auto Approved"/>
+						<entry key="manager" value="Custom Governance Model - Get Manager"/>
+						<entry key="owner" value="Custom Governance Model - Get Owner"/>
+						<entry key="applicationOwner" value="Custom Governance Model - Get applicationOwner"/>
+					</Map>
+				</value>
+			</entry>
+			<entry key="approvalLevels">
+				<value>
+					<Map>
+					  <entry key="none">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>none</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+						<entry key="manager">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>manager</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+												<String>manager</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+						<entry key="owner">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>owner</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+												<String>owner</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+						<entry key="applicationOwner">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>applicationOwner</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+						<entry key="manager+owner">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>manager</String>
+												<String>owner</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+												<String>manager</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+						<entry key="manager+applicationOwner">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>manager</String>
+												<String>applicationOwner</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+												<String>manager</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+						<entry key="owner+applicationOwner">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>owner</String>
+												<String>applicationOwner</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+												<String>owner</String>
+												<String>securityOfficer</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+						<entry key="manager+owner+applicationOwner">
+							<value>
+								<Map>
+									<entry key="approval">
+										<value>
+											<List>
+												<String>manager</String>
+												<String>owner</String>
+												<String>applicationOwner</String>
+											</List>
+										</value>
+									</entry>
+									<entry key="notification">
+										<value>
+											<List>
+												<String>user</String>
+												<String>requester</String>
+												<String>manager</String>
+											</List>
+										</value>
+									</entry>
+								</Map>
+							</value>
+						</entry>
+					</Map>
+				</value>
+			</entry>
+		</Map>
+	</Attributes>
+</Custom>

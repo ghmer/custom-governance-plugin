@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="Custom Governance Model - Get Owner">
+	<Description></Description>
+	<Signature returnType="String">
+		<Inputs>
+		  <Argument name="log">
+				<Description>
+					a log4j logger
+				</Description>
+			</Argument>
+			<Argument name="identityName" type="String">
+				<Description>
+					the target identityName
+				</Description>
+			</Argument>
+			<Argument name="identityDisplayName" type="String">
+				<Description>
+					the target identityDisplayName
+				</Description>
+			</Argument>
+			<Argument name="launcher" type="String">
+				<Description>
+					the launcher identityName
+				</Description>
+			</Argument>
+			<Argument name="approvalItem" type="ApprovalItem">
+				<Description>
+					the approval item being processed
+				</Description>
+			</Argument>
+			<Argument name="requestObjectAttributes" type="Attributes">
+				<Description>
+					the attributes of the requested object (ManagedAttribute/Bundle)
+				</Description>
+			</Argument>
+			<Argument name="owner" type="Identity">
+				<Description>
+					the owner of the requested object
+				</Description>
+			</Argument>
+			<Argument name="fallbackApprover" type="String">
+				<Description>
+					the fallbackApprover defined on the workflow
+				</Description>
+			</Argument>
+		</Inputs>
+		<Returns>
+			<Argument name="approverName" type="String">
+				<Description>
+					The refreshed account group object.
+				</Description>
+			</Argument>
+		</Returns>
+	</Signature>
+	<Source>
+<![CDATA[
+String approverName = null;
+if(owner != null) {
+  approverName = owner.getName();
+}
+
+if(Util.isNullOrEmpty(approverName)) {
+  log.warn("Could not determine approver name, tried getting name of object " + owner);
+  if(!Util.isNullOrEmpty(fallbackApprover)) {
+    log.warn("using fallback Approver");
+    approverName = fallbackApprover;
+  }
+}
+
+return approverName;
+]]>
+  </Source>
+</Rule>

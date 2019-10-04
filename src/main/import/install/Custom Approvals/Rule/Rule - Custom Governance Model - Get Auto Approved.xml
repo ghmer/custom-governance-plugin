@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="Custom Governance Model - Get Auto Approved">
+	<Description>- Checks the requestable entitlement configuration to decide whether or not an entitlement is requestable
+	- If entitlement application is "Active Directory" then
+		   - set entitlement owner based on "managedBy" attribute of security group
+		   - set entitlement displayname based on "displayName" attribute</Description>
+	<Signature returnType="String">
+		<Inputs>
+		  <Argument name="log">
+				<Description>
+					a log4j logger
+				</Description>
+			</Argument>
+			<Argument name="identityName" type="String">
+				<Description>
+					the target identityName
+				</Description>
+			</Argument>
+			<Argument name="identityDisplayName" type="String">
+				<Description>
+					the target identityDisplayName
+				</Description>
+			</Argument>
+			<Argument name="launcher" type="String">
+				<Description>
+					the launcher identityName
+				</Description>
+			</Argument>
+			<Argument name="approvalItem" type="ApprovalItem">
+				<Description>
+					the approval item being processed
+				</Description>
+			</Argument>
+			<Argument name="requestObjectAttributes" type="Attributes">
+				<Description>
+					the attributes of the requested object (ManagedAttribute/Bundle)
+				</Description>
+			</Argument>
+			<Argument name="owner" type="Identity">
+				<Description>
+					the owner of the requested object
+				</Description>
+			</Argument>
+			<Argument name="fallbackApprover" type="String">
+				<Description>
+					the fallbackApprover defined on the workflow
+				</Description>
+			</Argument>
+		</Inputs>
+		<Returns>
+			<Argument name="approverName" type="String">
+				<Description>
+					The refreshed account group object.
+				</Description>
+			</Argument>
+		</Returns>
+	</Signature>
+	<Source>
+<![CDATA[
+//"Auto Approved" will generate an auto approved Approval
+String approverName = "Auto Approved";
+
+return approverName;
+]]>
+  </Source>
+</Rule>

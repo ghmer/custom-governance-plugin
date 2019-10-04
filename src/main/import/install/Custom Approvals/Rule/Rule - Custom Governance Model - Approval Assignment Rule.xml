@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Rule PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Rule language="beanshell" name="Custom Governance Model - Approval Assignment Rule" type="ApprovalAssignment">
+	<ReferencedRules>
+		<Reference class="sailpoint.object.Rule" name="Custom Governance Model - Approval Assignment Rule Library"/>
+	</ReferencedRules>
+	<Signature returnType="List">
+		<Inputs>
+			<Argument name="fallbackApprover" type="String"/>
+			<Argument name="sessionOwner" type="String"/>
+			<Argument name="project" type="ProvisioningProject"/>
+			<Argument name="identityDisplayName" type="String"/>
+			<Argument name="approvals" type="List"/>
+			<Argument name="context"/>
+			<Argument name="plan" type="ProvisioningPlan"/>
+			<Argument name="identityName" type="String"/>
+			<Argument name="workflow" type="Workflow"/>
+			<Argument name="approvalSet" type="ApprovalSet"/>
+			<Argument name="launcher" type="String"/>
+			<Argument name="approvalScheme" type="String"/>
+			<Argument name="log" type="Log4jLog"/>
+			<Argument name="workItemRequester" type="String"/>
+			<Argument name="approvalMode" type="String"/>
+		</Inputs>
+		<Returns>
+			<Argument name="approvals" type="List">
+				<Description>
+					the list of approvals
+				</Description>
+			</Argument>
+		</Returns>
+	</Signature>
+	<Source>
+<![CDATA[
+import java.util.List;
+import java.util.ArrayList;
+
+List result = approvals;
+try {
+  result = processApprovalSet(approvalSet, approvals, workflow);
+} catch(GeneralException e) {
+  log.error("There was an error retrieving the approvers. Using default approvals");
+}
+
+return approvals;
+]]>
+  </Source>
+</Rule>
