@@ -25,7 +25,6 @@ import sailpoint.object.Attributes;
 import sailpoint.object.Capability;
 import sailpoint.object.Configuration;
 import sailpoint.object.Custom;
-import sailpoint.object.Identity;
 import sailpoint.object.ObjectAttribute;
 import sailpoint.object.ObjectConfig;
 import sailpoint.object.QueryOptions;
@@ -34,8 +33,6 @@ import sailpoint.object.Workflow;
 import sailpoint.object.Workflow.Arg;
 import sailpoint.object.Workflow.Step;
 import sailpoint.object.Workflow.Variable;
-import sailpoint.plugin.PluginBaseHelper;
-import sailpoint.plugin.PluginsUtil;
 import sailpoint.rest.plugin.BasePluginResource;
 import sailpoint.rest.plugin.RequiredRight;
 import sailpoint.tools.GeneralException;
@@ -123,18 +120,12 @@ public class CGPRestInterface extends BasePluginResource {
 		}
 		
 		Boolean isAdmin = false;
-		try {
-      Identity loggedInUser = getLoggedInUser();
-      List<Capability> userCapabilities = getLoggedInUserCapabilities();
-      for(Capability cap : userCapabilities) {
-        if(cap.getName().equals("SystemAdministrator")) {
-          isAdmin = true;
-          break;
-        }
+		List<Capability> userCapabilities = getLoggedInUserCapabilities();
+    for(Capability cap : userCapabilities) {
+      if(cap.getName().equals("SystemAdministrator")) {
+        isAdmin = true;
+        break;
       }
-      
-    } catch (GeneralException e) {
-      log.error(e.getMessage());
     }
 		Response response = Response.ok().entity(isAdmin).build();
 		
@@ -375,7 +366,8 @@ public class CGPRestInterface extends BasePluginResource {
 	  
 	  String ruleName      = (String) setupInformation.get("rule");
 	  String approvalMode  = (String) setupInformation.get("approvalMode");
-	  List<String> steps   = (List) setupInformation.get("steps");
+	  @SuppressWarnings("unchecked")
+    List<String> steps   = (List<String>) setupInformation.get("steps");
 	  
 	  workflow.getVariableDefinition("approvalMode").setInitializer(approvalMode);
 	  
@@ -394,43 +386,6 @@ public class CGPRestInterface extends BasePluginResource {
         step.getArgs().add(argument);
       }	    
 	  }
-	  /*
-	  int modifyCount = 0;
-	  
-	  if(workflow.getSteps() == null || workflow.getSteps().isEmpty()) {
-	    throw new GeneralException("Workflow does not contain any Step");
-	  }
-	  
-	  for(Step step : workflow.getSteps()) {
-	    boolean found = false;
-	    List<Arg> argumentList = step.getArgs();
-	    if(argumentList != null && !argumentList.isEmpty()) {
-	      for(Arg argument : step.getArgs()) {
-	        if(argument.getName().equals(APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME)) {
-	          argument.setValue(ruleName);
-	          found = true;
-	          modifyCount++;
-	          break;
-	        }
-	      }
-	      if(!found) {
-	        Workflow workflowRef = step.getWorkflow();
-	        if(workflowRef.getName().equals("Provisioning Approval Subprocess") ||
-	           workflowRef.getName().equals("Approve and Provision Subprocess")) {
-	          Arg argument = new Arg();
-	          step.getArgs().add(argument);
-	          modifyCount++;
-	        }
-	      }   
-	    }
-	  }
-	  
-	  if(modifyCount == 0) {
-	    throw new GeneralException("Workflow did not contain any modifiable Steps");
-	  }
-	  */
-	  
-	  //TODO: setSystemIntegrationAttribute();
 	  
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "setupWorkflow", null));
