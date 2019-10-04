@@ -45,6 +45,7 @@ public class CGPRestInterface extends BasePluginResource {
 	
 	public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
 	public static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
+	public static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME = "governanceApprovalLevel";
 	
 	@GET
 	@Path("getGovernanceModel")
@@ -126,8 +127,8 @@ public class CGPRestInterface extends BasePluginResource {
       List<Object> allowedValues = getApprovalLevels(governanceModelJson);
       
       updateGovernanceModel(context, governanceModelJson);
-      updateObjectConfig(context, "ManagedAttribute", "securityLevel", allowedValues);
-      updateObjectConfig(context, "Bundle", "securityLevel", allowedValues);
+      updateObjectConfig(context, "ManagedAttribute", GOVERNANCE_OBJECT_ATTRIBUTE_NAME, allowedValues);
+      updateObjectConfig(context, "Bundle", GOVERNANCE_OBJECT_ATTRIBUTE_NAME, allowedValues);
       
       response = Response.ok().entity(true).build();
     } catch (GeneralException e) {
