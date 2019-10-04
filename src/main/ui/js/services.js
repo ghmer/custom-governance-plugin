@@ -5,25 +5,6 @@
 
   app.service('GovernancePluginService', function($http, $q) {
 
-    this.getGovernanceModel = function() {
-      var deferred = $q.defer();
-      return $http({
-        method: "GET",
-        withCredentials: true,
-        xsrfHeaderName: "X-XSRF-TOKEN",
-        xsrfCookieName: "CSRF-TOKEN",
-        url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel'
-      }).then(function mySuccess(response) {
-        deferred.resolve(response.data);
-        return deferred.promise;
-      }, function myError(response) {
-        // the following line rejects the promise 
-        deferred.reject(response);
-        // promise is returned
-        return deferred.promise;
-      });
-    };
-
     this.validateNotInList = function(list, value) {
       var notInList = true;
       for (var i = 0; i < list.length; i++) {
@@ -35,7 +16,6 @@
       return notInList;
     };
 
-
     this.isInList = function(list, value) {
       var isInList = false;
       for (var i = 0; i < list.length; i++) {
@@ -45,25 +25,6 @@
         }
       }
       return isInList;
-    };
-
-    this.getSetupInformation = function() {
-      var deferred = $q.defer();
-      return $http({
-        method: "GET",
-        withCredentials: true,
-        xsrfHeaderName: "X-XSRF-TOKEN",
-        xsrfCookieName: "CSRF-TOKEN",
-        url : PluginHelper.getPluginRestUrl('custom-governance') + '/setup/information'
-      }).then(function mySuccess(response) {
-        deferred.resolve(response.data);
-        return deferred.promise;
-      }, function myError(response) {
-        // the following line rejects the promise 
-        deferred.reject(response);
-        // promise is returned
-        return deferred.promise;
-      });
     };
 
     this.getArrayExceptValue = function(value, array) {
@@ -84,9 +45,6 @@
       return newArray;
     };
 
-    /*
-     * get the input parameters of a template
-     */
     this.getAvailableRules = function(templateName) {
       var deferred = $q.defer();
       return $http({
@@ -100,6 +58,25 @@
         return deferred.promise;
       }, function myError(response) {
         deferred.reject(response);
+        return deferred.promise;
+      });
+    };
+    
+    this.getGovernanceModel = function() {
+      var deferred = $q.defer();
+      return $http({
+        method: "GET",
+        withCredentials: true,
+        xsrfHeaderName: "X-XSRF-TOKEN",
+        xsrfCookieName: "CSRF-TOKEN",
+        url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel'
+      }).then(function mySuccess(response) {
+        deferred.resolve(response.data);
+        return deferred.promise;
+      }, function myError(response) {
+        // the following line rejects the promise 
+        deferred.reject(response);
+        // promise is returned
         return deferred.promise;
       });
     };
@@ -124,7 +101,26 @@
         });
     };
     
-    this.revertIntegrationStatus = function(governanceModel) {
+    this.getSetupInformation = function() {
+      var deferred = $q.defer();
+      return $http({
+        method: "GET",
+        withCredentials: true,
+        xsrfHeaderName: "X-XSRF-TOKEN",
+        xsrfCookieName: "CSRF-TOKEN",
+        url : PluginHelper.getPluginRestUrl('custom-governance') + '/setup/information'
+      }).then(function mySuccess(response) {
+        deferred.resolve(response.data);
+        return deferred.promise;
+      }, function myError(response) {
+        // the following line rejects the promise 
+        deferred.reject(response);
+        // promise is returned
+        return deferred.promise;
+      });
+    };
+    
+    this.revertIntegrationStatus = function() {
       var deferred = $q.defer();
       return $http({
         method: "GET",

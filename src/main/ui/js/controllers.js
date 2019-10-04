@@ -242,6 +242,8 @@
       $scope.showInfoMessage    = false;
       $scope.successMessage     = null;
       $scope.showSuccessMessage = false;
+      $scope.showErrorMessage   = false;
+      $scope.errorMessage       = null;
       
       $scope.setupInformation = {
           workflow : "",
@@ -269,29 +271,30 @@
 
       controller.getSetupInformation = function() {
         GovernancePluginService.getSetupInformation().then(function(result) {
-          console.log("setup information: " + JSON.stringify(result));
-          console.log(result);
+          // success getting the setup information
           $scope.setupInformation = result;
+        }, function(result) {
+          // something went wrong getting the setup information
+          $scope.showErrorMessage   = true;
+          $scope.errorMessage       = result.data;
         });
       };
       
       controller.setupSystemIntegration = function() {
         console.log("setup system");
         GovernancePluginService.performIntegration($scope.setupInformation).then(function(result) {
-          console.log("----------");
-          console.log(result);
-          console.log("----------");
           controller.toggleShowSuccessMessage("system successfully set up.");
           $scope.setupInformation.integration = true;
+        }, function(result) {
+          // something went wrong getting the setup information
+          $scope.showErrorMessage   = true;
+          $scope.errorMessage       = result.data;
         });
       };
       
       controller.revertSystemIntegrationStatus = function() {
         console.log("revert system integration status");
         GovernancePluginService.revertIntegrationStatus().then(function(result) {
-          console.log("----------");
-          console.log(result);
-          console.log("----------");
           $scope.setupInformation.integration = false;
         });
       };
