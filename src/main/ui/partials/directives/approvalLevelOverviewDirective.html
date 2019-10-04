@@ -7,8 +7,9 @@
 	<div id="GovernanceConfigurationDiv" data-ng-show="showApprovalLevels">
 		<table id="CustomGovernancePluginConfigTable" class="table table-hover">
 			<tbody>
-				<tr class="clickable" data-ng-click="controller.showApprovalLevelModal(key)" data-ng-repeat="key in approvalLevelArray | orderBy">
-					<td>{{key}}</td>
+				<tr class="clickable" data-ng-repeat="key in approvalLevelArray | orderBy">
+					<td data-ng-click="controller.showApprovalLevelModal(key)">{{key}}</td>
+          <td width="100px"><i class="fa fa-trash-o" aria-hidden="true" data-ng-click="controller.deleteApprovalLevel(key)"></i></td>
 				</tr>
 			</tbody>
 		</table>

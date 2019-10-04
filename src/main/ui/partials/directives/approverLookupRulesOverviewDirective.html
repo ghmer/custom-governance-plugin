@@ -9,12 +9,14 @@
 				<tr>
 					<th scope="col">Approver</th>
 					<th scope="col">Approver Lookup Rule</th>
+          <th scope="col">action</th>
 				</tr>
 			</thead>
 			<tbody>
-				<tr class="clickable" data-ng-click="controller.showApproverLookupModal(key, value)" data-ng-repeat="(key, value) in configObject.approverLookupRules">
-					<td>{{key}}</td>
-					<td>{{value}}</td>
+				<tr class="clickable" data-ng-repeat="(key, value) in configObject.approverLookupRules">
+					<td data-ng-click="controller.showApproverLookupModal(key, value)">{{key}}</td>
+					<td data-ng-click="controller.showApproverLookupModal(key, value)">{{value}}</td>
+          <td width="100px"><i class="fa fa-trash-o" aria-hidden="true" data-ng-click="controller.deleteApproverLookup(key)"></i></td>
 				</tr>
 			</tbody>
 		</table>
