@@ -6,14 +6,14 @@
     <p><input class="btn btn-primary btn-block" type="submit" value="start over" data-ng-click="controller.revertSystemIntegrationStatus()" /></p>
   </div>
   <div id="CustomGovernancePluginSetupInformation" data-ng-hide="setupInformation.integration">
-  	<h5>Setup Information: {{setupInformation.integration}}</h5>
-    <p>Based on the System Configuration, the workflow <b>{{setupInformation.workflow}}</b> will be modified.</p>
+  	<h5>Setup Information</h5>
+    <p>Based on the System Configuration, the workflow <strong>{{setupInformation.workflow}}</strong> will be modified.</p>
     <p>The following Steps will be altered:
       <ol>
         <li data-ng-repeat="step in setupInformation.steps">{{step}}</li>
       </ol>
     </p>
-    <p>Each step will be modified to include the argument <b>{{setupInformation.attribute}}</b> with value <b>{{setupInformation.rule}}</b></p>
+    <p>Each step will be modified to include the argument <strong>{{setupInformation.attribute}}</strong> with value <strong>{{setupInformation.rule}}</strong></p>
     <br />
     <p><input class="btn btn-primary btn-block" type="submit" value="perform System Integration" data-ng-click="controller.setupSystemIntegration()" /></p>
   </div>

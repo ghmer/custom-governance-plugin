@@ -72,10 +72,10 @@
 									<entry key="notification">
 										<value>
 											<List>
-												<String>user</String>
-												<String>requester</String>
-												<String>owner</String>
-											</List>
+                        <String>user</String>
+                        <String>requester</String>
+                        <String>manager</String>
+                      </List>
 										</value>
 									</entry>
 								</Map>
@@ -108,9 +108,10 @@
 									<entry key="approval">
 										<value>
 											<List>
-												<String>manager</String>
-												<String>owner</String>
-											</List>
+                        <String>user</String>
+                        <String>requester</String>
+                        <String>manager</String>
+                      </List>
 										</value>
 									</entry>
 									<entry key="notification">
@@ -131,9 +132,10 @@
 									<entry key="approval">
 										<value>
 											<List>
-												<String>manager</String>
-												<String>applicationOwner</String>
-											</List>
+                        <String>user</String>
+                        <String>requester</String>
+                        <String>manager</String>
+                      </List>
 										</value>
 									</entry>
 									<entry key="notification">
@@ -162,11 +164,10 @@
 									<entry key="notification">
 										<value>
 											<List>
-												<String>user</String>
-												<String>requester</String>
-												<String>owner</String>
-												<String>securityOfficer</String>
-											</List>
+                        <String>user</String>
+                        <String>requester</String>
+                        <String>manager</String>
+                      </List>
 										</value>
 									</entry>
 								</Map>

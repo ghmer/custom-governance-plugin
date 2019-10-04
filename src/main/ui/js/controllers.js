@@ -246,7 +246,7 @@
       $scope.setupInformation = {
           workflow : "",
           steps: [],
-          integration : false
+          integration : true
       };
       
       controller.toggleShowInfoMessage = function(message) {
@@ -277,14 +277,23 @@
       
       controller.setupSystemIntegration = function() {
         console.log("setup system");
-        controller.toggleShowSuccessMessage("system successfully set up.");
-        $scope.setupInformation.integration = true;
+        GovernancePluginService.performIntegration($scope.setupInformation).then(function(result) {
+          console.log("----------");
+          console.log(result);
+          console.log("----------");
+          controller.toggleShowSuccessMessage("system successfully set up.");
+          $scope.setupInformation.integration = true;
+        });
       };
       
       controller.revertSystemIntegrationStatus = function() {
         console.log("revert system integration status");
-        $scope.setupInformation.integration = false;
-        
+        GovernancePluginService.revertIntegrationStatus().then(function(result) {
+          console.log("----------");
+          console.log(result);
+          console.log("----------");
+          $scope.setupInformation.integration = false;
+        });
       };
       
       controller.getSetupInformation();

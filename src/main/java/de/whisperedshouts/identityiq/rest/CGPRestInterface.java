@@ -171,14 +171,14 @@ public class CGPRestInterface extends BasePluginResource {
 	}
 	
 	@GET
-	@Path("setup/information")
-	public Response getSetupInformation() {
-	  if(log.isDebugEnabled()) {
+  @Path("setup/information")
+  public Response getSetupInformation() {
+    if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s()", "getSetupInformation"));
     }
-	  Response response            = null;
-	  SailPointContext context     = getContext();
-	  try {
+    Response response            = null;
+    SailPointContext context     = getContext();
+    try {
       Configuration configuration   = context.getConfiguration();
       String lcmAccessRequestWfName = (String) configuration.get(CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME);
       String isSystemIntegration    = (String) configuration.get(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME);
@@ -193,12 +193,67 @@ public class CGPRestInterface extends BasePluginResource {
     } catch (GeneralException e) {
       response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
     }
-	  
-	  if(log.isDebugEnabled()) {
+    
+    if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "getSetupInformation", response));
     }
-	  return response;
-	}
+    return response;
+  }
+	
+	@GET
+  @Path("setup/revertIntegrationStatus")
+  public Response revertIntegrationStatus() {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s()", "revertIntegrationStatus"));
+    }
+    Response response            = null;
+    SailPointContext context     = getContext();
+    try {
+      Configuration configuration   = context.getConfiguration();
+      configuration.put(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME, "false");
+      context.saveObject(configuration);
+      context.commitTransaction();
+      
+      response = Response.ok().entity(true).build();
+    } catch (GeneralException e) {
+      response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "revertIntegrationStatus", response));
+    }
+    return response;
+  }
+	
+	@POST
+  @Path("setup/performIntegration")
+  public Response performIntegration(Map<String, Object> setupInformation) {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(setupInformation = %s)", "performIntegration", setupInformation));
+    }
+    Response response            = null;
+    SailPointContext context     = getContext();
+    try {
+      Configuration configuration   = context.getConfiguration();
+      configuration.put(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME, "true");
+      context.saveObject(configuration);
+      
+      Workflow workflow = context.getObject(Workflow.class, (String)setupInformation.get("workflow"));
+      setupWorkflow(workflow, setupInformation);
+      context.saveObject(workflow);
+      
+      context.commitTransaction();
+      
+      response = Response.ok().entity(true).build();
+    } catch (GeneralException e) {
+      response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "performIntegration", response));
+    }
+    return response;
+  }
 
   private Map<String, Object> getSetupInformation(Workflow workflow) throws GeneralException {
     if(log.isDebugEnabled()) {
@@ -303,10 +358,30 @@ public class CGPRestInterface extends BasePluginResource {
     }
 	}
 	
-	private void setupWorkflow(Workflow workflow, String ruleName) throws GeneralException {
+	private void setupWorkflow(Workflow workflow, Map<String, Object> setupInformation) throws GeneralException {
 	  if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(workflow = %s, ruleName = %s)", "setupWorkflow", workflow, ruleName));
+      log.debug(String.format("ENTERING %s(workflow = %s, setupInformation = %s)", "setupWorkflow", workflow, setupInformation));
     }
+	  
+	  String ruleName    = (String) setupInformation.get("rule");
+	  List<String> steps = (List) setupInformation.get("steps");
+	  
+	  for(String stepName : steps) {
+	    Step step = workflow.getStep(stepName);
+	    Boolean found = false;
+	    for(Arg argument : step.getArgs()) {
+        if(argument.getName().equals(APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME)) {
+          argument.setValue(ruleName);
+          found = true;
+          break;
+        }
+      }
+	    if(!found) {
+        Arg argument = new Arg();
+        step.getArgs().add(argument);
+      }	    
+	  }
+	  /*
 	  int modifyCount = 0;
 	  
 	  if(workflow.getSteps() == null || workflow.getSteps().isEmpty()) {
@@ -340,6 +415,7 @@ public class CGPRestInterface extends BasePluginResource {
 	  if(modifyCount == 0) {
 	    throw new GeneralException("Workflow did not contain any modifiable Steps");
 	  }
+	  */
 	  
 	  //TODO: setSystemIntegrationAttribute();
 	  

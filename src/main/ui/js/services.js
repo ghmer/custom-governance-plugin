@@ -105,23 +105,61 @@
     };
 
     this.saveGovernanceModel = function(governanceModel) {
-    	var deferred  = $q.defer(); 
-    	return $http({
-    		method  : "POST",
+      var deferred  = $q.defer(); 
+      return $http({
+        method  : "POST",
             withCredentials: true,
             xsrfHeaderName : "X-XSRF-TOKEN",
             xsrfCookieName : "CSRF-TOKEN",
             url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel/update',
             headers: {'Content-Type': 'application/json'},
             data : governanceModel
-    	}).then(function mySuccess(response) {
-        	deferred.resolve(response.data);
+      }).then(function mySuccess(response) {
+          deferred.resolve(response.data);
+          console.log(deferred.promise);
             return deferred.promise;
         }, function myError(response) {
             deferred.reject(response);
             return deferred.promise;
         });
     };
-
+    
+    this.revertIntegrationStatus = function(governanceModel) {
+      var deferred = $q.defer();
+      return $http({
+        method: "GET",
+        withCredentials: true,
+        xsrfHeaderName: "X-XSRF-TOKEN",
+        xsrfCookieName: "CSRF-TOKEN",
+        url: PluginHelper.getPluginRestUrl('custom-governance') + '/setup/revertIntegrationStatus'
+      }).then(function mySuccess(response) {
+        deferred.resolve(response.data);
+        return deferred.promise;
+      }, function myError(response) {
+        deferred.reject(response);
+        return deferred.promise;
+      });
+    };
+    
+    this.performIntegration = function(setupInformation) {
+      var deferred  = $q.defer(); 
+      return $http({
+        method  : "POST",
+            withCredentials: true,
+            xsrfHeaderName : "X-XSRF-TOKEN",
+            xsrfCookieName : "CSRF-TOKEN",
+            url: PluginHelper.getPluginRestUrl('custom-governance') + '/setup/performIntegration',
+            headers: {'Content-Type': 'application/json'},
+            data : setupInformation
+      }).then(function mySuccess(response) {
+          deferred.resolve(response.data);
+          console.log(deferred.promise);
+            return deferred.promise;
+        }, function myError(response) {
+            deferred.reject(response);
+            return deferred.promise;
+        });
+    };
+    
   });
 }());
