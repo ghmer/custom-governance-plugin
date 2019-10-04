@@ -1,18 +1,20 @@
-<div id="CustomGovernancePluginConfigurationDiv">
-	<h5 data-ng-click="controller.toggleView('showApprovalLevels')">
-		</i>Approval Level&nbsp;<i data-ng-class="showApprovalLevels ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i> 
-	</h5>
-	<hr data-ng-hide="showApprovalLevels">
-	</hr>
-	<div id="GovernanceConfigurationDiv" data-ng-show="showApprovalLevels">
-		<table id="CustomGovernancePluginConfigTable" class="table table-hover">
-			<tbody>
-				<tr class="clickable" data-ng-click="controller.showApprovalLevelModal(key)" data-ng-repeat="key in approvalLevelArray | orderBy">
-					<td>{{key}}</td>
-				</tr>
-			</tbody>
-		</table>
-		<a class="btn btn-primary btn-sm" role="button" data-ng-click="controller.showAddApprovalLevelModal()">add Approval Level</a> 
-	</div>
-	<br />
+<div id="CustomGovernancePluginSetupDiv">
+  <div id="CustomGovernancePluginSetupRestart" data-ng-show="setupInformation.integration">
+    <div class="alert alert-info">
+      It seems that the integration was already performed. If you want to start over, click on the button.
+    </div>
+    <p><input class="btn btn-primary btn-block" type="submit" value="start over" data-ng-click="controller.revertSystemIntegrationStatus()" /></p>
+  </div>
+  <div id="CustomGovernancePluginSetupInformation" data-ng-hide="setupInformation.integration">
+  	<h5>Setup Information: {{setupInformation.integration}}</h5>
+    <p>Based on the System Configuration, the workflow <b>{{setupInformation.workflow}}</b> will be modified.</p>
+    <p>The following Steps will be altered:
+      <ol>
+        <li data-ng-repeat="step in setupInformation.steps">{{step}}</li>
+      </ol>
+    </p>
+    <p>Each step will be modified to include the argument <b>{{setupInformation.attribute}}</b> with value <b>{{setupInformation.rule}}</b></p>
+    <br />
+    <p><input class="btn btn-primary btn-block" type="submit" value="perform System Integration" data-ng-click="controller.setupSystemIntegration()" /></p>
+  </div>
 </div>

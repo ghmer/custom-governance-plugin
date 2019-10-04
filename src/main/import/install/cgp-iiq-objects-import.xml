@@ -12,5 +12,15 @@
       <Reference class="sailpoint.object.SPRight" name="CGPPluginAccess" />
     </RightRefs>
   </Capability>
+  
+  <ImportAction name="merge">
+    <Configuration name="SystemConfiguration">
+      <Attributes>
+        <Map>
+          <entry key="customApprovalSystemIntegration" value="false"/>
+        </Map>
+      </Attributes>
+    </Configuration>
+  </ImportAction>
 
 </sailpoint>

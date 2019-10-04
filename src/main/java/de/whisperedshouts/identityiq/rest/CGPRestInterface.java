@@ -50,7 +50,13 @@ import sailpoint.tools.Util;
 @RequiredRight(value = CGPRestInterface.SPRIGHT_PLUGIN_ACCESS)
 public class CGPRestInterface extends BasePluginResource {
 
-	private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
+  private static final String APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME = "approvalAssignmentRule";
+  private static final String CUSTOM_GOVERNANCE_RULE_NAME = "Custom Governance Model - Approval Assignment Rule";
+  
+  private static final String CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME = "customApprovalSystemIntegration";
+  private static final String CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME = "workflowLCMAccessRequest";
+
+  private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
 	
 	public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
 	public static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
@@ -174,10 +180,14 @@ public class CGPRestInterface extends BasePluginResource {
 	  SailPointContext context     = getContext();
 	  try {
       Configuration configuration   = context.getConfiguration();
-      String lcmAccessRequestWfName = (String) configuration.get("workflowLCMAccessRequest");
+      String lcmAccessRequestWfName = (String) configuration.get(CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME);
+      String isSystemIntegration    = (String) configuration.get(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME);
       Workflow lcmAccessRequestWf   = context.getObject(Workflow.class, lcmAccessRequestWfName);
       Map<String, Object> result    = getSetupInformation(lcmAccessRequestWf);
       result.put("workflow", lcmAccessRequestWfName);
+      result.put("attribute", APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME);
+      result.put("rule", CUSTOM_GOVERNANCE_RULE_NAME);
+      result.put("integration", (isSystemIntegration.equalsIgnoreCase("true") ? true : false));
       
       response = Response.ok().entity(result).build();
     } catch (GeneralException e) {
@@ -204,7 +214,7 @@ public class CGPRestInterface extends BasePluginResource {
       List<Arg> argumentList = step.getArgs();
       if(argumentList != null && !argumentList.isEmpty()) {
         for(Arg argument : step.getArgs()) {
-          if(argument.getName().equals("approvalAssignmentRule")) {
+          if(argument.getName().equals(APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME)) {
             stepNames.add(step.getName());
             found = true;
             break;
@@ -308,7 +318,7 @@ public class CGPRestInterface extends BasePluginResource {
 	    List<Arg> argumentList = step.getArgs();
 	    if(argumentList != null && !argumentList.isEmpty()) {
 	      for(Arg argument : step.getArgs()) {
-	        if(argument.getName().equals("approvalAssignmentRule")) {
+	        if(argument.getName().equals(APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME)) {
 	          argument.setValue(ruleName);
 	          found = true;
 	          modifyCount++;
@@ -330,6 +340,9 @@ public class CGPRestInterface extends BasePluginResource {
 	  if(modifyCount == 0) {
 	    throw new GeneralException("Workflow did not contain any modifiable Steps");
 	  }
+	  
+	  //TODO: setSystemIntegrationAttribute();
+	  
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "setupWorkflow", null));
     }

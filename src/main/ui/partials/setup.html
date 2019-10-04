@@ -9,8 +9,11 @@
 	<p>
 		This is the <i>Custom Governance</i> page. This plugin lets you manage <i>Approval Levels</i> that can be assigned to Entitlements and Roles. 
 	</p>
-	<div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
-		{{infoMessage}}
-	</div>
+	<div class="alert alert-success" role="alert" data-ng-show="showSuccessMessage">
+    {{successMessage}}
+  </div>
+  <div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
+    {{infoMessage}}
+  </div>
 	<custom-governance-setup></custom-governance-setup>
 </div>

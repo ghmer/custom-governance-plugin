@@ -46,6 +46,8 @@
       $scope.rules = [];
       $scope.infoMessage = null;
       $scope.showInfoMessage = false;
+      $scope.successMessage     = null;
+      $scope.showSuccessMessage = false;
       $scope.newApproverName = null;
 
       controller.getGovernanceModel = function() {
@@ -78,6 +80,15 @@
         $timeout(function() {
           $scope.infoMessage = null;
           $scope.showInfoMessage = false;
+        }, 3000);
+      };
+      
+      controller.toggleShowSuccessMessage = function(message) {
+        $scope.successMessage = message;
+        $scope.showSuccessMessage = true;
+        $timeout(function() {
+          $scope.successMessage = null;
+          $scope.showSuccessMessage = false;
         }, 3000);
       };
 
@@ -161,6 +172,7 @@
       controller.applyChanges = function() {
         GovernancePluginService.saveGovernanceModel($scope.configObject);
         $scope.showApplyChangesButton = false;
+        controller.toggleShowSuccessMessage("Model successfully saved");
       };
 
       controller.revertChanges = function() {
@@ -226,16 +238,56 @@
       
       var controller = this;
       
-      $scope.infoMessage      = null;
-      $scope.showInfoMessage  = false;
-      $scope.setupInformation = {};
+      $scope.infoMessage        = null;
+      $scope.showInfoMessage    = false;
+      $scope.successMessage     = null;
+      $scope.showSuccessMessage = false;
+      
+      $scope.setupInformation = {
+          workflow : "",
+          steps: [],
+          integration : false
+      };
+      
+      controller.toggleShowInfoMessage = function(message) {
+        $scope.infoMessage = message;
+        $scope.showInfoMessage = true;
+        $timeout(function() {
+          $scope.infoMessage = null;
+          $scope.showInfoMessage = false;
+        }, 3000);
+      };
+      
+      controller.toggleShowSuccessMessage = function(message) {
+        $scope.successMessage = message;
+        $scope.showSuccessMessage = true;
+        $timeout(function() {
+          $scope.successMessage = null;
+          $scope.showSuccessMessage = false;
+        }, 3000);
+      };
 
       controller.getSetupInformation = function() {
         GovernancePluginService.getSetupInformation().then(function(result) {
+          console.log("setup information: " + JSON.stringify(result));
+          console.log(result);
           $scope.setupInformation = result;
         });
       };
-
+      
+      controller.setupSystemIntegration = function() {
+        console.log("setup system");
+        controller.toggleShowSuccessMessage("system successfully set up.");
+        $scope.setupInformation.integration = true;
+      };
+      
+      controller.revertSystemIntegrationStatus = function() {
+        console.log("revert system integration status");
+        $scope.setupInformation.integration = false;
+        
+      };
+      
+      controller.getSetupInformation();
     }
   ]);
 
@@ -244,10 +296,12 @@
     function($scope, $http, $timeout, GovernancePluginService) {
       var controller = this;
 
-      $scope.infoMessage = null;
-      $scope.showInfoMessage = false;
-      $scope.showAddApprover = false;
-      $scope.newApprover = null;
+      $scope.infoMessage        = null;
+      $scope.showInfoMessage    = false;
+      $scope.successMessage     = null;
+      $scope.showSuccessMessage = false;
+      $scope.showAddApprover    = false;
+      $scope.newApprover        = null;
       $scope.btnMessages = {
         "addApprover": {
           "add": "add approver",
@@ -272,6 +326,15 @@
         $timeout(function() {
           $scope.infoMessage = null;
           $scope.showInfoMessage = false;
+        }, 3000);
+      };
+      
+      controller.toggleShowSuccessMessage = function(message) {
+        $scope.successMessage = message;
+        $scope.showSuccessMessage = true;
+        $timeout(function() {
+          $scope.successMessage = null;
+          $scope.showSuccessMessage = false;
         }, 3000);
       };
 
