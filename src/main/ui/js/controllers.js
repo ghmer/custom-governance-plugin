@@ -40,15 +40,15 @@
       var controller = this;
 
       $scope.showApplyChangesButton = false;
-      $scope.showApprovalLevels = false;
-      $scope.showApprovalRules = false;
-      $scope.showAddNewApprover = false;
-      $scope.rules = [];
-      $scope.infoMessage = null;
-      $scope.showInfoMessage = false;
-      $scope.successMessage     = null;
-      $scope.showSuccessMessage = false;
-      $scope.newApproverName = null;
+      $scope.showApprovalLevels     = false;
+      $scope.showApprovalRules      = false;
+      $scope.showAddNewApprover     = false;
+      $scope.rules                  = [];
+      $scope.infoMessage            = null;
+      $scope.showInfoMessage        = false;
+      $scope.successMessage         = null;
+      $scope.showSuccessMessage     = false;
+      $scope.newApproverName        = null;
 
       controller.getGovernanceModel = function() {
         GovernancePluginService.getGovernanceModel().then(function(result) {
@@ -179,6 +179,21 @@
         controller.getGovernanceModel();
         $scope.showApplyChangesButton = false;
       };
+      
+      controller.deleteApproverLookup = function(approver) {
+        console.log("deleteApproverLookup: " + approver);
+        $scope.showApplyChangesButton = true;
+        delete $scope.configObject.approverLookupRules[approver];
+      };
+      
+      controller.deleteApprovalLevel = function(approvalLevel) {
+        console.log("deleteApprovalLevel: " + approvalLevel);
+        $scope.showApplyChangesButton = true;
+        delete $scope.configObject.approvalLevels[approvalLevel];
+        $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
+          return key;
+        });
+      };
 
       /* Events from Modals */
       $scope.$on('saveApprovalEvent', function(event, args) {
@@ -204,6 +219,7 @@
         }
 
         $scope.showApplyChangesButton = true;
+        
         $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
           return key;
         });
@@ -248,8 +264,31 @@
       $scope.setupInformation = {
           workflow : "",
           steps: [],
-          integration : true
+          integration : true,
+          userAgreement : false
       };
+      
+      $scope.approvalModes = [
+        "parallel","parallelPoll","serial","serialPoll","any"
+      ];
+      
+      $scope.modeInfo = {
+          "parallel" : {
+            description: "Approvals are processed concurrently and there must be consensus, we wait for all approvers to approve.  The first approver that rejects terminates the entire approval."
+          },
+          "parallelPoll" : {
+            description: "Approvals are processed concurrently but consensus is not required. All approvals will be processed, we don't stop if there are any rejections."
+          },
+          "serial" : {
+            description: "Approvals are processed one at a time and there must be consensus. The first approver that rejects terminates the entire approval."
+          },
+          "serialPoll" : {
+            description: "Approvals are processed in order but consensus is not required. All approvals will be processed, we don't stop if there are any rejections.  In effect we are 'taking a poll' of the approvers."
+          },
+          "any" : {
+            description: "Approvals are processed concurrently, the first approver to respond makes the decision for the group."
+          }
+      }
       
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
