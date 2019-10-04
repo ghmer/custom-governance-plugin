@@ -51,8 +51,8 @@
       $scope.showInfoMessage = false;
       $scope.newApproverName = null;
 
-      controller.getConfiguration = function() {
-        GovernancePluginService.getConfiguration().then(function(result) {
+      controller.getGovernanceModel = function() {
+        GovernancePluginService.getGovernanceModel().then(function(result) {
         	console.log("get configuration result");
         	console.log(result);
           $scope.configObject = result;
@@ -167,13 +167,14 @@
 
       controller.applyChanges = function() {
         alert("changes applied");
+        GovernancePluginService.saveGovernanceModel($scope.configObject);
         $scope.showApplyChangesButton = false;
         console.log($scope.configObject);
       };
 
       controller.revertChanges = function() {
         alert("changes reverted");
-        controller.getConfiguration();
+        controller.getGovernanceModel();
         $scope.showApplyChangesButton = false;
         console.log($scope.configObject);
       };
@@ -232,7 +233,7 @@
         $scope.showApplyChangesButton = true;
       });
 
-      controller.getConfiguration();
+      controller.getGovernanceModel();
       controller.getAvailableRules();
 
     }

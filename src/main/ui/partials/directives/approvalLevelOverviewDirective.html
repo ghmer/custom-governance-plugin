@@ -5,7 +5,7 @@
 	<hr data-ng-hide="showApprovalLevels">
 	</hr>
 	<div id="GovernanceConfigurationDiv" data-ng-show="showApprovalLevels">
-		<table id="CustomGovernancePluginConfigTable" class="table table-hover table-sm">
+		<table id="CustomGovernancePluginConfigTable" class="table table-hover">
 			<tbody>
 				<tr class="clickable" data-ng-click="controller.showApprovalLevelModal(key)" data-ng-repeat="key in approvalLevelArray | orderBy">
 					<td>{{key}}</td>

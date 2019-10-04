@@ -7,7 +7,7 @@
     /*
      * return all template names found in the system
      */
-    this.getConfiguration = function() {
+    this.getGovernanceModel = function() {
       var deferred = $q.defer();
       return $http({
         method: "GET",
@@ -88,38 +88,24 @@
       });
     };
 
-    /*
-     * evaluate a template with an argument array
-     */
-    /*
-        this.evaluateTemplate = function(templateName, argumentArray) {
-        	var deferred  = $q.defer(); 
-        	return $http({
-        		method  : "POST",
-                withCredentials: true,
-                xsrfHeaderName : "X-XSRF-TOKEN",
-                xsrfCookieName : "CSRF-TOKEN",
-                url : PluginHelper.getPluginRestUrl('velocity-template') + '/evaluateTemplate',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-                transformRequest: function(obj) {
-                    var str = [];
-                    for(var p in obj) {
-                    	str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
-                    }  
-                    return str.join("&");
-                },
-                data : {
-                	templateName : templateName,
-                    arguments 	 : angular.toJson(argumentArray)
-                }
-        	}).then(function mySuccess(response) {
-            	deferred.resolve(response.data);
-                return deferred.promise;
-            }, function myError(response) {
-                deferred.reject(response);
-                return deferred.promise;
-            });
-        };
-        */
+    this.saveGovernanceModel = function(governanceModel) {
+    	var deferred  = $q.defer(); 
+    	return $http({
+    		method  : "POST",
+            withCredentials: true,
+            xsrfHeaderName : "X-XSRF-TOKEN",
+            xsrfCookieName : "CSRF-TOKEN",
+            url : PluginHelper.getPluginRestUrl('custom-governance') + '/saveGovernanceModel',
+            headers: {'Content-Type': 'application/json'},
+            data : governanceModel
+    	}).then(function mySuccess(response) {
+        	deferred.resolve(response.data);
+            return deferred.promise;
+        }, function myError(response) {
+            deferred.reject(response);
+            return deferred.promise;
+        });
+    };
+
   });
 }());
