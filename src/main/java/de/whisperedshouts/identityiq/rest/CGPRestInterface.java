@@ -120,7 +120,10 @@ public class CGPRestInterface extends BasePluginResource {
       Identity loggedInUser = getLoggedInUser();
       List<Capability> userCapabilities = getLoggedInUserCapabilities();
       for(Capability cap : userCapabilities) {
-        log.error("capability: " + cap.getName());
+        if(cap.getName().equals("SystemAdministrator")) {
+          isAdmin = true;
+          break;
+        }
       }
       
     } catch (GeneralException e) {
