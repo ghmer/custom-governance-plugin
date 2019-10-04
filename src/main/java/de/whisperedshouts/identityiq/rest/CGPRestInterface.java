@@ -264,6 +264,9 @@ public class CGPRestInterface extends BasePluginResource {
     List<String> stepNames      = new ArrayList<>();
     
     Variable approvalModeVar    = workflow.getVariableDefinition("approvalMode");
+    if(approvalModeVar == null || approvalModeVar.getInitializer() == null) {
+      throw new GeneralException("Workflow does not contain an approval mode variable!");
+    }
     String approvalMode         = approvalModeVar.getInitializer();
     
     result.put("approvalMode", approvalMode);
@@ -370,8 +373,11 @@ public class CGPRestInterface extends BasePluginResource {
       log.debug(String.format("ENTERING %s(workflow = %s, setupInformation = %s)", "setupWorkflow", workflow, setupInformation));
     }
 	  
-	  String ruleName    = (String) setupInformation.get("rule");
-	  List<String> steps = (List) setupInformation.get("steps");
+	  String ruleName      = (String) setupInformation.get("rule");
+	  String approvalMode  = (String) setupInformation.get("approvalMode");
+	  List<String> steps   = (List) setupInformation.get("steps");
+	  
+	  workflow.getVariableDefinition("approvalMode").setInitializer(approvalMode);
 	  
 	  for(String stepName : steps) {
 	    Step step = workflow.getStep(stepName);
