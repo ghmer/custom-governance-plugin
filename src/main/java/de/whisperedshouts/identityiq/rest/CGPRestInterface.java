@@ -4,6 +4,7 @@
 package de.whisperedshouts.identityiq.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,15 @@ import org.apache.log4j.Logger;
 
 import sailpoint.api.SailPointContext;
 import sailpoint.object.Attributes;
+import sailpoint.object.Configuration;
 import sailpoint.object.Custom;
 import sailpoint.object.ObjectAttribute;
 import sailpoint.object.ObjectConfig;
 import sailpoint.object.QueryOptions;
 import sailpoint.object.Rule;
+import sailpoint.object.Workflow;
+import sailpoint.object.Workflow.Arg;
+import sailpoint.object.Workflow.Step;
 import sailpoint.rest.plugin.BasePluginResource;
 import sailpoint.rest.plugin.RequiredRight;
 import sailpoint.tools.GeneralException;
@@ -90,7 +95,7 @@ public class CGPRestInterface extends BasePluginResource {
 			Util.flushIterator(iterator);
 			response = Response.ok().entity(ruleNames).build();
 		} catch (GeneralException e) {
-			response = Response.status(Status.NOT_FOUND).build();
+			response = Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
 		}
 		
 		if(log.isDebugEnabled()) {
@@ -140,11 +145,81 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return response;
 	}
+	
+	@GET
+	@Path("setupInformation")
+	public Response getSetupInformation() {
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s()", "getSetupInformation"));
+    }
+	  Response response            = null;
+	  SailPointContext context     = getContext();
+	  try {
+      Configuration configuration   = context.getConfiguration();
+      String lcmAccessRequestWfName = (String) configuration.get("workflowLCMAccessRequest");
+      Workflow lcmAccessRequestWf   = context.getObject(Workflow.class, lcmAccessRequestWfName);
+      Map<String, Object> result    = getSetupInformation(lcmAccessRequestWf);
+      result.put("workflow", lcmAccessRequestWfName);
+      
+      response = Response.ok().entity(result).build();
+    } catch (GeneralException e) {
+      response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+	  
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "getSetupInformation", response));
+    }
+	  return response;
+	}
+
+  private Map<String, Object> getSetupInformation(Workflow workflow) throws GeneralException {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(workflow = %s)", "getSetupInformation", workflow));
+    }
+    List<String> stepNames = new ArrayList<>();
+    if(workflow.getSteps() == null || workflow.getSteps().isEmpty()) {
+      throw new GeneralException("Workflow does not contain any Step");
+    }
+    
+    for(Step step : workflow.getSteps()) {
+      boolean found = false;
+      List<Arg> argumentList = step.getArgs();
+      if(argumentList != null && !argumentList.isEmpty()) {
+        for(Arg argument : step.getArgs()) {
+          if(argument.getName().equals("approvalAssignmentRule")) {
+            stepNames.add(step.getName());
+            found = true;
+            break;
+          }
+        }
+        if(!found) {
+          Workflow workflowRef = step.getWorkflow();
+          if(workflowRef.getName().equals("Provisioning Approval Subprocess") ||
+             workflowRef.getName().equals("Approve and Provision Subprocess")) {
+            stepNames.add(step.getName());
+          }
+        }   
+      }
+    }
+    
+    if(stepNames.isEmpty()) {
+      throw new GeneralException("Workflow did not contain any modifiable Steps");
+    }
+    
+    Map<String, Object> result = new HashMap<>();
+    result.put("steps", stepNames);
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "getSetupInformation", result));
+    }
+    
+    return result;
+  }
 
   @SuppressWarnings("unchecked")
   private List<Object> getApprovalLevels(Map<String, Object> governanceModelJson) {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(governanceModelJson  = %s)", "getApprovalLevels", governanceModelJson));
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "getApprovalLevels", governanceModelJson));
     }
     
     List<Object> result = new ArrayList<>();
@@ -197,6 +272,48 @@ public class CGPRestInterface extends BasePluginResource {
 	  
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "updateObjectConfig", null));
+    }
+	}
+	
+	private void setupWorkflow(Workflow workflow, String ruleName) throws GeneralException {
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(workflow = %s, ruleName = %s)", "setupWorkflow", workflow, ruleName));
+    }
+	  int modifyCount = 0;
+	  
+	  if(workflow.getSteps() == null || workflow.getSteps().isEmpty()) {
+	    throw new GeneralException("Workflow does not contain any Step");
+	  }
+	  
+	  for(Step step : workflow.getSteps()) {
+	    boolean found = false;
+	    List<Arg> argumentList = step.getArgs();
+	    if(argumentList != null && !argumentList.isEmpty()) {
+	      for(Arg argument : step.getArgs()) {
+	        if(argument.getName().equals("approvalAssignmentRule")) {
+	          argument.setValue(ruleName);
+	          found = true;
+	          modifyCount++;
+	          break;
+	        }
+	      }
+	      if(!found) {
+	        Workflow workflowRef = step.getWorkflow();
+	        if(workflowRef.getName().equals("Provisioning Approval Subprocess") ||
+	           workflowRef.getName().equals("Approve and Provision Subprocess")) {
+	          Arg argument = new Arg();
+	          step.getArgs().add(argument);
+	          modifyCount++;
+	        }
+	      }   
+	    }
+	  }
+	  
+	  if(modifyCount == 0) {
+	    throw new GeneralException("Workflow did not contain any modifiable Steps");
+	  }
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "setupWorkflow", null));
     }
 	}
 	
