@@ -15,9 +15,9 @@
         controller: 'HomeController'
       })
 
-      .when('/admin', {
-        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/admin.html'),
-        controller: 'HomeController'
+      .when('/setup', {
+        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/setup.html'),
+        controller: 'SetupController'
       })
 
       .otherwise({

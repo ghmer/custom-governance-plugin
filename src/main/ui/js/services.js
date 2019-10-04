@@ -4,9 +4,7 @@
   var app = angular.module('customGovernancePluginApp');
 
   app.service('GovernancePluginService', function($http, $q) {
-    /*
-     * return all template names found in the system
-     */
+
     this.getGovernanceModel = function() {
       var deferred = $q.defer();
       return $http({
@@ -14,7 +12,7 @@
         withCredentials: true,
         xsrfHeaderName: "X-XSRF-TOKEN",
         xsrfCookieName: "CSRF-TOKEN",
-        url : PluginHelper.getPluginRestUrl('custom-governance') + '/getGovernanceModel'
+        url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel'
       }).then(function mySuccess(response) {
         deferred.resolve(response.data);
         return deferred.promise;
@@ -49,6 +47,24 @@
       return isInList;
     };
 
+    this.getSetupInformation = function() {
+      var deferred = $q.defer();
+      return $http({
+        method: "GET",
+        withCredentials: true,
+        xsrfHeaderName: "X-XSRF-TOKEN",
+        xsrfCookieName: "CSRF-TOKEN",
+        url : PluginHelper.getPluginRestUrl('custom-governance') + '/setup/information'
+      }).then(function mySuccess(response) {
+        deferred.resolve(response.data);
+        return deferred.promise;
+      }, function myError(response) {
+        // the following line rejects the promise 
+        deferred.reject(response);
+        // promise is returned
+        return deferred.promise;
+      });
+    };
 
     this.getArrayExceptValue = function(value, array) {
       var newArray = [...array];
@@ -78,7 +94,7 @@
         withCredentials: true,
         xsrfHeaderName: "X-XSRF-TOKEN",
         xsrfCookieName: "CSRF-TOKEN",
-        url: PluginHelper.getPluginRestUrl('custom-governance') + '/getRuleNames'
+        url: PluginHelper.getPluginRestUrl('custom-governance') + '/ruleNames'
       }).then(function mySuccess(response) {
         deferred.resolve(response.data);
         return deferred.promise;
@@ -95,7 +111,7 @@
             withCredentials: true,
             xsrfHeaderName : "X-XSRF-TOKEN",
             xsrfCookieName : "CSRF-TOKEN",
-            url : PluginHelper.getPluginRestUrl('custom-governance') + '/saveGovernanceModel',
+            url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel/update',
             headers: {'Content-Type': 'application/json'},
             data : governanceModel
     	}).then(function mySuccess(response) {

@@ -53,8 +53,8 @@
 
       controller.getGovernanceModel = function() {
         GovernancePluginService.getGovernanceModel().then(function(result) {
-        	console.log("get configuration result");
-        	console.log(result);
+          console.log("get configuration result");
+          console.log(result);
           $scope.configObject = result;
           $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
             return key;
@@ -64,8 +64,8 @@
 
       controller.getAvailableRules = function() {
         GovernancePluginService.getAvailableRules().then(function(result) {
-        	console.log("get available rules result");
-        	console.log(result);
+          console.log("get available rules result");
+          console.log(result);
           $scope.rules = result;
         });
       };
@@ -116,7 +116,7 @@
         notificationConfig, availableApprovers, usedApprovalLevelNames, $scope, $uibModal) {
         var modalScope = $scope.$new();
         var modalInstance = $uibModal.open({
-        	templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/modals/approvalLevelModal.html'),
+          templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/modals/approvalLevelModal.html'),
           controller: 'ApprovalLevelModalController',
           windowClass: 'app-modal-window',
           scope: modalScope
@@ -235,6 +235,25 @@
 
       controller.getGovernanceModel();
       controller.getAvailableRules();
+
+    }
+  ]);
+  
+  app.controller('SetupController', ['$scope', '$http', '$uibModal', '$timeout', 'GovernancePluginService',
+    function($scope, $http, $uibModal, $timeout, GovernancePluginService) {
+      $scope.headline = 'Hello, Stranger!';
+      
+      var controller = this;
+      
+      $scope.infoMessage      = null;
+      $scope.showInfoMessage  = false;
+      $scope.setupInformation = {};
+
+      controller.getSetupInformation = function() {
+        GovernancePluginService.getSetupInformation().then(function(result) {
+          $scope.setupInformation = result;
+        });
+      };
 
     }
   ]);

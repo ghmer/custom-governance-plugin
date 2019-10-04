@@ -22,8 +22,10 @@ import org.apache.log4j.Logger;
 
 import sailpoint.api.SailPointContext;
 import sailpoint.object.Attributes;
+import sailpoint.object.Capability;
 import sailpoint.object.Configuration;
 import sailpoint.object.Custom;
+import sailpoint.object.Identity;
 import sailpoint.object.ObjectAttribute;
 import sailpoint.object.ObjectConfig;
 import sailpoint.object.QueryOptions;
@@ -31,6 +33,8 @@ import sailpoint.object.Rule;
 import sailpoint.object.Workflow;
 import sailpoint.object.Workflow.Arg;
 import sailpoint.object.Workflow.Step;
+import sailpoint.plugin.PluginBaseHelper;
+import sailpoint.plugin.PluginsUtil;
 import sailpoint.rest.plugin.BasePluginResource;
 import sailpoint.rest.plugin.RequiredRight;
 import sailpoint.tools.GeneralException;
@@ -111,7 +115,18 @@ public class CGPRestInterface extends BasePluginResource {
 			log.debug(String.format("ENTERING %s()", "isAdmin"));
 		}
 		
-		Response response = Response.ok().entity(false).build();
+		Boolean isAdmin = false;
+		try {
+      Identity loggedInUser = getLoggedInUser();
+      List<Capability> userCapabilities = getLoggedInUserCapabilities();
+      for(Capability cap : userCapabilities) {
+        log.error("capability: " + cap.getName());
+      }
+      
+    } catch (GeneralException e) {
+      log.error(e.getMessage());
+    }
+		Response response = Response.ok().entity(isAdmin).build();
 		
 		if(log.isDebugEnabled()) {
 			log.debug(String.format("LEAVING %s(return = %s)", "isAdmin", response));

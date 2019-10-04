@@ -41,5 +41,14 @@
       templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/applyChangesButtonDirective.html')
     };
   });
-
+  
+  app.directive('customGovernanceSetup', function() {
+    return {
+      controller: 'SetupController',
+      controllerAs: 'controller',
+      restrict: 'E',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/setupDirective.html')
+    };
+  });
+  
 }());
