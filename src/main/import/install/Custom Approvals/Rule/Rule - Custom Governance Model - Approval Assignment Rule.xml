@@ -42,7 +42,7 @@ try {
   log.error("There was an error retrieving the approvers. Using default approvals");
 }
 
-return approvals;
+return result;
 ]]>
   </Source>
 </Rule>
