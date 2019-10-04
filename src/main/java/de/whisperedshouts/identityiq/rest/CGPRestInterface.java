@@ -53,7 +53,7 @@ public class CGPRestInterface extends BasePluginResource {
 	public static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME = "governanceApprovalLevel";
 	
 	@GET
-	@Path("getGovernanceModel")
+	@Path("governanceModel")
 	public Response getGovernanceModel() {
 		if(log.isDebugEnabled()) {
 			log.debug(String.format("ENTERING %s()", "getGovernanceModel"));
@@ -76,7 +76,7 @@ public class CGPRestInterface extends BasePluginResource {
 	}
 	
 	@GET
-	@Path("getRuleNames")
+	@Path("ruleNames")
 	public Response getRuleNames() {
 		if(log.isDebugEnabled()) {
 			log.debug(String.format("ENTERING %s()", "getRuleNames"));
@@ -120,7 +120,7 @@ public class CGPRestInterface extends BasePluginResource {
 	}
 	
 	@POST
-	@Path("saveGovernanceModel")
+	@Path("governanceModel/update")
 	public Response saveGovernanceModel(Map<String, Object> governanceModelJson) {
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s()", "saveGovernanceModel"));
@@ -147,7 +147,7 @@ public class CGPRestInterface extends BasePluginResource {
 	}
 	
 	@GET
-	@Path("setupInformation")
+	@Path("setup/information")
 	public Response getSetupInformation() {
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s()", "getSetupInformation"));
