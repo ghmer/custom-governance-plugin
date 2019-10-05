@@ -34,7 +34,6 @@
 
   app.controller('HomeController', ['$scope', '$http', '$uibModal', '$timeout', 'GovernancePluginService',
     function($scope, $http, $uibModal, $timeout, GovernancePluginService) {
-      $scope.headline = 'Hello, Stranger!';
       $scope.configObject = {};
 
       var controller = this;
@@ -250,8 +249,6 @@
   
   app.controller('SetupController', ['$scope', '$http', '$uibModal', '$timeout', 'GovernancePluginService',
     function($scope, $http, $uibModal, $timeout, GovernancePluginService) {
-      $scope.headline = 'Hello, Stranger!';
-      
       var controller = this;
       
       $scope.infoMessage        = null;
