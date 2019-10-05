@@ -1,0 +1,28 @@
+<div>
+  <custom-governance-navigation activelink="entitlement"></custom-governance-navigation>
+  <h3>
+    <small>Custom Governance</small> 
+  </h3>
+  <div class="alert alert-success" role="alert" data-ng-show="showSuccessMessage">
+    {{successMessage}}
+  </div>
+  <div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
+    {{infoMessage}}
+  </div>
+  <div class="alert alert-danger" role="alert" data-ng-show="showErrorMessage">
+    {{errorMessage}}
+  </div>
+  <entitlement-general-configuration></entitlement-general-configuration>
+	<defined-entitlement-applications></defined-entitlement-applications>
+	<br />
+	<br />
+	<br />
+	<div>
+    <input class="btn btn-primary btn-block" type="submit" value="add Application" data-ng-click="controller.addApplication()"/>
+    <br />
+    <br />
+    <br />
+    <input class="btn btn-primary btn-block" type="submit" value="save Configuration" data-ng-click="controller.saveEntitlementConfiguration()"/>
+  </div>
+
+</div>

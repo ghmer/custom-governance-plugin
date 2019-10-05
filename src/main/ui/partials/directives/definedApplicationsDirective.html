@@ -1,0 +1,38 @@
+<div id="EntitlementConfigurationDiv">
+  <h4>Defined Applications</h4>
+  <table class="table">
+    <tr data-ng-repeat="(name, application) in configObject.ApplicationConfiguration">
+      <td>{{name}}&nbsp;<i  data-ng-click="controller.toggleView(name)"
+                            data-ng-class="showApplication[name] ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>
+
+        <div data-ng-show="showApplication[name] === true">
+          <div data-ng-repeat="entitlementConfig in application.EntitlementConfiguration">
+            <table class="table">
+              <tr>
+                <td>
+                <h5 data-ng-click="controller.toggleView(name, entitlementConfig.descriptor)">{{entitlementConfig.descriptor}}&nbsp;<i data-ng-class="showDescriptor[name][entitlementConfig.descriptor] ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i></h5>
+                <application-entitlement-configuration></application-entitlement-configuration>
+                </td>
+                <td width="100px">
+                  <i class="fa fa-trash-o myIcons" aria-hidden="true" data-ng-click="controller.deleteEntitlementConfiguration(application.EntitlementConfiguration, $index)"></i>
+                  <i class="fa fa-arrow-up myIcons" aria-hidden="true" data-ng-show="$index > 0" data-ng-click="controller.raise(application.EntitlementConfiguration, $index)"></i>
+                  <i class="fa fa-arrow-down myIcons" aria-hidden="true" data-ng-show="$index &lt; application.EntitlementConfiguration.length - 1" data-ng-click="controller.lower(application.EntitlementConfiguration, $index)"></i>
+                </td>
+              </tr>
+            </table>
+          </div>
+          <br />
+          <input class="btn btn-primary btn-block" type="submit" value="add Entitlement Configuration"
+                data-ng-click="controller.addEntitlementConfiguration(name)"/>
+          <br />
+          <hr />
+          <div>
+            <application-general-configuration></application-general-configuration>
+          </div>
+        </div>
+
+      </td>
+      <td width="100px"><i class="fa fa-trash-o myIcons" aria-hidden="true" data-ng-click="controller.deleteApplication(name)"></i></td>
+    </tr>
+  </table>
+</div>

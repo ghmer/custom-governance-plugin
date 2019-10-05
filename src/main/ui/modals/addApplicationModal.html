@@ -1,0 +1,79 @@
+<div data-ng-controller="AddApplicationModalController as controller">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" data-ng-click="controller.close()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Application General Configuration</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div id="ApplicationConfiguration">
+        <table class="table">
+          <tr>
+            <td class="td-lefthand"><strong>Application Name</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="object.applicationName">
+              <option data-ng-repeat="applicationName in applicationNames" value="{{applicationName}}">{{applicationName}}</option>
+            </select>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="td-lefthand"><strong>Default Approval Level</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="object.defaultApprovalLevel">
+                <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
+              </select>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="td-lefthand"><strong>Default Approval Owner</strong></td>
+            <td class="td-righthand">
+              <input  class="form-control"
+                      type="text"
+                      data-ng-model="object.defaultOwner"
+                      placeholder="insert approver name"
+                      data-ng-required="true">
+              </input>
+            </td>
+          </tr>
+
+          <tr>
+            <td class="td-lefthand"><strong>is requestable</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="object.isRequestable">
+                <option>true</option>
+                <option>false</option>
+              </select>
+            </td>
+          </tr>
+          
+      <tr>
+        <td class="td-lefthand"><strong>run another Group Aggregation rule</strong></td>
+        <td class="td-righthand">
+          <select class="form-control" data-ng-model="object.runAfterRule">
+            <option>true</option>
+            <option>false</option>
+          </select>
+        </td>
+      </tr>
+      
+      <tr data-ng-show="object.runAfterRule === 'true'">
+        <td class="td-lefthand"><strong>Group Aggregation Rule</strong></td>
+        <td class="td-righthand">
+          <select class="form-control" data-ng-model="object.afterRuleName">
+            <option data-ng-repeat="afterRuleName in groupRefreshRules" value="{{afterRuleName}}">{{afterRuleName}}</option>
+          </select>
+        </td>
+      </tr>
+      
+        </table>
+        <br />
+      </div>
+    </div>
+
+    <div class="modal-footer">
+        <input class="btn btn-primary btn-block" type="submit" value="save Approval Level" data-ng-click="controller.addApplicationDefinition()" />
+    </div>
+</div>

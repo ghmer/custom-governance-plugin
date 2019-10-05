@@ -51,4 +51,36 @@
     };
   });
   
+  app.directive('entitlementGeneralConfiguration', function() {
+    return {
+      controller: 'EntitlementController',
+      controllerAs: 'controller',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/generalConfigurationDirective.html')
+    };
+  });
+
+  app.directive('applicationGeneralConfiguration', function() {
+    return {
+      controller: 'EntitlementController',
+      controllerAs: 'controller',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/applicationGeneralConfigurationDirective.html')
+    };
+  });
+
+  app.directive('applicationEntitlementConfiguration', function() {
+    return {
+      controller: 'EntitlementController',
+      controllerAs: 'controller',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/entitlementConfigurationDirective.html')
+    };
+  });
+
+  app.directive('definedEntitlementApplications', function() {
+    return {
+      controller: 'EntitlementController',
+      controllerAs: 'controller',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/definedApplicationsDirective.html')
+    };
+  });
+  
 }());

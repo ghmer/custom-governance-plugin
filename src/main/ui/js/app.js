@@ -19,6 +19,11 @@
         templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/setup.html'),
         controller: 'SetupController'
       })
+      
+      .when('/entitlements', {
+        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/entitlements.html'),
+        controller: 'EntitlementController'
+      })
 
       .otherwise({
         redirectTo: '/'

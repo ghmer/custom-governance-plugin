@@ -26,6 +26,15 @@
       }
       return isInList;
     };
+    
+    this.removeEntries = function(lista, listb) {
+      var newArray = [...lista];
+      newArray = newArray.filter( function(el) {
+        return !listb.includes( el );
+      } );
+      
+      return newArray;
+    };
 
     this.getArrayExceptValue = function(value, array) {
       var newArray = [...array];
@@ -44,15 +53,46 @@
 
       return newArray;
     };
+    
+    this.raise = function(object, index) {
+      var temp1 = object[index - 1];
+      var temp2 = object[index];
+      object[index - 1] = temp2;
+      object[index]     = temp1;
+    };
 
-    this.getAvailableRules = function(templateName) {
+    this.lower = function(object, index) {
+      var temp1 = object[index + 1];
+      var temp2 = object[index];
+      object[index + 1] = temp2;
+      object[index]     = temp1;
+    };
+    
+    this.getAvailableRules = function(type) {
       var deferred = $q.defer();
       return $http({
         method: "GET",
         withCredentials: true,
         xsrfHeaderName: "X-XSRF-TOKEN",
         xsrfCookieName: "CSRF-TOKEN",
-        url: PluginHelper.getPluginRestUrl('custom-governance') + '/ruleNames'
+        url: PluginHelper.getPluginRestUrl('custom-governance') + '/ruleNames/' + type
+      }).then(function mySuccess(response) {
+        deferred.resolve(response.data);
+        return deferred.promise;
+      }, function myError(response) {
+        deferred.reject(response);
+        return deferred.promise;
+      });
+    };
+    
+    this.getAvailableApplications = function(templateName) {
+      var deferred = $q.defer();
+      return $http({
+        method: "GET",
+        withCredentials: true,
+        xsrfHeaderName: "X-XSRF-TOKEN",
+        xsrfCookieName: "CSRF-TOKEN",
+        url: PluginHelper.getPluginRestUrl('custom-governance') + '/applicationNames'
       }).then(function mySuccess(response) {
         deferred.resolve(response.data);
         return deferred.promise;
@@ -70,6 +110,25 @@
         xsrfHeaderName: "X-XSRF-TOKEN",
         xsrfCookieName: "CSRF-TOKEN",
         url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel'
+      }).then(function mySuccess(response) {
+        deferred.resolve(response.data);
+        return deferred.promise;
+      }, function myError(response) {
+        // the following line rejects the promise 
+        deferred.reject(response);
+        // promise is returned
+        return deferred.promise;
+      });
+    };
+    
+    this.getApprovalLevels = function() {
+      var deferred = $q.defer();
+      return $http({
+        method: "GET",
+        withCredentials: true,
+        xsrfHeaderName: "X-XSRF-TOKEN",
+        xsrfCookieName: "CSRF-TOKEN",
+        url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel/approvalLevels',
       }).then(function mySuccess(response) {
         deferred.resolve(response.data);
         return deferred.promise;
@@ -147,6 +206,45 @@
             url: PluginHelper.getPluginRestUrl('custom-governance') + '/setup/performIntegration',
             headers: {'Content-Type': 'application/json'},
             data : setupInformation
+      }).then(function mySuccess(response) {
+          deferred.resolve(response.data);
+          console.log(deferred.promise);
+            return deferred.promise;
+        }, function myError(response) {
+            deferred.reject(response);
+            return deferred.promise;
+        });
+    };
+    
+    this.getEntitlementConfiguration = function() {
+      var deferred = $q.defer();
+      return $http({
+        method: "GET",
+        withCredentials: true,
+        xsrfHeaderName: "X-XSRF-TOKEN",
+        xsrfCookieName: "CSRF-TOKEN",
+        url : PluginHelper.getPluginRestUrl('custom-governance') + '/entitlementConfiguration'
+      }).then(function mySuccess(response) {
+        deferred.resolve(response.data);
+        return deferred.promise;
+      }, function myError(response) {
+        // the following line rejects the promise 
+        deferred.reject(response);
+        // promise is returned
+        return deferred.promise;
+      });
+    };
+    
+    this.saveEntitlementConfiguration = function(entitlementConfiguration) {
+      var deferred  = $q.defer(); 
+      return $http({
+        method  : "POST",
+            withCredentials: true,
+            xsrfHeaderName : "X-XSRF-TOKEN",
+            xsrfCookieName : "CSRF-TOKEN",
+            url : PluginHelper.getPluginRestUrl('custom-governance') + '/entitlementConfiguration/update',
+            headers: {'Content-Type': 'application/json'},
+            data : entitlementConfiguration
       }).then(function mySuccess(response) {
           deferred.resolve(response.data);
           console.log(deferred.promise);

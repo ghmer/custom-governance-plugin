@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Custom PUBLIC "sailpoint.dtd" "sailpoint.dtd">
+<Custom name="Requestable Entitlement Configuration">
+  <Attributes>
+    <Map>
+      <entry key="GeneralConfiguration">
+        <value>
+          <Map>
+            <entry key="defaultApprovalLevel" value="manager"/>
+            <entry key="defaultOwner" value="spadmin"/>
+            <entry key="governanceAttribute" value="governanceApprovalLevel"/>
+            <entry key="isRequestable" value="false"/>
+          </Map>
+        </value>
+      </entry>
+      <entry key="ApplicationConfiguration" />
+    </Map>
+  </Attributes>
+</Custom>

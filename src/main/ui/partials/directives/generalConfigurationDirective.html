@@ -1,0 +1,36 @@
+<div id="GeneralConfigurationDiv">
+	  <h4 data-ng-click="controller.toggleView('defaultConfig')">Default General Configuration&nbsp;
+	    <i data-ng-class="showApplication['defaultConfig'] ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>
+	  </h4>
+
+    <table class="table" data-ng-show="showApplication['defaultConfig'] === true">
+      <tr>
+        <td class="td-lefthand"><strong>Default Approval Level</strong></td>
+        <td class="td-righthand">
+          <select class="form-control" name="approvalModeSelect" id="approvalModeSelect" data-ng-model="configObject.GeneralConfiguration.defaultApprovalLevel">
+            <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
+          </select>
+        </td>
+      </tr>
+      <tr>
+        <td class="td-lefthand"><strong>Default Approval Owner</strong></td>
+        <td class="td-righthand">
+          <input  class="form-control"
+                  id="defaultApprovalOwner"
+                  type="text"
+                  data-ng-model="configObject.GeneralConfiguration.defaultOwner"
+                  placeholder="insert approver name"
+                  data-ng-required="true">
+          </input>
+        </td>
+      </tr>
+      <tr>
+        <td class="td-lefthand"><strong>is requestable</strong></td>
+        <td class="td-righthand">
+          <select class="form-control" data-ng-model="configObject.GeneralConfiguration.isRequestable">
+            <option>true</option>
+            <option>false</option>
+          </select>
+      </tr>
+    </table>
+	</div>

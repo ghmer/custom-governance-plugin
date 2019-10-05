@@ -1,0 +1,112 @@
+<div data-ng-controller="AddEntitlementConfigurationModalController as controller">
+
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" data-ng-click="controller.close()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Entitlement Configuration</h4>
+    </div>
+
+    <div class="modal-body">
+
+      <div>
+        <table class="table">
+          <tr>
+            <td class="td-lefthand"><strong>Descriptor</strong></td>
+            <td class="td-righthand">
+              <input  class="form-control"
+                      type="text"
+                      data-ng-model="entitlementConfig.descriptor"
+                      placeholder="insert a descriptive name"
+                      data-ng-required="true">
+              </input>
+            </td>
+          </tr>
+          <tr>
+            <td class="td-lefthand"><strong>Approval Level</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="entitlementConfig.governanceLevel">
+                <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="td-lefthand"><strong>Is Requestable</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="entitlementConfig.isRequestable">
+                <option>true</option>
+                <option>false</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="td-lefthand"><strong>Owner Selection Type</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="entitlementConfig.ownerSelectionType">
+                <option data-ng-repeat="selectionType in ownerSelectionTypes" value="{{selectionType}}">{{selectionType}}</option>
+              </select>
+            </td>
+          </tr>
+          <tr data-ng-hide="entitlementConfig.ownerSelectionType === 'rule'">
+            <td class="td-lefthand"><strong>Static Owner</strong></td>
+            <td class="td-righthand">
+              <input  class="form-control"
+                      type="text"
+                      data-ng-model="entitlementConfig.staticOwner"
+                      placeholder="insert the owner name"
+                      data-ng-required="true">
+              </input>
+            </td>
+          </tr>
+          <tr data-ng-hide="entitlementConfig.ownerSelectionType === 'static'">
+            <td class="td-lefthand"><strong>Owner Selection Rule</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="entitlementConfig.ownerSelectionRuleName">
+                <option data-ng-repeat="rule in ruleNames" value="{{rule}}">{{rule}}</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <td class="td-lefthand"><strong>Check Entitlement Eligibility Type</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="entitlementConfig.selectionType">
+                <option data-ng-repeat="selectionType in selectionTypes" value="{{selectionType}}">{{selectionType}}</option>
+              </select>
+            </td>
+          </tr>
+          <tr data-ng-hide="entitlementConfig.selectionType === 'rule'">
+            <td class="td-lefthand"><strong>Regular Expression</strong></td>
+            <td class="td-righthand">
+              <input  class="form-control"
+                      type="text"
+                      data-ng-model="entitlementConfig.selectionRegexValue"
+                      placeholder="insert regular expression"
+                      data-ng-required="true">
+              </input>
+            </td>
+          </tr>
+          <tr data-ng-hide="entitlementConfig.selectionType === 'rule'">
+            <td class="td-lefthand"><strong>RegEx attribute</strong></td>
+            <td class="td-righthand">
+              <input  class="form-control"
+                      type="text"
+                      data-ng-model="entitlementConfig.selectionRegexAttribute"
+                      placeholder="insert the attribute name to check"
+                      data-ng-required="true">
+              </input>
+            </td>
+          </tr>
+          <tr data-ng-hide="entitlementConfig.selectionType === 'regex'">
+            <td class="td-lefthand"><strong>Eligibility Selection Rule</strong></td>
+            <td class="td-righthand">
+              <select class="form-control" data-ng-model="entitlementConfig.selectionRuleName">
+                <option data-ng-repeat="rule in ruleNames" value="{{rule}}">{{rule}}</option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+        <input class="btn btn-primary btn-block" type="submit" value="save Approval Level" data-ng-click="controller.addEntitlementConfiguration()" />
+    </div>
+</div>

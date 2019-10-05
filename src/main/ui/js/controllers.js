@@ -59,7 +59,7 @@
       };
 
       controller.getAvailableRules = function() {
-        GovernancePluginService.getAvailableRules().then(function(result) {
+        GovernancePluginService.getAvailableRules("all").then(function(result) {
           $scope.rules = result;
         });
       };
@@ -169,14 +169,26 @@
       };
 
       controller.applyChanges = function() {
-        GovernancePluginService.saveGovernanceModel($scope.configObject);
-        $scope.showApplyChangesButton = false;
-        controller.toggleShowSuccessMessage("Model successfully saved");
+        GovernancePluginService.saveGovernanceModel($scope.configObject).then(function(result) {
+          // success getting the setup information
+          $scope.showApplyChangesButton = false;
+          controller.toggleShowSuccessMessage("Model successfully saved");
+        }, function(result) {
+          // something went wrong getting the setup information
+          controller.toggleShowErrorMessage(result.data);
+        });
+        
       };
 
       controller.revertChanges = function() {
-        controller.getGovernanceModel();
-        $scope.showApplyChangesButton = false;
+        controller.getGovernanceModel().then(function(result) {
+          // success getting the setup information
+          controller.toggleShowSuccessMessage("Model successfully reverted");
+          $scope.showApplyChangesButton = false;
+        }, function(result) {
+          // something went wrong getting the setup information
+          controller.toggleShowErrorMessage(result.data);
+        });
       };
       
       controller.deleteApproverLookup = function(approver) {
@@ -265,10 +277,6 @@
           userAgreement : false
       };
       
-      $scope.approvalModes = [
-        "parallel","parallelPoll","serial","serialPoll","any"
-      ];
-      
       $scope.modeInfo = {
           "parallel" : {
             description: "Approvals are processed concurrently and there must be consensus, we wait for all approvers to approve.  The first approver that rejects terminates the entire approval."
@@ -286,6 +294,8 @@
             description: "Approvals are processed concurrently, the first approver to respond makes the decision for the group."
           }
       }
+      
+      $scope.approvalModes = Object.keys($scope.modeInfo);
       
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
@@ -417,19 +427,13 @@
       };
 
       controller.raise = function(index) {
-        var temp1 = $scope.user.approval[index - 1];
-        var temp2 = $scope.user.approval[index];
-        $scope.user.approval[index - 1] = temp2;
-        $scope.user.approval[index] = temp1;
+        GovernancePluginService.raise($scope.user.approval, index);
       };
 
       controller.lower = function(index) {
-        var temp1 = $scope.user.approval[index + 1];
-        var temp2 = $scope.user.approval[index];
-        $scope.user.approval[index + 1] = temp2;
-        $scope.user.approval[index] = temp1;
+        GovernancePluginService.lower($scope.user.approval, index);
       };
-
+      
       controller.saveApprovalLevel = function() {
         if (GovernancePluginService.validateNotInList($scope.usedNames, $scope.user.name)) {
           if ($scope.user.name !== null) {
@@ -508,5 +512,314 @@
       };
 
     }
+  ]);
+  
+  app.controller('EntitlementController', ['$scope', '$http', '$uibModal', '$timeout', 'GovernancePluginService',
+    function($scope, $http, $uibModal, $timeout, GovernancePluginService) {
+      var controller = this;
+
+      $scope.infoMessage          = null;
+      $scope.showInfoMessage      = false;
+      $scope.successMessage       = null;
+      $scope.showSuccessMessage   = false;
+      $scope.showErrorMessage     = false;
+      $scope.errorMessage         = null;
+      $scope.showApplication      = {};
+      $scope.showDescriptor       = {};
+      $scope.selectionTypes       = ["regex",  "rule"];
+      $scope.ownerSelectionTypes  = ["static", "rule"];
+      $scope.ruleNames            = [];
+      $scope.groupRefreshRules    = [];
+      $scope.afterRuleNames       = [];
+      $scope.applicationNames     = [];
+      $scope.approvalLevels       = [];
+      $scope.configObject         = {};
+
+      controller.getAvailableRules = function() {
+        GovernancePluginService.getAvailableRules("all").then(function(result) {
+          $scope.ruleNames = result;
+        });
+      };
+      
+      controller.getApprovalLevels = function() {
+        GovernancePluginService.getApprovalLevels().then(function(result) {
+          $scope.approvalLevels = result;
+        });
+      };
+      
+      controller.getGroupRefreshRules = function() {
+        GovernancePluginService.getAvailableRules("GroupAggregationRefresh").then(function(result) {
+          $scope.groupRefreshRules = result;
+        });
+      };
+      
+      controller.getAvailableApplications = function() {
+        GovernancePluginService.getAvailableApplications().then(function(result) {
+          $scope.applicationNames = result;
+        });
+      };
+      
+      controller.getEntitlementConfiguration = function() {
+        GovernancePluginService.getEntitlementConfiguration().then(function(result) {
+          $scope.configObject = result;
+        });
+      };
+      
+      controller.toggleView = function(name, descriptor) {
+        if(typeof descriptor === 'undefined') {
+          var currentSetting = $scope.showApplication[name];
+          if(typeof currentSetting === 'undefined') {
+            currentSetting = false;
+          }
+
+          $scope.showApplication[name] = !currentSetting;
+        } else {
+          if(typeof $scope.showDescriptor[name] === 'undefined') {
+            $scope.showDescriptor[name] = {};
+          }
+
+          if(typeof $scope.showDescriptor[name][descriptor] === 'undefined') {
+            $scope.showDescriptor[name][descriptor] = false;
+          }
+
+          $scope.showDescriptor[name][descriptor] = !$scope.showDescriptor[name][descriptor];
+        }
+      };
+
+      controller.toggleShowInfoMessage = function(message) {
+        $scope.infoMessage = message;
+        $scope.showInfoMessage = true;
+        $timeout(function() {
+          $scope.infoMessage = null;
+          $scope.showInfoMessage = false;
+        }, 3000);
+      };
+
+      controller.toggleShowSuccessMessage = function(message) {
+        $scope.successMessage = message;
+        $scope.showSuccessMessage = true;
+        $timeout(function() {
+          $scope.successMessage = null;
+          $scope.showSuccessMessage = false;
+        }, 3000);
+      };
+      
+      controller.toggleShowErrorMessage = function(message) {
+        $scope.errorMessage = message;
+        $scope.showErrorMessage = true;
+        $timeout(function() {
+          $scope.errorMessage = null;
+          $scope.showErrorMessage = false;
+        }, 3000);
+      };
+
+      controller.logObject = function() {
+        console.log($scope.configObject);
+        console.log(JSON.stringify($scope.configObject));
+      };
+
+      controller.deleteApplication = function(name) {
+        // wtf moment. For any reason, when trying to delete in this function
+        // I always got the wrong JSON object?!?
+        // working around by emitting an event
+        console.log(name);
+        $scope.$emit('deleteApplicationEvent', name);
+      };
+
+      controller.deleteEntitlementConfiguration = function(object, index) {
+        object.splice(index, 1);
+      };
+
+      controller.raise = function(object, index) {
+        GovernancePluginService.raise(object, index);
+      };
+
+      controller.lower = function(object, index) {
+        GovernancePluginService.lower(object, index);
+      };
+      
+      controller.saveEntitlementConfiguration = function() {
+        GovernancePluginService.saveEntitlementConfiguration($scope.configObject).then(function(result) {
+          // success getting the setup information
+          controller.toggleShowSuccessMessage("Entitlement Configuration sucessfully saved");
+        }, function(result) {
+          // something went wrong getting the setup information
+          controller.toggleShowErrorMessage(result.data);
+        });
+        
+      }
+
+      controller.addApplication = function() {
+        $scope.addApplicationModal($scope, $uibModal);
+      };
+
+      $scope.addApplicationModal = function($scope, $uibModal) {
+        var modalScope = $scope.$new();
+        var modalInstance = $uibModal.open({
+          templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/modals/addApplicationModal.html'),
+          controller: 'AddApplicationModalController',
+          windowClass: 'app-modal-window',
+          scope: modalScope
+        });
+        
+        var usedApplicationNames      = Object.keys($scope.configObject.ApplicationConfiguration);
+        var filteredApplicationNames  = GovernancePluginService.removeEntries($scope.applicationNames, usedApplicationNames);
+        
+        modalScope.modalInstance      = modalInstance;
+        //TODO: remove already created application names from list
+        modalScope.applicationNames   = filteredApplicationNames;
+        modalScope.approvalLevels     = $scope.approvalLevels;
+        modalScope.groupRefreshRules  = $scope.groupRefreshRules;
+        modalScope.ruleNames          = $scope.ruleNames;
+
+      };
+
+      controller.addEntitlementConfiguration = function(applicationName) {
+        $scope.addEntitlementConfigurationModal(applicationName, $scope, $uibModal);
+      };
+
+      $scope.addEntitlementConfigurationModal = function(applicationName, $scope, $uibModal) {
+        var modalScope = $scope.$new();
+        var modalInstance = $uibModal.open({
+          templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/modals/addEntitlementConfigurationModal.html'),
+          controller: 'AddApplicationModalController',
+          windowClass: 'app-modal-window',
+          scope: modalScope
+        });
+        
+        var usedApplicationNames        = Object.keys($scope.configObject.ApplicationConfiguration);
+        var filteredApplicationNames    = GovernanceUtil.removeEntries($scope.applicationNames, usedApplicationNames);
+        
+        modalScope.applicationName      = applicationName;
+        modalScope.modalInstance        = modalInstance;
+        modalScope.applicationNames     = filteredApplicationNames;
+        modalScope.approvalLevels       = $scope.approvalLevels;
+        modalScope.ruleNames            = $scope.ruleNames;
+        modalScope.selectionTypes       = $scope.selectionTypes;
+        modalScope.ownerSelectionTypes  = $scope.ownerSelectionTypes;
+        modalScope.groupRefreshRules    = $scope.groupRefreshRules;
+        
+      };
+
+      $scope.$on('addApplicationEvent', function(event, args) {
+        var applicationName       = args.applicationName;
+        var defaultApprovalLevel  = args.defaultApprovalLevel;
+        var defaultOwner          = args.defaultOwner;
+        var isRequestable         = args.isRequestable;
+        var afterRuleName         = args.afterRuleName;
+        var runAfterRule          = args.runAfterRule;
+
+        var object = {
+          "EntitlementConfiguration" : [],
+          "GeneralConfiguration" : {
+            "defaultApprovalLevel": defaultApprovalLevel,
+            "defaultOwner"        : defaultOwner,
+            "isRequestable"       : isRequestable,
+            "afterRuleName"       : afterRuleName,
+            "runAfterRule"        : runAfterRule
+          }
+        };
+
+        $scope.configObject.ApplicationConfiguration[applicationName] = object;
+      });
+
+      $scope.$on('deleteApplicationEvent', function(event, args) {
+        var applicationName = args;
+
+        delete $scope.configObject.ApplicationConfiguration[applicationName];
+      });
+
+      $scope.$on('addEntitlementConfigurationEvent', function(event, args) {
+        var applicationName = args.appName;
+        var configuration   = args.config;
+        var list            = $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration;
+
+        if (!list.some(e => e.descriptor === configuration.descriptor)) {
+          /* list contains the element we're looking for */
+          console.log("adding now");
+          $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration.push(configuration);
+        }
+      });
+      
+      try {
+        controller.getAvailableRules();
+        controller.getGroupRefreshRules();
+        controller.getAvailableApplications();
+        controller.getEntitlementConfiguration();
+        controller.getApprovalLevels();
+      }catch(e) {
+        console.log(e);
+      }
+    }
+  ]);
+
+  /** ApproverLookupModalController **/
+  app.controller('AddApplicationModalController', ['$scope', '$http', '$timeout', 'GovernancePluginService',
+    function($scope, $http, $timeout, GovernancePluginService) {
+      var controller = this;
+
+      $scope.object = {
+          "runAfterRule" : false
+      };
+
+      controller.close = function() {
+        $scope.modalInstance.close('close');
+      };
+
+      controller.cancel = function() {
+        $scope.modalInstance.dismiss('cancel');
+      };
+
+      controller.addApplicationDefinition = function() {
+        $scope.$emit('addApplicationEvent', $scope.object);
+        $scope.modalInstance.close('close');
+      };
+
+      controller.toggleShowInfoMessage = function(message) {
+        $scope.infoMessage = message;
+        $scope.showInfoMessage = true;
+        $timeout(function() {
+          $scope.infoMessage = null;
+          $scope.showInfoMessage = false;
+        }, 3000);
+      };
+
+    }
+  ]);
+
+  app.controller('AddEntitlementConfigurationModalController', ['$scope', '$http', '$timeout', 'GovernancePluginService',
+  function($scope, $http, $timeout, GovernancePluginService) {
+    var controller = this;
+    $scope.entitlementConfig = {
+                "ownerSelectionType": "static",
+                "selectionType": "regex",
+    };
+
+    controller.close = function() {
+      $scope.modalInstance.close('close');
+    };
+
+    controller.cancel = function() {
+      $scope.modalInstance.dismiss('cancel');
+    };
+
+    controller.addEntitlementConfiguration = function() {
+      var args = {
+        "config" : $scope.entitlementConfig,
+        "appName": $scope.applicationName
+      };
+      $scope.$emit('addEntitlementConfigurationEvent', args);
+      $scope.modalInstance.close('close');
+    };
+
+    controller.toggleShowInfoMessage = function(message) {
+      $scope.infoMessage = message;
+      $scope.showInfoMessage = true;
+      $timeout(function() {
+        $scope.infoMessage = null;
+        $scope.showInfoMessage = false;
+      }, 3000);
+    };
+  }
   ]);
 }());

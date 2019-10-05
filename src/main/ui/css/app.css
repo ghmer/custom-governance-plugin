@@ -33,3 +33,15 @@ ul, ul li {
 .clickable {
     cursor: pointer;
 }
+
+.td-lefthand {
+  width: 200px;
+}
+
+.td-righthand {
+  width: 300px;
+}
+
+.myIcons {
+  font-size: 1.3em;
+}
