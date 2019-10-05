@@ -59,7 +59,7 @@ public class CustomGovernanceApprovalUtil {
    * @param workflow
    *          the workflow invoking the approval assignment rule
    * @return a List of approvals
-   * @throws GeneralException
+   * @throws GeneralException when checks are failing
    */
   @SuppressWarnings("unchecked")
   public List<Approval> processApprovalSet(ApprovalSet approvalSet, List<Approval> approvals, Workflow workflow)
