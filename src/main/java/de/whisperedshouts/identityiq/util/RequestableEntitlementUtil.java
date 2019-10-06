@@ -138,8 +138,8 @@ public class RequestableEntitlementUtil {
     Map<String, Map<String, Object>> result = null;
     Map<String, Map> appConfig = (Map<String, Map>) config.get("ApplicationConfiguration");
     if(appConfig == null) {
-      log.error(String.format("Custom configuration ->%s<- does not contain node %s", entitlementConfigurationName, "ApplicationConfiguration"));
-      throw new GeneralException(String.format("Custom configuration ->%s<- does not contain node %s", entitlementConfigurationName, "ApplicationConfiguration"));
+      log.error(String.format("Custom configuration ->%s<- does not contain node %s", config.getName(), "ApplicationConfiguration"));
+      throw new GeneralException(String.format("Custom configuration ->%s<- does not contain node %s", config.getName(), "ApplicationConfiguration"));
     }
     
     if(appConfig.containsKey(applicationName)) {
@@ -212,7 +212,7 @@ public class RequestableEntitlementUtil {
     Map<String, Object> result = null;
     Map<String, Object> generalConfig = (Map<String, Object>) config.get("GeneralConfiguration");
     if(generalConfig == null) {
-      String message = String.format("Custom configuration ->%s<- does not contain node %s", entitlementConfigurationName, "GeneralConfiguration");
+      String message = String.format("Custom configuration ->%s<- does not contain node %s", config.getName(), "GeneralConfiguration");
       log.error(message);
       throw new GeneralException(message);
     }
@@ -358,5 +358,12 @@ public class RequestableEntitlementUtil {
     regexHit = valueToCheck.matches(regexValue);
     
     return regexHit;
+  }
+  
+  public static void main(String[] args) {
+
+    String owner = "uid=9000003,ou=people,dc=sailpoint,dc=labs";
+    owner = owner.substring((owner.indexOf("=") + 1), owner.indexOf(","));
+    System.out.println(owner);
   }
 }
