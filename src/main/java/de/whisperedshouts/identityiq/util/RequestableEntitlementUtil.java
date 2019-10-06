@@ -60,12 +60,14 @@ public class RequestableEntitlementUtil {
       boolean configHit = false;
       
       List<Map<String, Object>> entConf = getAppEntitlementConfig(appConfig, groupApplication.getName());
-      for(Map<String, Object> entry : entConf) {      
-        configHit = isEntitlementMatchingConfig(obj, accountGroup, groupApplication, entry);      
-        if(configHit) {
-          applyChangesToEntitlement(obj, accountGroup, groupApplication, 
-              entry, defaultOwner, governanceAttribute);
-          break;
+      if(entConf != null && !entConf.isEmpty()) {
+        for(Map<String, Object> entry : entConf) {      
+          configHit = isEntitlementMatchingConfig(obj, accountGroup, groupApplication, entry);      
+          if(configHit) {
+            applyChangesToEntitlement(obj, accountGroup, groupApplication, 
+                entry, defaultOwner, governanceAttribute);
+            break;
+          }
         }
       }
       
@@ -196,8 +198,13 @@ public class RequestableEntitlementUtil {
   @SuppressWarnings("unchecked")
   private boolean hasApplicationDefinition(Custom config, String applicationName) {
     boolean hasDefinition = false;
-    Map<String, Object> applicationConfiguration = (Map<String, Object>) config.get("ApplicationConfiguration");
-    hasDefinition = applicationConfiguration.containsKey(applicationName);
+    Map<String, Object> applicationConfiguration = null;
+    if(config.containsAttribute("ApplicationConfiguration")) {
+      applicationConfiguration = (Map<String, Object>) config.get("ApplicationConfiguration");
+    }
+    if(applicationConfiguration != null) {
+      hasDefinition = applicationConfiguration.containsKey(applicationName);
+    }   
     
     return hasDefinition;
   }
