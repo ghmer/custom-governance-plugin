@@ -1,5 +1,5 @@
 <div id="EntitlementConfigurationDiv">
-  <h4 class="font-thin" data-ng-click="controller.toggleView('applicationView')"><i data-ng-class="showApplication['applicationView'] ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>&nbsp;Defined Applications&nbsp;</h4>
+  <h4 class="font-thin" data-ng-click="controller.toggleView('applicationView')"><i data-ng-class="showApplication['applicationView'] ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>&nbsp;Defined Applications&nbsp;</h4>
   <table class="table" data-ng-show="showApplication['applicationView'] === true">
     <tr data-ng-repeat="(name, application) in configObject.ApplicationConfiguration">
       <td><i  data-ng-click="controller.toggleView(name)" data-ng-class="showApplication[name] ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>&nbsp;{{name}}&nbsp;

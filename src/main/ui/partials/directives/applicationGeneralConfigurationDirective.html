@@ -2,7 +2,7 @@
 	  <h4>Application General Configuration</h4>
     <table class="table">
       <tr>
-        <td class="td-lefthand"><strong>Fallback: Approver Level</strong></td>
+        <td class="td-lefthand"><strong>Default Approval Level</strong></td>
         <td class="td-righthand">
           <select class="form-control" data-ng-model="application.GeneralConfiguration.defaultApprovalLevel">
             <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
@@ -10,7 +10,7 @@
         </td>
       </tr>
       <tr>
-        <td class="td-lefthand"><strong>Fallback: Approval Owner</strong></td>
+        <td class="td-lefthand"><strong>Default Entitlement Owner</strong></td>
         <td class="td-righthand">
           <input  class="form-control"
                   id="defaultApprovalOwner"
@@ -21,7 +21,7 @@
         </td>
       </tr>
       <tr>
-        <td class="td-lefthand"><strong>Fallback: is requestable</strong></td>
+        <td class="td-lefthand"><strong>Default is requestable</strong></td>
         <td class="td-righthand">
           <select class="form-control" data-ng-model="application.GeneralConfiguration.isRequestable">
             <option>true</option>

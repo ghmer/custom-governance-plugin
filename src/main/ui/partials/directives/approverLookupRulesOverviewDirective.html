@@ -1,6 +1,6 @@
 <div id="ApproverLookupRuleDiv">
 	<h4 class="font-thin" data-ng-click="controller.toggleView('showApprovalRules')">
-		<i data-ng-class="showApprovalRules ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>&nbsp;Approver&nbsp;
+		<i data-ng-class="showApprovalRules ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>&nbsp;Approver&nbsp;
 	</h4>
 	<hr class="nice-ruler" data-ng-hide="showApprovalRules"></hr>
 	<div data-ng-show="showApprovalRules">
@@ -16,7 +16,7 @@
 				<tr class="clickable" data-ng-repeat="(key, value) in configObject.approverLookupRules">
 					<td data-ng-click="controller.showApproverLookupModal(key, value)">{{key}}</td>
 					<td data-ng-click="controller.showApproverLookupModal(key, value)">{{value}}</td>
-          <td width="100px"><i class="fa fa-trash-o" aria-hidden="true" data-ng-click="controller.deleteApproverLookup(key)"></i></td>
+          <td width="100px"><i class="fa fa-trash-o myIcons" aria-hidden="true" data-ng-click="controller.deleteApproverLookup(key)"></i></td>
 				</tr>
 			</tbody>
 		</table>

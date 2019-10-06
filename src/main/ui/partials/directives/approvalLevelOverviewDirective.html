@@ -1,6 +1,6 @@
 <div id="CustomGovernancePluginConfigurationDiv">
 	<h4 class="font-thin" data-ng-click="controller.toggleView('showApprovalLevels')">
-		<i data-ng-class="showApprovalLevels ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>&nbsp;Approval Level&nbsp;
+		<i data-ng-class="showApprovalLevels ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>&nbsp;Approval Level&nbsp;
 	</h4>
 	<hr class="nice-ruler" data-ng-hide="showApprovalLevels"></hr>
 	<div id="GovernanceConfigurationDiv" data-ng-show="showApprovalLevels">
@@ -8,7 +8,7 @@
 			<tbody>
 				<tr class="clickable" data-ng-repeat="key in approvalLevelArray | orderBy">
 					<td data-ng-click="controller.showApprovalLevelModal(key)">{{key}}</td>
-          <td width="100px"><i class="fa fa-trash-o" aria-hidden="true" data-ng-click="controller.deleteApprovalLevel(key)"></i></td>
+          <td width="100px"><i class="fa fa-trash-o myIcons" aria-hidden="true" data-ng-click="controller.deleteApprovalLevel(key)"></i></td>
 				</tr>
 			</tbody>
 		</table>
