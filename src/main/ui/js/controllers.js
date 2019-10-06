@@ -192,13 +192,11 @@
       };
       
       controller.deleteApproverLookup = function(approver) {
-        console.log("deleteApproverLookup: " + approver);
         $scope.showApplyChangesButton = true;
         delete $scope.configObject.approverLookupRules[approver];
       };
       
       controller.deleteApprovalLevel = function(approvalLevel) {
-        console.log("deleteApprovalLevel: " + approvalLevel);
         $scope.showApplyChangesButton = true;
         delete $scope.configObject.approvalLevels[approvalLevel];
         $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
@@ -327,7 +325,6 @@
       };
       
       controller.setupSystemIntegration = function() {
-        console.log("setup system");
         GovernancePluginService.performIntegration($scope.setupInformation).then(function(result) {
           controller.toggleShowSuccessMessage("system successfully set up.");
           $scope.setupInformation.integration = true;
@@ -339,7 +336,6 @@
       };
       
       controller.revertSystemIntegrationStatus = function() {
-        console.log("revert system integration status");
         GovernancePluginService.revertIntegrationStatus().then(function(result) {
           $scope.setupInformation.integration = false;
         });
@@ -535,6 +531,10 @@
       $scope.approvalLevels       = [];
       $scope.configObject         = {};
 
+      controller.logObject = function() {
+        console.log($scope.configObject);
+      };
+      
       controller.getAvailableRules = function() {
         GovernancePluginService.getAvailableRules("all").then(function(result) {
           $scope.ruleNames = result;
@@ -613,16 +613,10 @@
         }, 3000);
       };
 
-      controller.logObject = function() {
-        console.log($scope.configObject);
-        console.log(JSON.stringify($scope.configObject));
-      };
-
       controller.deleteApplication = function(name) {
         // wtf moment. For any reason, when trying to delete in this function
         // I always got the wrong JSON object?!?
         // working around by emitting an event
-        console.log(name);
         $scope.$emit('deleteApplicationEvent', name);
       };
 
@@ -662,7 +656,10 @@
           scope: modalScope
         });
         
-        var usedApplicationNames      = Object.keys($scope.configObject.ApplicationConfiguration);
+        var usedApplicationNames = [];
+        if(!$scope.configObject.ApplicationConfiguration === null) {
+          usedApplicationNames = Object.keys($scope.configObject.ApplicationConfiguration);
+        }
         var filteredApplicationNames  = GovernancePluginService.removeEntries($scope.applicationNames, usedApplicationNames);
         
         modalScope.modalInstance      = modalInstance;
@@ -687,8 +684,11 @@
           scope: modalScope
         });
         
-        var usedApplicationNames        = Object.keys($scope.configObject.ApplicationConfiguration);
-        var filteredApplicationNames    = GovernanceUtil.removeEntries($scope.applicationNames, usedApplicationNames);
+        var usedApplicationNames = [];
+        if(!$scope.configObject.ApplicationConfiguration === null) {
+          usedApplicationNames = Object.keys($scope.configObject.ApplicationConfiguration);
+        }
+        var filteredApplicationNames    = GovernancePluginService.removeEntries($scope.applicationNames, usedApplicationNames);
         
         modalScope.applicationName      = applicationName;
         modalScope.modalInstance        = modalInstance;
@@ -719,6 +719,10 @@
             "runAfterRule"        : runAfterRule
           }
         };
+        
+        if($scope.configObject.ApplicationConfiguration === null) {
+          $scope.configObject.ApplicationConfiguration = {};
+        }
 
         $scope.configObject.ApplicationConfiguration[applicationName] = object;
       });
@@ -730,15 +734,18 @@
       });
 
       $scope.$on('addEntitlementConfigurationEvent', function(event, args) {
+        console.log($scope.configObject);
         var applicationName = args.appName;
         var configuration   = args.config;
-        var list            = $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration;
+        
+        if($scope.configObject.ApplicationConfiguration !== null) {
+          var list            = $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration;
 
-        if (!list.some(e => e.descriptor === configuration.descriptor)) {
-          /* list contains the element we're looking for */
-          console.log("adding now");
-          $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration.push(configuration);
-        }
+          if (!list.some(e => e.descriptor === configuration.descriptor)) {
+            /* list contains the element we're looking for */
+            $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration.push(configuration);
+          }  
+        }    
       });
       
       try {
