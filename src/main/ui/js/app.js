@@ -6,22 +6,22 @@
     $routeProvider
 
       .when('/', {
-        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/manage.html'),
+        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/governanceConfigurationPartial.html'),
         controller: 'HomeController'
       })
 
       .when('/manage', {
-        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/manage.html'),
+        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/governanceConfigurationPartial.html'),
         controller: 'HomeController'
       })
 
       .when('/setup', {
-        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/setup.html'),
+        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/setupSystemPartial.html'),
         controller: 'SetupController'
       })
       
       .when('/entitlements', {
-        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/entitlements.html'),
+        templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/entitlementConfigurationPartial.html'),
         controller: 'EntitlementController'
       })
 
