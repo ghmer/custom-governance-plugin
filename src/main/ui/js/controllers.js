@@ -23,11 +23,9 @@
         });
       };
 
-      try {
+      this.$onInit = function () {
         $scope.isAdmin();
-      } catch (error) {
-        console.log("could not determine whether or not we are an admin");
-      }
+      };
 
     }
   ]);
@@ -181,14 +179,10 @@
       };
 
       controller.revertChanges = function() {
-        controller.getGovernanceModel().then(function(result) {
-          // success getting the setup information
-          controller.toggleShowSuccessMessage("Model successfully reverted");
-          $scope.showApplyChangesButton = false;
-        }, function(result) {
-          // something went wrong getting the setup information
-          controller.toggleShowErrorMessage(result.data);
-        });
+        controller.getGovernanceModel();
+        controller.toggleShowSuccessMessage("Model successfully reverted");
+        $scope.showApplyChangesButton = false;
+      
       };
       
       controller.deleteApproverLookup = function(approver) {
@@ -250,10 +244,11 @@
 
         $scope.showApplyChangesButton = true;
       });
-
-      controller.getGovernanceModel();
-      controller.getAvailableRules();
-
+      
+      this.$onInit = function () {
+        controller.getGovernanceModel();
+        controller.getAvailableRules();
+      }
     }
   ]);
   
@@ -272,8 +267,12 @@
           workflow : "",
           steps: [],
           integration : true,
-          userAgreement : false
+          userAgreement : false,
+          tasks : [],
+          aggregationRule : null
       };
+      
+      $scope.groupAggregationtasks = null;
       
       $scope.modeInfo = {
           "parallel" : {
@@ -317,6 +316,11 @@
         GovernancePluginService.getSetupInformation().then(function(result) {
           // success getting the setup information
           $scope.setupInformation = result;
+          $scope.groupAggregationtasks = [...result.tasks];
+          console.log("setup info");
+          console.log($scope.setupInformation);
+          console.log("copy to variable");
+          console.log($scope.groupAggregationtasks);
         }, function(result) {
           // something went wrong getting the setup information
           $scope.showErrorMessage   = true;
@@ -341,7 +345,9 @@
         });
       };
       
-      controller.getSetupInformation();
+      this.$onInit = function () {
+        controller.getSetupInformation();
+      }
     }
   ]);
 
@@ -670,6 +676,18 @@
         modalScope.ruleNames          = $scope.ruleNames;
 
       };
+      
+      controller.revertChanges = function() {
+        GovernancePluginService.getEntitlementConfiguration().then(function(result) {
+          // success getting the setup information
+          console.log(result);
+          $scope.configObject = result;
+          controller.toggleShowSuccessMessage("Model successfully reverted");
+        }, function(result) {
+          // something went wrong getting the setup information
+          controller.toggleShowErrorMessage(result.data);
+        });
+      };
 
       controller.addEntitlementConfiguration = function(applicationName) {
         $scope.addEntitlementConfigurationModal(applicationName, $scope, $uibModal);
@@ -734,7 +752,6 @@
       });
 
       $scope.$on('addEntitlementConfigurationEvent', function(event, args) {
-        console.log($scope.configObject);
         var applicationName = args.appName;
         var configuration   = args.config;
         
@@ -748,15 +765,13 @@
         }    
       });
       
-      try {
+      this.$onInit = function () {
         controller.getAvailableRules();
         controller.getGroupRefreshRules();
         controller.getAvailableApplications();
         controller.getEntitlementConfiguration();
         controller.getApprovalLevels();
-      }catch(e) {
-        console.log(e);
-      }
+      };
     }
   ]);
 

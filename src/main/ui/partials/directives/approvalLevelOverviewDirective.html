@@ -1,8 +1,8 @@
 <div id="CustomGovernancePluginConfigurationDiv">
-	<h5 data-ng-click="controller.toggleView('showApprovalLevels')">
-		Approval Level&nbsp;<i data-ng-class="showApprovalLevels ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i> 
-	</h5>
-	<hr data-ng-hide="showApprovalLevels"></hr>
+	<h4 class="font-thin" data-ng-click="controller.toggleView('showApprovalLevels')">
+		<i data-ng-class="showApprovalLevels ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>&nbsp;Approval Level&nbsp;
+	</h4>
+	<hr class="nice-ruler" data-ng-hide="showApprovalLevels"></hr>
 	<div id="GovernanceConfigurationDiv" data-ng-show="showApprovalLevels">
 		<table id="CustomGovernancePluginConfigTable" class="table table-hover">
 			<tbody>
@@ -12,7 +12,7 @@
 				</tr>
 			</tbody>
 		</table>
+    <hr class="nice-ruler" />
 		<a class="btn btn-link btn-block" role="button" data-ng-click="controller.showAddApprovalLevelModal()">add Approval Level</a> 
 	</div>
-	<br />
 </div>

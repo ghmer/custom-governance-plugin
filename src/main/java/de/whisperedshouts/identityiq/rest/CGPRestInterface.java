@@ -32,6 +32,7 @@ import sailpoint.object.ObjectAttribute;
 import sailpoint.object.ObjectConfig;
 import sailpoint.object.QueryOptions;
 import sailpoint.object.Rule;
+import sailpoint.object.TaskDefinition;
 import sailpoint.object.Workflow;
 import sailpoint.object.Workflow.Arg;
 import sailpoint.object.Workflow.Step;
@@ -63,6 +64,7 @@ public class CGPRestInterface extends BasePluginResource {
 	private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME = "Requestable Entitlement Configuration";
 	private static final String CUSTOM_GOVERNANCE_RULE_NAME = "Custom Governance Model - Approval Assignment Rule";
 	private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
+  private static final Object GROUP_REFRESH_RULE_NAME = "Requestable Entitlements - Group Refresh Rule";
 	
 	/**
 	 * return an array of application names
@@ -253,7 +255,9 @@ public class CGPRestInterface extends BasePluginResource {
       result.put("workflow", lcmAccessRequestWfName);
       result.put("attribute", APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME);
       result.put("rule", CUSTOM_GOVERNANCE_RULE_NAME);
-      result.put("integration", (isSystemIntegration.equalsIgnoreCase("true") ? true : false));
+      result.put("integration", (isSystemIntegration.equalsIgnoreCase("true") ? true : false));     
+      result.put("aggregationRule", GROUP_REFRESH_RULE_NAME);
+      result.put("tasks", getGroupAggregationTasks(context));
       
       response = Response.ok().entity(result).build();
     } catch (GeneralException e) {
@@ -267,6 +271,34 @@ public class CGPRestInterface extends BasePluginResource {
   }
 	
 	/**
+	 * returns the names of defined group aggregation tasks
+	 * @param context a SailPointContext to retrieve the tasks
+	 * @return a List of group aggregation task names
+	 * @throws GeneralException when there was an isssue retrieving the tasks
+	 */
+	private List<String> getGroupAggregationTasks(SailPointContext context) throws GeneralException {
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s)", "getGroupAggregationTasks", context));
+    }
+    List<String> result   = new ArrayList<>();
+    QueryOptions options  = new QueryOptions();
+    
+    options.addFilter(Filter.eq("type", "AccountGroupAggregation"));
+    options.addFilter(Filter.eq("template", false));
+
+    Iterator<Object[]> iterator = context.search(TaskDefinition.class, options, "name");
+    while(iterator.hasNext()) {
+      Object[] taskObject = iterator.next();
+      result.add(String.valueOf(taskObject[0]));
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "getGroupAggregationTasks", result));
+    }
+    return result;
+  }
+
+  /**
 	 * returns whether or not the given user has the SystemAdministator capability
 	 * @return a Response object encapsulating the json object
 	 */
@@ -312,10 +344,9 @@ public class CGPRestInterface extends BasePluginResource {
       context.saveObject(configuration);
       
       Workflow workflow = context.getObject(Workflow.class, (String)setupInformation.get("workflow"));
-      setupWorkflow(workflow, setupInformation);
-      context.saveObject(workflow);
+      setupWorkflow(context, workflow, setupInformation);
+      setupAggregationTasks(context, setupInformation);
       
-      context.commitTransaction();
       
       response = Response.ok().entity(true).build();
     } catch (GeneralException e) {
@@ -328,7 +359,30 @@ public class CGPRestInterface extends BasePluginResource {
     return response;
   }
 	
-	/**
+	@SuppressWarnings("unchecked")
+  private void setupAggregationTasks(SailPointContext context, Map<String, Object> setupInformation) throws GeneralException {
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s, setupInformation = %s)", "setupAggregationTasks", context, setupInformation));
+    }
+	  
+	  String ruleName        = String.valueOf(setupInformation.get("aggregationRule"));
+	  List<String> taskNames = (List<String>) setupInformation.get("tasks");
+	  
+	  for(String taskName : taskNames) {
+	    TaskDefinition task = context.getObject(TaskDefinition.class, taskName);
+	    task.setArgument("accountGroupRefreshRule", ruleName);
+	    
+	    context.saveObject(task);
+	  }
+	  
+	  context.commitTransaction();
+	  
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "setupAggregationTasks", "null"));
+    }
+  }
+
+  /**
 	 * resets the integration status, so that the system integration screen can be displayed again
 	 * @return a Response object encapsulating the json object
 	 */
@@ -507,13 +561,14 @@ public class CGPRestInterface extends BasePluginResource {
 	
 	/**
 	 * performs setup tasks on the given workflow
+	 * @param context 
 	 * @param workflow the Workflow to setup
 	 * @param setupInformation the Map containing the setup information
 	 * @throws GeneralException when there was an issue
 	 */
-	private void setupWorkflow(Workflow workflow, Map<String, Object> setupInformation) throws GeneralException {
+	private void setupWorkflow(SailPointContext context, Workflow workflow, Map<String, Object> setupInformation) throws GeneralException {
 	  if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(workflow = %s, setupInformation = %s)", "setupWorkflow", workflow, setupInformation));
+      log.debug(String.format("ENTERING %s(context = %s, workflow = %s, setupInformation = %s)", "setupWorkflow", context, workflow, setupInformation));
     }
 	  
 	  String ruleName      = (String) setupInformation.get("rule");
@@ -538,6 +593,9 @@ public class CGPRestInterface extends BasePluginResource {
         step.getArgs().add(argument);
       }	    
 	  }
+	  
+	  context.saveObject(workflow);     
+    context.commitTransaction();
 	  
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "setupWorkflow", null));

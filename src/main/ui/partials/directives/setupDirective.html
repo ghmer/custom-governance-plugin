@@ -7,7 +7,7 @@
     <p><input class="btn btn-primary btn-block" type="submit" value="start over" data-ng-click="controller.revertSystemIntegrationStatus()" /></p>
   </div>
   <div id="CustomGovernancePluginSetupInformation" data-ng-hide="setupInformation.integration">
-  	<h5>Setup Information</h5>
+  	<h4 class="font-thin">Setup Information</h4>
     <p>Based on the System Configuration, the workflow <strong>{{setupInformation.workflow}}</strong> will be modified.</p>
     <p>The following Steps will be altered:</p>
     <ol>
@@ -23,16 +23,32 @@
       </p>
       <div class="alert alert-info">{{modeInfo[setupInformation.approvalMode].description}}</div>
     </div>
+    <div>
+      <p>Additionally, we can add the <strong>{{setupInformation.aggregationRule}}</strong> rule to the following tasks. Please uncheck if you don't wish to do this.</p>
+      <ul>
+        <li data-ng-repeat="task in groupAggregationtasks">
+          <label>
+              <input type="checkbox" data-checklist-model="setupInformation.tasks" data-checklist-value="task" />&nbsp;{{task}}&nbsp;
+          </label>
+        </li>
+      </ul>
+    </div>
     <br />
     <p>
+      <hr class="nice-ruler" />
       <label>
           <input type="checkbox" data-ng-model="setupInformation.userAgreement" /><strong>&nbsp;I understand that clicking the button below will alter the {{setupInformation.workflow}} workflow. I made a backup of it or am otherwise prepared to restore its original state</strong>
       </label>
     </p>
-    <br />
-    <p><input class="btn btn-primary btn-block" 
+    <p>
+      <hr class="nice-ruler" />
+      <button type="button" class="btn btn-primary btn-block" 
+              value="perform System Integration" 
+              data-ng-click="controller.setupSystemIntegration()"
+              data-ng-disabled="!setupInformation.userAgreement">apply changes</button>
+      <!-- <input class="btn btn-primary btn-block" 
               type="submit" value="perform System Integration" 
               data-ng-click="controller.setupSystemIntegration()"
-              data-ng-disabled="!setupInformation.userAgreement"/></p>
+              data-ng-disabled="!setupInformation.userAgreement"/></p>-->
   </div>
 </div>

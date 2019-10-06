@@ -1,7 +1,5 @@
 <div id="GeneralConfigurationDiv">
-	  <h4 data-ng-click="controller.toggleView('defaultConfig')">Default General Configuration&nbsp;
-	    <i data-ng-class="showApplication['defaultConfig'] ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>
-	  </h4>
+	  <h4 class="font-thin" data-ng-click="controller.toggleView('defaultConfig')"><i data-ng-class="showApplication['defaultConfig'] ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>&nbsp;Default General Configuration&nbsp;</h4>
 
     <table class="table" data-ng-show="showApplication['defaultConfig'] === true">
       <tr>
@@ -20,8 +18,7 @@
                   type="text"
                   data-ng-model="configObject.GeneralConfiguration.defaultOwner"
                   placeholder="insert approver name"
-                  data-ng-required="true">
-          </input>
+                  data-ng-required="true" />
         </td>
       </tr>
       <tr>

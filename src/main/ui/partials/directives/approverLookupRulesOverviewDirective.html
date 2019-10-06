@@ -1,8 +1,8 @@
 <div id="ApproverLookupRuleDiv">
-	<h5 data-ng-click="controller.toggleView('showApprovalRules')">
-		Approver&nbsp;<i data-ng-class="showApprovalRules ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i> 
-	</h5>
-	<hr data-ng-hide="showApprovalRules"></hr>
+	<h4 class="font-thin" data-ng-click="controller.toggleView('showApprovalRules')">
+		<i data-ng-class="showApprovalRules ? 'fa fa-minus-square-o' : 'fa fa-plus-square-o'" aria-hidden="true"></i>&nbsp;Approver&nbsp;
+	</h4>
+	<hr class="nice-ruler" data-ng-hide="showApprovalRules"></hr>
 	<div data-ng-show="showApprovalRules">
 		<table id="CustomGovernancePluginRulesTable" class="table table-hover">
 			<thead class="thead-light">
@@ -20,6 +20,7 @@
 				</tr>
 			</tbody>
 		</table>
+    <hr class="nice-ruler" />
 		<a class="btn btn-link btn-block" role="button" data-ng-click="controller.showAddNewApproverLookupModal()">add new Approver</a> 
 	</div>
 </div>

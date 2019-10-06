@@ -7,8 +7,7 @@
                 type="text"
                 data-ng-model="entitlementConfig.descriptor"
                 placeholder="insert a descriptive name"
-                data-ng-required="true">
-        </input>
+                data-ng-required="true" />
       </td>
     </tr>
     <tr>
@@ -43,8 +42,7 @@
                 type="text"
                 data-ng-model="entitlementConfig.staticOwner"
                 placeholder="insert the owner name"
-                data-ng-required="true">
-        </input>
+                data-ng-required="true" />
       </td>
     </tr>
     <tr data-ng-hide="entitlementConfig.ownerSelectionType === 'static'">
@@ -70,8 +68,7 @@
                 type="text"
                 data-ng-model="entitlementConfig.selectionRegexValue"
                 placeholder="insert regular expression"
-                data-ng-required="true">
-        </input>
+                data-ng-required="true" />
       </td>
     </tr>
     <tr data-ng-hide="entitlementConfig.selectionType === 'rule'">
@@ -81,8 +78,7 @@
                 type="text"
                 data-ng-model="entitlementConfig.selectionRegexAttribute"
                 placeholder="insert the attribute name to check"
-                data-ng-required="true">
-        </input>
+                data-ng-required="true" />
       </td>
     </tr>
     <tr data-ng-hide="entitlementConfig.selectionType === 'regex'">

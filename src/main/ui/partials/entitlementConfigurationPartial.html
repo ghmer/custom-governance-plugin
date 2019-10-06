@@ -14,16 +14,22 @@
   </div>
   <entitlement-general-configuration></entitlement-general-configuration>
 	<defined-entitlement-applications></defined-entitlement-applications>
-	<br />
-	<br />
-	<br />
+	<div class="alert alert-success" role="alert" data-ng-show="showSuccessMessage">
+    {{successMessage}}
+  </div>
+  <div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
+    {{infoMessage}}
+  </div>
+  <div class="alert alert-danger" role="alert" data-ng-show="showErrorMessage">
+    {{errorMessage}}
+  </div>
 	<div>
-    <input class="btn btn-link btn-block" type="submit" value="add Application" data-ng-click="controller.addApplication()"/>
     <br />
-    <br />
-    <br />
-    <input class="btn btn-primary btn-block" type="submit" value="save Configuration" data-ng-click="controller.saveEntitlementConfiguration()"/>
-    <input class="btn btn-danger btn-block" type="submit" value="log to console" data-ng-click="controller.logObject()"/>
+    <hr class="nice-ruler"/>
+    <button type="button" class="btn btn-primary btn-block" data-ng-click="controller.saveEntitlementConfiguration()">save Configuration</button>
+    <button type="button" class="btn btn-primary btn-block" data-ng-click="controller.revertChanges()">revert changes</button>
+    <!-- <input class="btn btn-primary btn-block" type="submit" value="save Configuration" data-ng-click="controller.saveEntitlementConfiguration()"/>
+    <input class="btn btn-primary btn-block" type="submit" value="revert changes"     data-ng-click="controller.revertChanges()"/>-->
   </div>
 
 </div>
