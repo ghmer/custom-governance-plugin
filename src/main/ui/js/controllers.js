@@ -170,6 +170,8 @@
         GovernancePluginService.saveGovernanceModel($scope.configObject).then(function(result) {
           // success getting the setup information
           $scope.showApplyChangesButton = false;
+          $scope.showApprovalLevels     = false;
+          $scope.showApprovalRules      = false;
           controller.toggleShowSuccessMessage("Model successfully saved");
         }, function(result) {
           // something went wrong getting the setup information
@@ -180,9 +182,10 @@
 
       controller.revertChanges = function() {
         controller.getGovernanceModel();
-        controller.toggleShowSuccessMessage("Model successfully reverted");
+        $scope.showApprovalLevels     = false;
+        $scope.showApprovalRules      = false;
         $scope.showApplyChangesButton = false;
-      
+        controller.toggleShowSuccessMessage("Model successfully reverted");
       };
       
       controller.deleteApproverLookup = function(approver) {
@@ -571,6 +574,16 @@
         });
       };
       
+      controller.closeAllToggles = function() {
+        for(var key in $scope.showApplication) {
+          $scope.showApplication[key] = false;
+        }
+        
+        for(var key in $scope.showDescriptor) {
+          $scope.showDescriptor[key] = false;
+        }        
+      };
+      
       controller.toggleView = function(name, descriptor) {
         if(typeof descriptor === 'undefined') {
           var currentSetting = $scope.showApplication[name];
@@ -641,6 +654,7 @@
       controller.saveEntitlementConfiguration = function() {
         GovernancePluginService.saveEntitlementConfiguration($scope.configObject).then(function(result) {
           // success getting the setup information
+          controller.closeAllToggles();
           controller.toggleShowSuccessMessage("Entitlement Configuration sucessfully saved");
         }, function(result) {
           // something went wrong getting the setup information
@@ -682,7 +696,8 @@
           // success getting the setup information
           console.log(result);
           $scope.configObject = result;
-          controller.toggleShowSuccessMessage("Model successfully reverted");
+          controller.closeAllToggles();
+          controller.toggleShowSuccessMessage("Model successfully reverted");          
         }, function(result) {
           // something went wrong getting the setup information
           controller.toggleShowErrorMessage(result.data);
@@ -755,10 +770,14 @@
         var applicationName = args.appName;
         var configuration   = args.config;
         
+        console.log($scope.configObject);
         if($scope.configObject.ApplicationConfiguration !== null) {
+          if($scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration == null) {
+            $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration = [];
+          }
           var list            = $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration;
 
-          if (!list.some(e => e.descriptor === configuration.descriptor)) {
+          if (list != null && !list.some(e => e.descriptor === configuration.descriptor)) {
             /* list contains the element we're looking for */
             $scope.configObject.ApplicationConfiguration[applicationName].EntitlementConfiguration.push(configuration);
           }  
