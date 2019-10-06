@@ -69,16 +69,26 @@ public class RequestableEntitlementUtil {
         }
       }
       
-      if(!configHit) {
-        Map<String, Object> appDefaultConfig = getAppDefaultConfig(appConfig, groupApplication.getName());
-        if(appDefaultConfig == null) {
-          String message = String.format("Config for application %s does not contain a default configuration", groupApplication.getName());
-          log.error(message);
-          throw new GeneralException(message);
-        }
-        applyChangesToEntitlement(accountGroup, appDefaultConfig, defaultOwner, governanceAttribute);
-        
+      Map<String, Object> appDefaultConfig = getAppDefaultConfig(appConfig, groupApplication.getName());
+      if(appDefaultConfig == null) {
+        String message = String.format("Config for application %s does not contain a default configuration", groupApplication.getName());
+        log.error(message);
+        throw new GeneralException(message);
       }
+      
+      if(!configHit) {       
+        applyChangesToEntitlement(accountGroup, appDefaultConfig, defaultOwner, governanceAttribute);
+      }
+      
+      Boolean runAfterRule = false;
+      if(appDefaultConfig.containsKey("runAfterRule")) {
+        runAfterRule = Boolean.valueOf(String.valueOf(appDefaultConfig.get("runAfterRule")));
+      }
+      if(runAfterRule) {
+        String afterafterRuleName = String.valueOf(appDefaultConfig.get("runAfterRule"));
+        accountGroup = (ManagedAttribute) runRule(accountGroup, obj, groupApplication, afterafterRuleName);
+      }
+      
     } else {
       applyChangesToEntitlement(accountGroup, generalConfig, "spadmin", governanceAttribute);
     }
@@ -235,7 +245,7 @@ public class RequestableEntitlementUtil {
     
     switch(selectionType.toLowerCase()) {
       case "static" : ownerName = staticOwner; break;
-      case "rule"   : ownerName = (String) handleRuleSelection(accountGroup, resourceObject, groupApplication, ruleName); break;
+      case "rule"   : ownerName = (String) runRule(accountGroup, resourceObject, groupApplication, ruleName); break;
       default       : {
         String message = "Unknown selection type " + selectionType;
         log.error(message);
@@ -286,7 +296,7 @@ public class RequestableEntitlementUtil {
     }
     switch(selectionType.toLowerCase()) {
       case "regex" : configHit = handleRegexSelection(accountGroup, regexAttribute, regexValue); break;
-      case "rule"  : configHit = (boolean) handleRuleSelection(accountGroup, resourceObject, groupApplication, ruleName); break;
+      case "rule"  : configHit = (boolean) runRule(accountGroup, resourceObject, groupApplication, ruleName); break;
       default      : {
         String message = "Unknown selection type " + selectionType;
         log.error(message);
@@ -304,7 +314,7 @@ public class RequestableEntitlementUtil {
    * @return the return value of the rule
    * @throws GeneralException when there was an issue with the rule
    */
-  private Object handleRuleSelection(ManagedAttribute accountGroup, ResourceObject obj, Application groupApplication,
+  private Object runRule(ManagedAttribute accountGroup, ResourceObject obj, Application groupApplication,
       String ruleName) throws GeneralException {
     Object result = null;
     Rule rule = context.getObject(Rule.class, ruleName);
