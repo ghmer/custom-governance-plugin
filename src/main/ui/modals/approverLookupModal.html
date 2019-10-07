@@ -1,26 +1,24 @@
 <div data-ng-controller="ApproverLookupModalController as controller">
-	<form name="approverLookupForm">
+  <form name="approverLookupForm">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" data-ng-click="controller.close()" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">
-			Editing approver lookup {{user.name}} 
-		</h4>
+      <button type="button" class="close" data-dismiss="modal" data-ng-click="controller.close()" aria-label="Close"><span aria-hidden="true">&times;</span></button> 
+      <h4 class="modal-title">Editing approver lookup {{user.name}}</h4>
     </div>
     <div class="modal-body">
       <div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
-        {{infoMessage}}
+        {{infoMessage}} 
       </div>
-    	<div id="ApproverLookupFormDiv">
-    			<label for="approverName">Approver Name</label>
-        	<input class="form-control" id="approverName" name="approverName" type="text" data-ng-model="user.approverName" placeholder="insert approver name" data-ng-required="true"></input>
-      		<label for="repeatSelect">Lookup Rule</label>
-      		<select class="form-control" name="repeatSelect" id="repeatSelect" data-ng-model="user.ruleName" data-ng-required="true">
-							<option data-ng-repeat="rule in rules" value="{{rule}}">{{rule}}</option>
-					</select>
+      <div id="ApproverLookupFormDiv">
+        <label for="approverName">Approver Name</label> 
+        <input class="form-control" id="approverName" name="approverName" type="text" data-ng-model="user.approverName" placeholder="insert approver name" data-ng-required="true" />
+        <label for="repeatSelect">Lookup Rule</label> 
+        <select class="form-control" name="repeatSelect" id="repeatSelect" data-ng-model="user.ruleName" data-ng-required="true">
+          <option data-ng-repeat="rule in rules" value="{{rule}}">{{rule}}</option>
+        </select>
       </div>
     </div>
     <div class="modal-footer">
-        <input class="btn btn-primary btn-block" type="submit" value="save Approver Lookup" data-ng-click="controller.saveApproverLookup()" />
+      <input class="btn btn-primary btn-block" type="submit" value="save Approver Lookup" data-ng-click="controller.saveApproverLookup()" />
     </div>
-    </form>
+  </form>
 </div>

@@ -1,50 +1,47 @@
 <div id="ApplicationConfiguration">
-	  <h4 class="font-thin">Application General Configuration</h4>
-    <table class="table">
-      <tr>
-        <td class="td-lefthand">Default Approval Level</td>
-        <td class="td-righthand">
-          <select class="form-control" data-ng-model="application.GeneralConfiguration.defaultApprovalLevel">
-            <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td class="td-lefthand">Default Entitlement Owner</td>
-        <td class="td-righthand">
-          <input  class="form-control"
-                  id="defaultApprovalOwner"
-                  type="text"
-                  data-ng-model="application.GeneralConfiguration.defaultOwner"
-                  placeholder="insert approver name"
-                  data-ng-required="true" />
-        </td>
-      </tr>
-      <tr>
-        <td class="td-lefthand">Default is requestable</td>
-        <td class="td-righthand">
-          <select class="form-control" data-ng-model="application.GeneralConfiguration.isRequestable">
-            <option>true</option>
-            <option>false</option>
-          </select>
-        </td>
-      </tr>
-      <tr>
-        <td class="td-lefthand">run another Group Aggregation rule</td>
-        <td class="td-righthand">
-          <select class="form-control" data-ng-model="application.GeneralConfiguration.runAfterRule">
-            <option>true</option>
-            <option>false</option>
-          </select>
-        </td>
-      </tr>
-      <tr data-ng-show="application.GeneralConfiguration.runAfterRule === 'true'">
-        <td class="td-lefthand">Group Aggregation Rule</td>
-        <td class="td-righthand">
-          <select class="form-control" data-ng-model="application.GeneralConfiguration.afterRuleName">
-            <option data-ng-repeat="afterRuleName in groupRefreshRules" value="{{afterRuleName}}">{{afterRuleName}}</option>
-          </select>
-        </td>
-      </tr>
-    </table>
-	</div>
+  <h4 class="font-thin">
+    Application General Configuration
+  </h4>
+  <table class="table">
+    <tr>
+      <td class="td-lefthand">Default Approval Level</td>
+      <td class="td-righthand"> 
+      <select class="form-control" data-ng-model="application.GeneralConfiguration.defaultApprovalLevel">
+        <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
+      </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="td-lefthand">Default Entitlement Owner</td>
+      <td class="td-righthand"> 
+      <input class="form-control" id="defaultApprovalOwner" type="text" data-ng-model="application.GeneralConfiguration.defaultOwner" placeholder="insert approver name" data-ng-required="true" />
+      </td>
+    </tr>
+    <tr>
+      <td class="td-lefthand">Default is requestable</td>
+      <td class="td-righthand"> 
+      <select class="form-control" data-ng-model="application.GeneralConfiguration.isRequestable">
+        <option>true</option>
+        <option>false</option>
+      </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="td-lefthand">run another Group Aggregation rule</td>
+      <td class="td-righthand"> 
+      <select class="form-control" data-ng-model="application.GeneralConfiguration.runAfterRule">
+        <option>true</option>
+        <option>false</option>
+      </select>
+      </td>
+    </tr>
+    <tr data-ng-show="application.GeneralConfiguration.runAfterRule === 'true'">
+      <td class="td-lefthand">Group Aggregation Rule</td>
+      <td class="td-righthand"> 
+      <select class="form-control" data-ng-model="application.GeneralConfiguration.afterRuleName">
+        <option data-ng-repeat="afterRuleName in groupRefreshRules" value="{{afterRuleName}}">{{afterRuleName}}</option>
+      </select>
+      </td>
+    </tr>
+  </table>
+</div>

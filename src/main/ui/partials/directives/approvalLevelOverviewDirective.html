@@ -1,18 +1,18 @@
 <div id="CustomGovernancePluginConfigurationDiv">
-	<h4 class="font-thin" data-ng-click="controller.toggleView('showApprovalLevels')">
-		<i data-ng-class="showApprovalLevels ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>&nbsp;Approval Level&nbsp;
-	</h4>
-	<hr class="nice-ruler" data-ng-hide="showApprovalLevels"></hr>
-	<div id="GovernanceConfigurationDiv" data-ng-show="showApprovalLevels">
-		<table id="CustomGovernancePluginConfigTable" class="table table-hover">
-			<tbody>
-				<tr class="clickable" data-ng-repeat="key in approvalLevelArray | orderBy">
-					<td data-ng-click="controller.showApprovalLevelModal(key)">{{key}}</td>
+  <h4 class="font-thin" data-ng-click="controller.toggleView('showApprovalLevels')">
+    <i data-ng-class="showApprovalLevels ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>&nbsp;Approval Level&nbsp; 
+  </h4>
+  <hr class="nice-ruler" data-ng-hide="showApprovalLevels" />
+  <div id="GovernanceConfigurationDiv" data-ng-show="showApprovalLevels">
+    <table id="CustomGovernancePluginConfigTable" class="table table-hover">
+      <tbody>
+        <tr class="clickable" data-ng-repeat="key in approvalLevelArray | orderBy">
+          <td data-ng-click="controller.showApprovalLevelModal(key)">{{key}}</td>
           <td width="100px"><i class="fa fa-trash-o myIcons" aria-hidden="true" data-ng-click="controller.deleteApprovalLevel(key)"></i></td>
-				</tr>
-			</tbody>
-		</table>
+        </tr>
+      </tbody>
+    </table>
     <hr class="nice-ruler" />
-		<a class="btn btn-link btn-block" role="button" data-ng-click="controller.showAddApprovalLevelModal()">add Approval Level</a> 
-	</div>
+    <a class="btn btn-link btn-block" role="button" data-ng-click="controller.showAddApprovalLevelModal()">add Approval Level</a> 
+  </div>
 </div>
