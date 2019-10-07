@@ -10,7 +10,7 @@
       <div id="ApplicationConfiguration">
         <table class="table">
           <tr>
-            <td class="td-lefthand"><strong>Application Name</strong></td>
+            <td class="td-lefthand">Application Name</td>
             <td class="td-righthand">
               <select class="form-control" data-ng-model="object.applicationName">
               <option data-ng-repeat="applicationName in applicationNames" value="{{applicationName}}">{{applicationName}}</option>
@@ -19,7 +19,7 @@
           </tr>
 
           <tr>
-            <td class="td-lefthand"><strong>Default Approval Level</strong></td>
+            <td class="td-lefthand">Default Approval Level</td>
             <td class="td-righthand">
               <select class="form-control" data-ng-model="object.defaultApprovalLevel">
                 <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
@@ -28,7 +28,7 @@
           </tr>
 
           <tr>
-            <td class="td-lefthand"><strong>Default Entitlement Owner</strong></td>
+            <td class="td-lefthand">Default Entitlement Owner</td>
             <td class="td-righthand">
               <input  class="form-control"
                       type="text"
@@ -40,7 +40,7 @@
           </tr>
 
           <tr>
-            <td class="td-lefthand"><strong>Default is requestable</strong></td>
+            <td class="td-lefthand">Default is requestable</td>
             <td class="td-righthand">
               <select class="form-control" data-ng-model="object.isRequestable">
                 <option>true</option>
@@ -50,7 +50,7 @@
           </tr>
           
       <tr>
-        <td class="td-lefthand"><strong>run another Group Aggregation rule</strong></td>
+        <td class="td-lefthand">run another Group Aggregation rule</td>
         <td class="td-righthand">
           <select class="form-control" data-ng-model="object.runAfterRule">
             <option>true</option>
@@ -60,7 +60,7 @@
       </tr>
       
       <tr data-ng-show="object.runAfterRule === 'true'">
-        <td class="td-lefthand"><strong>Group Aggregation Rule</strong></td>
+        <td class="td-lefthand">Group Aggregation Rule</td>
         <td class="td-righthand">
           <select class="form-control" data-ng-model="object.afterRuleName">
             <option data-ng-repeat="afterRuleName in groupRefreshRules" value="{{afterRuleName}}">{{afterRuleName}}</option>

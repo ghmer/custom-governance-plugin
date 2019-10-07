@@ -3,7 +3,7 @@
 
     <table class="table" data-ng-show="showApplication['defaultConfig'] === true">
       <tr>
-        <td class="td-lefthand"><strong>Default Approval Level</strong></td>
+        <td class="td-lefthand">Default Approval Level</td>
         <td class="td-righthand">
           <select class="form-control" name="approvalModeSelect" id="approvalModeSelect" data-ng-model="configObject.GeneralConfiguration.defaultApprovalLevel">
             <option data-ng-repeat="level in approvalLevels" value="{{level}}">{{level}}</option>
@@ -11,7 +11,7 @@
         </td>
       </tr>
       <tr>
-        <td class="td-lefthand"><strong>Default Approval Owner</strong></td>
+        <td class="td-lefthand">Default Approval Owner</td>
         <td class="td-righthand">
           <input  class="form-control"
                   id="defaultApprovalOwner"
@@ -22,7 +22,7 @@
         </td>
       </tr>
       <tr>
-        <td class="td-lefthand"><strong>is requestable</strong></td>
+        <td class="td-lefthand">is requestable</td>
         <td class="td-righthand">
           <select class="form-control" data-ng-model="configObject.GeneralConfiguration.isRequestable">
             <option>true</option>

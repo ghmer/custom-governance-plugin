@@ -34,8 +34,14 @@ ul, ul li {
     cursor: pointer;
 }
 
+td {
+  font-size: 1.2em;
+}
+
 .td-lefthand {
   width: 200px;
+  font-size: 1em;
+  font-weight: bold;
 }
 
 .td-righthand {
@@ -59,8 +65,4 @@ hr.hard-cut {
   height: 10px;
   border: 0;
   box-shadow: 0 10px 10px -10px #8c8b8b inset;
-}
-
-td {
-  font-size: 1.2em;
 }
