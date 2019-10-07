@@ -8,8 +8,13 @@
   </div>
   <div id="CustomGovernancePluginSetupInformation" data-ng-hide="setupInformation.integration">
     <h4 class="font-thin">Setup Information</h4>
+    <label> 
+      <input type="checkbox" data-ng-model="setupInformation.wfintegration" />
+      <strong>Perform Workflow Integration</strong>
+    </label>
     <p>
-      Based on the System Configuration, the workflow <strong>{{setupInformation.workflow}}</strong> will be modified.
+      Based on the System Configuration, the workflow <strong>{{setupInformation.workflow}}</strong> is your current Access Request Workflow.<br />
+      The setup will create a copy with the name <strong>{{setupInformation.newWorkflow}}</strong> and modify the approval steps.
     </p>
     <p>
       The following Steps will be altered:
@@ -44,7 +49,7 @@
     <hr class="nice-ruler" />
     <label> 
       <input type="checkbox" data-ng-model="setupInformation.userAgreement" />
-      <strong>&nbsp;I understand that clicking the button below will alter the {{setupInformation.workflow}} workflow.</strong>
+      <strong>&nbsp;I understand that clicking the button below will alter the System.</strong>
       <strong>I made a backup of it or am otherwise prepared to restore its original state</strong>
     </label>
     <br />

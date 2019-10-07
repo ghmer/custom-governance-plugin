@@ -41,6 +41,7 @@ import sailpoint.rest.plugin.BasePluginResource;
 import sailpoint.rest.plugin.RequiredRight;
 import sailpoint.tools.GeneralException;
 import sailpoint.tools.Util;
+import sailpoint.tools.xml.XMLReferenceResolver;
 
 /**
  * @author mario
@@ -51,16 +52,14 @@ import sailpoint.tools.Util;
 @Produces(MediaType.APPLICATION_JSON)
 @RequiredRight(value = CGPRestInterface.SPRIGHT_PLUGIN_ACCESS)
 public class CGPRestInterface extends BasePluginResource {
-
-  public static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
-  public static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME = "governanceApprovalLevel";
-  
   public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
+  
+  
+  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
+  private static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME = "governanceApprovalLevel";
   private static final String APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME = "approvalAssignmentRule";
   private static final String CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME = "workflowLCMAccessRequest";
-
   private static final String CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME = "customApprovalSystemIntegration";
-	
 	private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME = "Requestable Entitlement Configuration";
 	private static final String CUSTOM_GOVERNANCE_RULE_NAME = "Custom Governance Model - Approval Assignment Rule";
 	private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
@@ -253,6 +252,8 @@ public class CGPRestInterface extends BasePluginResource {
       Workflow lcmAccessRequestWf   = context.getObject(Workflow.class, lcmAccessRequestWfName);
       Map<String, Object> result    = getSetupInformation(lcmAccessRequestWf);
       result.put("workflow", lcmAccessRequestWfName);
+      result.put("wfintegration", true);
+      result.put("newWorkflow", String.format("%s - Custom Governance", lcmAccessRequestWfName));
       result.put("attribute", APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME);
       result.put("rule", CUSTOM_GOVERNANCE_RULE_NAME);
       result.put("integration", (isSystemIntegration.equalsIgnoreCase("true") ? true : false));     
@@ -339,18 +340,34 @@ public class CGPRestInterface extends BasePluginResource {
     Response response            = null;
     SailPointContext context     = getContext();
     try {
+      context.startTransaction();
       Configuration configuration   = context.getConfiguration();
-      configuration.put(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME, "true");
-      context.saveObject(configuration);
       
-      Workflow workflow = context.getObject(Workflow.class, (String)setupInformation.get("workflow"));
-      setupWorkflow(context, workflow, setupInformation);
+      Boolean performWorkflowIntegration = Util.getBoolean(setupInformation, "wfintegration");
+      if(performWorkflowIntegration) {
+        log.debug("performing workflow integration");
+        Workflow workflow     = context.getObject(Workflow.class, (String)setupInformation.get("workflow"));
+        Workflow newWorkflow  = (Workflow) workflow.deepCopy((XMLReferenceResolver)context);
+        String newWfName      = String.valueOf(setupInformation.get("newWorkflow"));
+        newWorkflow.setId(null);
+        newWorkflow.setName(newWfName);
+        setupWorkflow(context, newWorkflow, setupInformation);
+        configuration.put(CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME, newWfName);
+      }
+      
       setupAggregationTasks(context, setupInformation);
+      configuration.put(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME, "true");
       
-      
+      context.saveObject(configuration);
+      context.commitTransaction();
       response = Response.ok().entity(true).build();
     } catch (GeneralException e) {
       response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+      try {
+        context.rollbackTransaction();
+      } catch (GeneralException e1) {
+        log.error(e.getMessage());
+      }
     }
     
     if(log.isDebugEnabled()) {
@@ -374,8 +391,6 @@ public class CGPRestInterface extends BasePluginResource {
 	    
 	    context.saveObject(task);
 	  }
-	  
-	  context.commitTransaction();
 	  
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "setupAggregationTasks", "null"));
@@ -594,8 +609,7 @@ public class CGPRestInterface extends BasePluginResource {
       }	    
 	  }
 	  
-	  context.saveObject(workflow);     
-    context.commitTransaction();
+	  context.saveObject(workflow);
 	  
 	  if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "setupWorkflow", null));
