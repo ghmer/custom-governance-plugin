@@ -152,7 +152,6 @@
             data : governanceModel
       }).then(function mySuccess(response) {
           deferred.resolve(response.data);
-          console.log(deferred.promise);
             return deferred.promise;
         }, function myError(response) {
             deferred.reject(response);
@@ -208,7 +207,6 @@
             data : setupInformation
       }).then(function mySuccess(response) {
           deferred.resolve(response.data);
-          console.log(deferred.promise);
             return deferred.promise;
         }, function myError(response) {
             deferred.reject(response);
@@ -247,7 +245,6 @@
             data : entitlementConfiguration
       }).then(function mySuccess(response) {
           deferred.resolve(response.data);
-          console.log(deferred.promise);
             return deferred.promise;
         }, function myError(response) {
             deferred.reject(response);
