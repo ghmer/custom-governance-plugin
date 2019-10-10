@@ -114,6 +114,8 @@ public List processApprovalSet(
     }
   }
 
+  workflow.put("notificationScheme", 
+        Util.listToCsv((List)approvalVariables.get("notificationScheme"), true));
   if (log.isDebugEnabled()) {
     log.debug(String.format("LEAVING %s(return = %s)", "processApprovalSet", finalApprovals));
   }

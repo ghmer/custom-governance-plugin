@@ -145,6 +145,9 @@ public class CustomGovernanceApprovalUtil {
 
       }
     }
+    
+    workflow.put("notificationScheme", 
+        Util.listToCsv((List<String>) approvalVariables.get("notificationScheme"), true));
 
     if (log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "processApprovalSet", finalApprovals));
