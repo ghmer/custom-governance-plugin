@@ -126,7 +126,6 @@ public class RequestableEntitlementUtil {
     accountGroup.setOwner(owner);
     accountGroup.setAttribute(governanceAttribute, defaultApprovalLevel);
     accountGroup.setRequestable(isRequestable);
-    log.warn("isRequestable: " + isRequestable);
   }
 
   /**
@@ -277,7 +276,6 @@ public class RequestableEntitlementUtil {
     accountGroup.setOwner(owner);
     accountGroup.setAttribute(governanceAttribute, appGovValue);
     accountGroup.setRequestable(isRequestable);
-    log.warn("isRequestable: " + isRequestable);
   }
 
   /**
