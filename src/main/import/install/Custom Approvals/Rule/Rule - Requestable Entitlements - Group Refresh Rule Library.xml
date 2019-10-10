@@ -20,12 +20,19 @@ import sailpoint.object.Rule;
 import sailpoint.tools.GeneralException;
 import sailpoint.tools.Util;
 
-public void processEntitlementConfig(Custom config, ResourceObject obj, ManagedAttribute accountGroup, Application groupApplication) throws GeneralException {
+public String entitlementConfigurationName = "Requestable Entitlement Configuration";
+
+public void processEntitlementConfig(
+    Custom requestableEntitlementConfig, 
+    ResourceObject resourceObject, 
+    ManagedAttribute accountGroup, 
+    Application groupApplication) throws GeneralException 
+{    
   //getting information
-  Map generalConfig = getGeneralConfig(config);
+  Map generalConfig = getGeneralConfig(requestableEntitlementConfig);
   Map appConfig = null;
-  if(hasApplicationDefinition(config, groupApplication.getName())) {
-    appConfig = getAppConfig(config, groupApplication.getName());
+  if(hasApplicationDefinition(requestableEntitlementConfig, groupApplication.getName())) {
+    appConfig = getAppConfig(requestableEntitlementConfig, groupApplication.getName());
   }
   
   // general Configuration
@@ -35,13 +42,24 @@ public void processEntitlementConfig(Custom config, ResourceObject obj, ManagedA
   if(appConfig != null) {
     boolean configHit = false;
     
-    List entConf = getAppEntitlementConfig(appConfig, groupApplication.getName());
-    if(entConf != null && !entConf.isEmpty()) {
-      for(Map entry : entConf) {      
-        configHit = isEntitlementMatchingConfig(obj, accountGroup, groupApplication, entry);      
-        if(configHit) {
-          applyChangesToEntitlement(obj, accountGroup, groupApplication, 
-              entry, defaultOwner, governanceAttribute);
+    List entitlementConfigurationList = getAppEntitlementConfig(appConfig,
+        groupApplication.getName());
+    if (entitlementConfigurationList != null && !entitlementConfigurationList.isEmpty()) {
+      for (Map entitlementConfiguration : entitlementConfigurationList) {
+        configHit = isEntitlementMatchingConfig(
+                        resourceObject, 
+                        accountGroup, 
+                        groupApplication,
+                        entitlementConfiguration);
+        
+        if (configHit) {
+          applyChangesToEntitlement(
+              resourceObject, 
+              accountGroup, 
+              groupApplication, 
+              entitlementConfiguration, 
+              defaultOwner,
+              governanceAttribute);
           break;
         }
       }
@@ -49,7 +67,8 @@ public void processEntitlementConfig(Custom config, ResourceObject obj, ManagedA
     
     Map appDefaultConfig = getAppDefaultConfig(appConfig, groupApplication.getName());
     if(appDefaultConfig == null) {
-      String message = String.format("Config for application %s does not contain a default configuration", groupApplication.getName());
+      String message = String.format("Config for application %s does not contain a default configuration",
+          groupApplication.getName());
       log.error(message);
       throw new GeneralException(message);
     }
@@ -59,12 +78,12 @@ public void processEntitlementConfig(Custom config, ResourceObject obj, ManagedA
     }
     
     Boolean runAfterRule = false;
-    if(appDefaultConfig.containsKey("runAfterRule")) {
+    if(getAppHasAfterRuleConfigured(appDefaultConfig)) {
       runAfterRule = Boolean.valueOf(String.valueOf(appDefaultConfig.get("runAfterRule")));
     }
     if(runAfterRule) {
-      String afterafterRuleName = String.valueOf(appDefaultConfig.get("runAfterRule"));
-      accountGroup = (ManagedAttribute) runRule(accountGroup, obj, groupApplication, afterafterRuleName);
+      String afterRuleName  = String.valueOf(appDefaultConfig.get("runAfterRule"));
+      accountGroup          = (ManagedAttribute) runRule(accountGroup, resourceObject, groupApplication, afterRuleName);
     }
     
   } else {
@@ -72,8 +91,12 @@ public void processEntitlementConfig(Custom config, ResourceObject obj, ManagedA
   }
 }
 
-private void applyChangesToEntitlement(ManagedAttribute accountGroup, Map appDefaultConfig, 
-    String fallbackOwnerName, String governanceAttribute) throws GeneralException {
+private void applyChangesToEntitlement(
+    ManagedAttribute accountGroup, 
+    Map appDefaultConfig, 
+    String fallbackOwnerName, 
+    String governanceAttribute) throws GeneralException 
+{
   String  fallbackApprover      = (String)  appDefaultConfig.get("defaultOwner");
   String  defaultApprovalLevel  = (String)  appDefaultConfig.get("defaultApprovalLevel");
   Boolean isRequestable         = Boolean.valueOf((String) appDefaultConfig.get("isRequestable"));
@@ -87,7 +110,8 @@ private void applyChangesToEntitlement(ManagedAttribute accountGroup, Map appDef
   
   Identity owner = context.getObject(Identity.class, ownerName);
   if(owner == null) {
-    String message = String.format("Could not retrieve identity %s. fallbackApprover was %s", ownerName, fallbackOwnerName);
+    String message = String.format("Could not retrieve identity %s. fallbackApprover was %s", 
+        ownerName, fallbackOwnerName);
     log.error(message);
     throw new GeneralException(message);
   }
@@ -97,78 +121,14 @@ private void applyChangesToEntitlement(ManagedAttribute accountGroup, Map appDef
   accountGroup.setRequestable(isRequestable);
 }
 
-private Map getAppConfig(Custom config, String applicationName) throws GeneralException {
-  Map result = null;
-  Map appConfig = (Map) config.get("ApplicationConfiguration");
-  if(appConfig == null) {
-    log.error(String.format("Custom configuration ->%s<- does not contain node %s", config.getName(), "ApplicationConfiguration"));
-    throw new GeneralException(String.format("Custom configuration ->%s<- does not contain node %s", config.getName(), "ApplicationConfiguration"));
-  }
-  
-  if(appConfig.containsKey(applicationName)) {
-    result = appConfig.get(applicationName);
-  }
-     
-  return result;
-}
-
-private List getAppEntitlementConfig(Map appConfig, String applicationName) throws GeneralException {
-  List result = new ArrayList();
-  if(!appConfig.containsKey("EntitlementConfiguration")) {
-    String message = String.format("Configuration for appliation %s did not contain node %s", applicationName, "EntitlementConfiguration");
-    log.error(message);
-    throw new GeneralException(message);
-  }
-  result = (List) appConfig.get("EntitlementConfiguration");
-  
-  
-  return result;
-}
-
-private Map getAppDefaultConfig(Map appConfig, String applicationName) throws GeneralException {
-  Map result = new HashMap();
-  if(!appConfig.containsKey("GeneralConfiguration")) {
-    String message = String.format("Configuration for appliation %s did not contain node %s", applicationName, "GeneralConfiguration");
-    log.error(message);
-    throw new GeneralException(message);
-  }
-  result = (Map) appConfig.get("GeneralConfiguration");
-  
-  
-  return result;
-}
-
-private boolean hasApplicationDefinition(Custom config, String applicationName) {
-  boolean hasDefinition = false;
-  Map applicationConfiguration = null;
-  if(config.containsAttribute("ApplicationConfiguration")) {
-    applicationConfiguration = (Map) config.get("ApplicationConfiguration");
-  }
-  if(applicationConfiguration != null) {
-    hasDefinition = applicationConfiguration.containsKey(applicationName);
-  }
-  
-  return hasDefinition;
-}
-
-private Map getGeneralConfig(Custom config) throws GeneralException {
-  Map result = null;
-  Map generalConfig = (Map) config.get("GeneralConfiguration");
-  if(generalConfig == null) {
-    String message = String.format("Custom configuration ->%s<- does not contain node %s", config.getName(), "GeneralConfiguration");
-    log.error(message);
-    throw new GeneralException(message);
-  }
-  
-  result = generalConfig;
-     
-  return result;
-}
-
-private void applyChangesToEntitlement(ResourceObject resourceObject, ManagedAttribute accountGroup,
-    Application groupApplication, Map configuration, 
-    String fallbackOwnerName, String governanceAttribute) throws GeneralException {
-  
+private void applyChangesToEntitlement(
+    ResourceObject resourceObject, 
+    ManagedAttribute accountGroup,
+    Application groupApplication, 
+    Map configuration, 
+    String fallbackOwnerName, 
+    String governanceAttribute) throws GeneralException 
+{    
   String   appGovValue    = (String) configuration.get("governanceLevel");
   String   selectionType  = (String) configuration.get("ownerSelectionType");
   String   staticOwner    = (String) configuration.get("staticOwner");
@@ -189,14 +149,17 @@ private void applyChangesToEntitlement(ResourceObject resourceObject, ManagedAtt
   
   if(Util.isNullOrEmpty(ownerName))  {
     if(selectionType.equalsIgnoreCase("rule")) {
-      log.error(String.format("Rule ->%s<- did not return an owner. That's not a good thing. Using fallback approver %s", ruleName, fallbackOwnerName));
+      String message = String.format("Rule ->%s<- did not return an owner. That's not a good thing. Using fallback approver %s",
+          ruleName, fallbackOwnerName);
+      log.error(message);
     }
     ownerName = fallbackOwnerName;
   }
   
   Identity owner = context.getObject(Identity.class, ownerName);
   if(owner == null) {
-    String message = String.format("Could not retrieve identity %s. Selection type was %s, fallbackApprover was %s", ownerName, selectionType, fallbackOwnerName);
+    String message = String.format("Could not retrieve identity %s. Selection type was %s, fallbackApprover was %s",
+        ownerName, selectionType, fallbackOwnerName);
     log.error(message);
     throw new GeneralException(message);
   }
@@ -206,8 +169,140 @@ private void applyChangesToEntitlement(ResourceObject resourceObject, ManagedAtt
   accountGroup.setRequestable(isRequestable);
 }
 
-private boolean isEntitlementMatchingConfig(ResourceObject resourceObject, ManagedAttribute accountGroup,
-    Application groupApplication, Map configuration) throws GeneralException {
+private Map getAppConfig(
+    Custom config, 
+    String applicationName) throws GeneralException 
+{
+  Map result = null;
+  Map appConfig = (Map) config.get("ApplicationConfiguration");
+  if(appConfig == null) {
+    String message = String.format("Custom configuration ->%s<- does not contain node %s", 
+        config.getName(), "ApplicationConfiguration");
+    log.error(message);
+    throw new GeneralException(message);
+  }
+  
+  if(isApplicationDefined(applicationName, appConfig)) {
+    result = appConfig.get(applicationName);
+  }
+     
+  return result;
+}
+
+private Map getAppDefaultConfig(
+    Map appConfig, 
+    String applicationName) throws GeneralException 
+{
+  Map result = new HashMap();
+  if(!hasGeneralConfiguration(appConfig)) {
+    String message = String.format("Configuration for appliation %s did not contain node %s", 
+        applicationName, "GeneralConfiguration");
+    log.error(message);
+    throw new GeneralException(message);
+  }
+  result = (Map) appConfig.get("GeneralConfiguration");
+  
+  
+  return result;
+}
+
+private List getAppEntitlementConfig(
+    Map appConfig, 
+    String applicationName) throws GeneralException 
+{
+  List result = new ArrayList();
+  
+  if(!hasEntitlementConfiguration(appConfig)) {
+    String message = String.format("Configuration for appliation %s did not contain node %s", 
+        applicationName, "EntitlementConfiguration");
+    log.error(message);
+    throw new GeneralException(message);
+  }
+  result = (List) appConfig.get("EntitlementConfiguration");
+  
+  
+  return result;
+}
+
+
+private boolean getAppHasAfterRuleConfigured(Map appDefaultConfig) {
+  return appDefaultConfig.containsKey("runAfterRule");
+}
+
+private Map getGeneralConfig(Custom config) throws GeneralException {
+  Map result        = null;
+  Map generalConfig = (Map) config.get("GeneralConfiguration");
+  if(generalConfig == null) {
+    String message = String.format("Custom configuration ->%s<- does not contain node %s", 
+        config.getName(), "GeneralConfiguration");      
+    log.error(message);
+    throw new GeneralException(message);
+  }
+  
+  result = generalConfig;
+     
+  return result;
+}
+
+
+private boolean handleRegexSelection(
+    ManagedAttribute accountGroup, 
+    String regexAttribute, 
+    String regexValue) throws GeneralException 
+{
+  Boolean regexHit    = false;
+  String valueToCheck = null;
+  
+  switch(regexAttribute.toLowerCase()) {
+    case "displayname" : valueToCheck = accountGroup.getDisplayName(); break;
+    case "value"       : valueToCheck = accountGroup.getValue(); break;
+    case "type"        : valueToCheck = accountGroup.getType(); break;
+    case "attribute"   : valueToCheck = accountGroup.getAttribute(); break;
+    default            : valueToCheck = (String) accountGroup.get(regexAttribute); break;
+  }
+  
+  if(Util.isNullOrEmpty(valueToCheck)) {
+    String message = "managed attribute does not contain regexAttribute " + regexAttribute;
+    log.error(message);
+    throw new GeneralException(message);
+  }
+  
+  regexHit = valueToCheck.matches(regexValue);
+  
+  return regexHit;
+}
+
+private boolean hasApplicationDefinition(Custom config, String applicationName) {
+  boolean hasDefinition = false;
+  Map applicationConfiguration = null;
+  if(config.containsAttribute("ApplicationConfiguration")) {
+    applicationConfiguration = (Map) config.get("ApplicationConfiguration");
+  }
+  if(applicationConfiguration != null) {
+    hasDefinition = applicationConfiguration.containsKey(applicationName);
+  }   
+  
+  return hasDefinition;
+}
+
+private boolean hasEntitlementConfiguration(Map appConfig) {
+  return appConfig.containsKey("EntitlementConfiguration");
+}
+
+private boolean hasGeneralConfiguration(Map appConfig) {
+  return appConfig.containsKey("GeneralConfiguration");
+}
+
+private boolean isApplicationDefined(String applicationName, Map appConfig) {
+  return appConfig.containsKey(applicationName);
+}
+
+private boolean isEntitlementMatchingConfig(
+    ResourceObject resourceObject,
+    ManagedAttribute accountGroup,
+    Application groupApplication, 
+    Map configuration) throws GeneralException 
+{
   boolean configHit         = false;
   String selectionType      = (String)  configuration.get("selectionType");
   String regexAttribute     = (String)  configuration.get("selectionRegexAttribute");
@@ -231,43 +326,27 @@ private boolean isEntitlementMatchingConfig(ResourceObject resourceObject, Manag
   return configHit;
 }
 
-private Object runRule(ManagedAttribute accountGroup, ResourceObject obj, Application groupApplication,
-    String ruleName) throws GeneralException {
+private Object runRule(
+    ManagedAttribute accountGroup, 
+    ResourceObject obj, 
+    Application groupApplication,
+    String ruleName) throws GeneralException 
+{
   Object result = null;
-  Rule rule = context.getObject(Rule.class, ruleName);
-  Map arguments = new HashMap();
-  arguments.put("context", context);
-  arguments.put("log", log);
-  arguments.put("accountGroup", accountGroup);
-  arguments.put("obj", obj);
-  arguments.put("groupApplication", groupApplication);
+  Rule rule     = context.getObject(Rule.class, ruleName);
   
-  result = context.runRule(rule, arguments);
+  if(rule != null) {
+    Map arguments = new HashMap();
+    arguments.put("context", context);
+    arguments.put("log", log);
+    arguments.put("accountGroup", accountGroup);
+    arguments.put("obj", obj);
+    arguments.put("groupApplication", groupApplication);
+    
+    result = context.runRule(rule, arguments);
+  }
   
   return result;
-}
-
-private boolean handleRegexSelection(ManagedAttribute accountGroup, String regexAttribute, String regexValue) throws GeneralException {
-  Boolean regexHit    = false;
-  String valueToCheck = null;
-  
-  switch(regexAttribute.toLowerCase()) {
-    case "displayname" : valueToCheck = accountGroup.getDisplayName(); break;
-    case "value"       : valueToCheck = accountGroup.getValue(); break;
-    case "type"        : valueToCheck = accountGroup.getType(); break;
-    case "attribute"   : valueToCheck = accountGroup.getAttribute(); break;
-    default            : valueToCheck = (String) accountGroup.get(regexAttribute); break;
-  }
-  
-  if(Util.isNullOrEmpty(valueToCheck)) {
-    String message = "managed attribute does not contain regexAttribute " + regexAttribute;
-    log.error(message);
-    throw new GeneralException(message);
-  }
-  
-  regexHit = valueToCheck.matches(regexValue);
-  
-  return regexHit;
 }
  
 ]]>
