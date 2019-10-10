@@ -30,17 +30,29 @@ public void processEntitlementConfig(
 {    
   //getting information
   Map generalConfig = getGeneralConfig(requestableEntitlementConfig);
-  Map appConfig = null;
+  Map appConfig     = null;
   if(hasApplicationDefinition(requestableEntitlementConfig, groupApplication.getName())) {
     appConfig = getAppConfig(requestableEntitlementConfig, groupApplication.getName());
   }
   
   // general Configuration
-  String governanceAttribute  = (String)  generalConfig.get("governanceAttribute");
-  String defaultOwner         = (String)  generalConfig.get("defaultOwner");
+  String governanceAttribute  = (String) generalConfig.get("governanceAttribute");
+  String defaultOwner         = (String) generalConfig.get("defaultOwner");
   
   if(appConfig != null) {
     boolean configHit = false;
+    Map appDefaultConfig = getAppDefaultConfig(appConfig, groupApplication.getName());
+    
+    if(appDefaultConfig == null) {
+      String message = String.format("Config for application %s does not contain a default configuration",
+          groupApplication.getName());
+      log.error(message);
+      throw new GeneralException(message);
+    }
+    
+    if(appDefaultConfig.containsKey("defaultOwner")) {
+      defaultOwner = String.valueOf(appDefaultConfig.get("defaultOwner"));
+    }
     
     List entitlementConfigurationList = getAppEntitlementConfig(appConfig,
         groupApplication.getName());
@@ -63,14 +75,6 @@ public void processEntitlementConfig(
           break;
         }
       }
-    }
-    
-    Map appDefaultConfig = getAppDefaultConfig(appConfig, groupApplication.getName());
-    if(appDefaultConfig == null) {
-      String message = String.format("Config for application %s does not contain a default configuration",
-          groupApplication.getName());
-      log.error(message);
-      throw new GeneralException(message);
     }
     
     if(!configHit) {       

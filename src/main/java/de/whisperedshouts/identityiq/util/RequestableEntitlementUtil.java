@@ -64,6 +64,18 @@ public class RequestableEntitlementUtil {
     
     if(appConfig != null) {
       boolean configHit = false;
+      Map<String, Object> appDefaultConfig = getAppDefaultConfig(appConfig, groupApplication.getName());
+      
+      if(appDefaultConfig == null) {
+        String message = String.format("Config for application %s does not contain a default configuration",
+            groupApplication.getName());
+        log.error(message);
+        throw new GeneralException(message);
+      }
+      
+      if(appDefaultConfig.containsKey("defaultOwner")) {
+        defaultOwner = String.valueOf(appDefaultConfig.get("defaultOwner"));
+      }
       
       List<Map<String, Object>> entitlementConfigurationList = getAppEntitlementConfig(appConfig,
           groupApplication.getName());
@@ -86,14 +98,6 @@ public class RequestableEntitlementUtil {
             break;
           }
         }
-      }
-      
-      Map<String, Object> appDefaultConfig = getAppDefaultConfig(appConfig, groupApplication.getName());
-      if(appDefaultConfig == null) {
-        String message = String.format("Config for application %s does not contain a default configuration",
-            groupApplication.getName());
-        log.error(message);
-        throw new GeneralException(message);
       }
       
       if(!configHit) {       
