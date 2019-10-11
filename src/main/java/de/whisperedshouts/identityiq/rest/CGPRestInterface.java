@@ -21,6 +21,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.log4j.Logger;
 
+import de.whisperedshouts.identityiq.util.ConfigurationValidationUtil;
 import sailpoint.api.SailPointContext;
 import sailpoint.object.Application;
 import sailpoint.object.Attributes;
@@ -64,7 +65,7 @@ public class CGPRestInterface extends BasePluginResource {
 	private static final String CUSTOM_GOVERNANCE_RULE_NAME = "Custom Governance Model - Approval Assignment Rule";
 	private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
   private static final Object GROUP_REFRESH_RULE_NAME = "Requestable Entitlements - Group Refresh Rule";
-	
+  
 	/**
 	 * return an array of application names
 	 * @return a Response object encapsulating the json object
@@ -111,12 +112,7 @@ public class CGPRestInterface extends BasePluginResource {
     SailPointContext context = getContext();
     Response response        = null;
     try {
-      Custom governanceModel  = context.getObject(Custom.class, CUSTOM_GOVERNANCE_CONFIG_NAME);
-      Attributes<String, Object> attributes = governanceModel.getAttributes();
-      @SuppressWarnings("unchecked")
-      Map<String, Object> approvalLevelsMap = (Map<String, Object>) attributes.get("approvalLevels");
-      List<String> approvalLevels = new ArrayList<>();
-      approvalLevels.addAll(approvalLevelsMap.keySet());
+      List<String> approvalLevels = ConfigurationValidationUtil.getApprovalLevels(context);
       
       response = Response.ok().entity(approvalLevels).build();
     } catch (GeneralException e) {
@@ -128,6 +124,8 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return response;
   }
+	
+	
 	
 	/**
 	 * returns the entitlement configuration as a json object
@@ -469,6 +467,29 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return response;
   }
+	
+	@POST
+  @Path("entitlementConfiguration/validate")
+  public Response validateEntitlementConfiguration(Map<String, Object> governanceModelJson) {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "validateEntitlementConfiguration", governanceModelJson));
+    }
+    
+    SailPointContext context = getContext();
+    Response response        = null;
+    try {
+      Map<String, Object> result = ConfigurationValidationUtil.validate(context, governanceModelJson, "entitlement");
+      
+      response = Response.ok().entity(result).build();
+    } catch (GeneralException e) {
+      response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "validateEntitlementConfiguration", response));
+    }
+    return response;
+  }
 
   /**
 	 * updates the Custom object with the given Map
@@ -498,6 +519,29 @@ public class CGPRestInterface extends BasePluginResource {
     
     if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "saveGovernanceModel", response));
+    }
+    return response;
+  }
+	
+	@POST
+  @Path("governanceModel/validate")
+  public Response validateGovernanceModel(Map<String, Object> governanceModelJson) {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "validateGovernanceModel", governanceModelJson));
+    }
+    
+    SailPointContext context = getContext();
+    Response response        = null;
+    try {
+      Map<String, Object> result = ConfigurationValidationUtil.validate(context, governanceModelJson, "approvallevel");
+      
+      response = Response.ok().entity(result).build();
+    } catch (GeneralException e) {
+      response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "validateGovernanceModel", response));
     }
     return response;
   }

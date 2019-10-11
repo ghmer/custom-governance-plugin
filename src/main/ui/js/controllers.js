@@ -170,12 +170,25 @@
       };
 
       controller.applyChanges = function() {
-        GovernancePluginService.saveGovernanceModel($scope.configObject).then(function(result) {
-          // success getting the setup information
-          $scope.toggleIndicators.showApplyChangesButton = false;
-          $scope.toggleIndicators.showApprovalLevels     = false;
-          $scope.toggleIndicators.showApprovalRules      = false;
-          controller.toggleShowSuccessMessage("Model successfully saved");
+        GovernancePluginService.validateGovernanceModel($scope.configObject).then(function(result) {
+          var info = result;
+          if(info.isValid === true) {
+            GovernancePluginService.saveGovernanceModel($scope.configObject).then(function(result) {
+              // success getting the setup information
+              $scope.toggleIndicators.showApplyChangesButton = false;
+              $scope.toggleIndicators.showApprovalLevels     = false;
+              $scope.toggleIndicators.showApprovalRules      = false;
+              controller.toggleShowSuccessMessage("Model successfully saved");
+            }, function(result) {
+              // something went wrong getting the setup information
+              controller.toggleShowErrorMessage(result.data);
+            });
+          } else {
+            var messages = info.errorMessages;
+            for(var message in messages) {
+              controller.toggleShowErrorMessage(messages[message]);
+            }
+          }
         }, function(result) {
           // something went wrong getting the setup information
           controller.toggleShowErrorMessage(result.data);
@@ -461,7 +474,6 @@
       };
       
       controller.toggleAppEntitlementView = function(name) {
-        console.log(name);
         var currentSetting = $scope.toggleIndicators.showApplicationEntitlementConfiguration[name];
         if(typeof currentSetting === 'undefined') {
           currentSetting = false;
@@ -518,16 +530,29 @@
       };
 
       controller.saveEntitlementConfiguration = function() {
-        GovernancePluginService.saveEntitlementConfiguration($scope.configObject).then(function(result) {
-          // success getting the setup information
-          controller.closeAllToggles();
-          controller.toggleShowSuccessMessage("Entitlement Configuration sucessfully saved");
+        GovernancePluginService.validateEntitlementConfiguration($scope.configObject).then(function(result) {
+          var info = result;
+          if(info.isValid === true) {
+            GovernancePluginService.saveEntitlementConfiguration($scope.configObject).then(function(result) {
+              // success getting the setup information
+              controller.closeAllToggles();
+              controller.toggleShowSuccessMessage("Entitlement Configuration sucessfully saved");
+            }, function(result) {
+              // something went wrong getting the setup information
+              controller.toggleShowErrorMessage(result.data);
+            });
+          } else {
+            var messages = info.errorMessages;
+            for(var message in messages) {
+              controller.toggleShowErrorMessage(messages[message]);
+            }
+          }
         }, function(result) {
           // something went wrong getting the setup information
           controller.toggleShowErrorMessage(result.data);
         });
-
-      }
+        
+      };
 
       controller.addApplication = function() {
         $scope.addApplicationModal($scope, $uibModal);
@@ -628,8 +653,13 @@
 
       $scope.$on('deleteApplicationEvent', function(event, args) {
         var applicationName = args;
-
-        delete $scope.configObject.ApplicationConfiguration[applicationName];
+        
+        if($scope.configObject != null && $scope.configObject.ApplicationConfiguration != null) {
+          if($scope.configObject.ApplicationConfiguration[applicationName] != null) {
+            delete $scope.configObject.ApplicationConfiguration[applicationName];
+          }
+        }
+        
       });
 
       $scope.$on('addEntitlementConfigurationEvent', function(event, args) {

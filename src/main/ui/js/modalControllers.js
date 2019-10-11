@@ -181,9 +181,7 @@
     function($scope, $http, $timeout, GovernancePluginService) {
       var controller = this;
 
-      $scope.object = {
-          "runAfterRule" : false
-      };
+      $scope.object = {};
 
       controller.close = function() {
         $scope.modalInstance.close('close');

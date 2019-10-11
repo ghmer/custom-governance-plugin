@@ -3,13 +3,13 @@
   <h3>
     <small>Custom Governance</small> 
   </h3>
-  <div class="alert alert-success" role="alert" data-ng-show="showSuccessMessage">
+  <div class="alert alert-success" role="alert" data-ng-show="toggleIndicators.showSuccessMessage">
     {{successMessage}} 
   </div>
-  <div class="alert alert-warning" role="alert" data-ng-show="showInfoMessage">
+  <div class="alert alert-warning" role="alert" data-ng-show="toggleIndicators.showInfoMessage">
     {{infoMessage}} 
   </div>
-  <div class="alert alert-danger" role="alert" data-ng-show="showErrorMessage">
+  <div class="alert alert-danger" role="alert" data-ng-show="toggleIndicators.showErrorMessage">
     {{errorMessage}} 
   </div>
   <custom-governance-setup></custom-governance-setup> 

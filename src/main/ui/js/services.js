@@ -148,6 +148,25 @@
         });
     };
     
+    this.validateGovernanceModel = function(governanceModel) {
+      var deferred  = $q.defer(); 
+      return $http({
+        method  : "POST",
+            withCredentials: true,
+            xsrfHeaderName : "X-XSRF-TOKEN",
+            xsrfCookieName : "CSRF-TOKEN",
+            url : PluginHelper.getPluginRestUrl('custom-governance') + '/governanceModel/validate',
+            headers: {'Content-Type': 'application/json'},
+            data : governanceModel
+      }).then(function mySuccess(response) {
+          deferred.resolve(response.data);
+            return deferred.promise;
+        }, function myError(response) {
+            deferred.reject(response);
+            return deferred.promise;
+        });
+    };
+    
     this.getSetupInformation = function() {
       var deferred = $q.defer();
       return $http({
@@ -230,6 +249,25 @@
             xsrfHeaderName : "X-XSRF-TOKEN",
             xsrfCookieName : "CSRF-TOKEN",
             url : PluginHelper.getPluginRestUrl('custom-governance') + '/entitlementConfiguration/update',
+            headers: {'Content-Type': 'application/json'},
+            data : entitlementConfiguration
+      }).then(function mySuccess(response) {
+          deferred.resolve(response.data);
+            return deferred.promise;
+        }, function myError(response) {
+            deferred.reject(response);
+            return deferred.promise;
+        });
+    };
+    
+    this.validateEntitlementConfiguration = function(entitlementConfiguration) {
+      var deferred  = $q.defer(); 
+      return $http({
+        method  : "POST",
+            withCredentials: true,
+            xsrfHeaderName : "X-XSRF-TOKEN",
+            xsrfCookieName : "CSRF-TOKEN",
+            url : PluginHelper.getPluginRestUrl('custom-governance') + '/entitlementConfiguration/validate',
             headers: {'Content-Type': 'application/json'},
             data : entitlementConfiguration
       }).then(function mySuccess(response) {
