@@ -69,8 +69,8 @@ public class ConfigurationValidationUtil {
     } catch (GeneralException e) {
       log.error(e.getMessage());
     }
-    validateEntitlementGeneralSection(context, configuration, approvalLevels, infoMap);
-    validateApplicationSection(context, configuration, approvalLevels, infoMap);
+    validateEntitlementConfigurationGeneralSection(context, configuration, approvalLevels, infoMap);
+    validateEntitlementConfigurationApplicationSection(context, configuration, approvalLevels, infoMap);
     
     List<String> errorMessages = (List<String>) infoMap.get("errorMessages");
     infoMap.put("isValid", errorMessages.isEmpty());
@@ -82,7 +82,7 @@ public class ConfigurationValidationUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static void validateApplicationSection(SailPointContext context, Map<String, Object> configuration,
+  private static void validateEntitlementConfigurationApplicationSection(SailPointContext context, Map<String, Object> configuration,
       List<String> approvalLevels, Map<String, Object> infoMap) {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(context = %s, configuration = %s, approvalLevels %s, infoMap = %s)", 
@@ -109,12 +109,13 @@ public class ConfigurationValidationUtil {
         for(Map.Entry<String, Map<String, Object>> application : applicationConfiguration.entrySet()) {
           String applicationName = application.getKey();
           Map<String, Object> definition = application.getValue();
-          if(definition.containsKey("EntitlementConfiguration")) {
-            validateAppEntitlementConfig(context, approvalLevels, errorMessages, applicationName, definition);     
-          }
-          
+          // validate the application general configuration
           if(definition.containsKey("GeneralConfiguration")) {
-            validateAppGeneralConfig(context, approvalLevels, errorMessages, applicationName, definition);
+            validateApplicationGeneralConfig(context, approvalLevels, errorMessages, applicationName, definition);
+          }
+          // validate the entitlement configuration section
+          if(definition.containsKey("EntitlementConfiguration")) {
+            validateApplicationEntitlementConfig(context, approvalLevels, errorMessages, applicationName, definition);     
           }
         }
       }  
@@ -138,7 +139,7 @@ public class ConfigurationValidationUtil {
    * @throws IllegalArgumentException
    */
   @SuppressWarnings("unchecked")
-  private static void validateAppGeneralConfig(SailPointContext context, List<String> approvalLevels,
+  private static void validateApplicationGeneralConfig(SailPointContext context, List<String> approvalLevels,
       List<String> errorMessages, String applicationName, Map<String, Object> definition)
       throws IllegalArgumentException {
     Map<String, Object> generalConfiguration = (Map<String, Object>) definition.get("GeneralConfiguration");
@@ -221,7 +222,7 @@ public class ConfigurationValidationUtil {
    * @throws IllegalArgumentException
    */
   @SuppressWarnings("unchecked")
-  private static void validateAppEntitlementConfig(SailPointContext context, List<String> approvalLevels,
+  private static void validateApplicationEntitlementConfig(SailPointContext context, List<String> approvalLevels,
       List<String> errorMessages, String applicationName, Map<String, Object> definition)
       throws IllegalArgumentException {
     List<Map<String, Object>> entitlementConfiguration = (List<Map<String, Object>>) definition.get("EntitlementConfiguration");
@@ -436,7 +437,7 @@ public class ConfigurationValidationUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static void validateEntitlementGeneralSection(SailPointContext context, Map<String, Object> configuration,
+  private static void validateEntitlementConfigurationGeneralSection(SailPointContext context, Map<String, Object> configuration,
       List<String> approvalLevels, Map<String, Object> infoMap) {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(context = %s, configuration = %s, approvalLevels %s, infoMap = %s)", 
@@ -547,8 +548,8 @@ public class ConfigurationValidationUtil {
     }
     
     Map<String, Object> infoMap = new HashMap<>();
-    validateApproverLookups(context, configuration, infoMap);
-    validateApprovalLevels(context, configuration, infoMap);
+    validateGovernanceConfigurationApproverLookups(context, configuration, infoMap);
+    validateGovernanceConfigurationApprovalLevels(context, configuration, infoMap);
     
     List<String> errorMessages = (List<String>) infoMap.get("errorMessages");
     infoMap.put("isValid", errorMessages.isEmpty());
@@ -560,7 +561,7 @@ public class ConfigurationValidationUtil {
   }
 
   @SuppressWarnings("unchecked")
-  private static void validateApprovalLevels(
+  private static void validateGovernanceConfigurationApprovalLevels(
       SailPointContext context, 
       Map<String, Object> configuration,
       Map<String, Object> infoMap) {
@@ -626,7 +627,7 @@ public class ConfigurationValidationUtil {
    * @throws IllegalArgumentException
    */
   @SuppressWarnings("unchecked")
-  private static void validateApproverLookups(
+  private static void validateGovernanceConfigurationApproverLookups(
       SailPointContext context, 
       Map<String, Object> configuration, 
       Map<String, Object> infoMap)
