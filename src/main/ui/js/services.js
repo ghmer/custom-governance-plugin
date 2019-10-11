@@ -5,18 +5,7 @@
 
   app.service('GovernancePluginService', function($http, $q) {
 
-    this.validateNotInList = function(list, value) {
-      var notInList = true;
-      for (var i = 0; i < list.length; i++) {
-        if (value == list[i]) {
-          notInList = false;
-          break;
-        }
-      }
-      return notInList;
-    };
-
-    this.isInList = function(list, value) {
+    this.isValueInArray = function(list, value) {
       var isInList = false;
       for (var i = 0; i < list.length; i++) {
         if (value == list[i]) {
@@ -27,7 +16,7 @@
       return isInList;
     };
     
-    this.removeEntries = function(lista, listb) {
+    this.getArrayExceptValues = function(lista, listb) {
       var newArray = [...lista];
       newArray = newArray.filter( function(el) {
         return !listb.includes( el );
@@ -54,14 +43,14 @@
       return newArray;
     };
     
-    this.raise = function(object, index) {
+    this.raisePositionInArray = function(object, index) {
       var temp1 = object[index - 1];
       var temp2 = object[index];
       object[index - 1] = temp2;
       object[index]     = temp1;
     };
 
-    this.lower = function(object, index) {
+    this.lowerPositionInArray = function(object, index) {
       var temp1 = object[index + 1];
       var temp2 = object[index];
       object[index + 1] = temp2;
