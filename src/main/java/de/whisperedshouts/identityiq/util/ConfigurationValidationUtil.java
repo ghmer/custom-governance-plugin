@@ -142,6 +142,15 @@ public class ConfigurationValidationUtil {
   private static void validateApplicationGeneralConfig(SailPointContext context, List<String> approvalLevels,
       List<String> errorMessages, String applicationName, Map<String, Object> definition)
       throws IllegalArgumentException {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s, approvalLevels %s, errorMessages %s, applicationName %s, definition = %s)", 
+          "validateApplicationGeneralConfig", 
+          context,
+          approvalLevels,
+          errorMessages,
+          applicationName,
+          definition));
+    }
     Map<String, Object> generalConfiguration = (Map<String, Object>) definition.get("GeneralConfiguration");
     
     String defaultApprovalLevel = String.valueOf(generalConfiguration.get("defaultApprovalLevel"));
@@ -211,6 +220,10 @@ public class ConfigurationValidationUtil {
         }
       }
     }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "validateApplicationGeneralConfig", null));
+    }
   }
 
   /**
@@ -222,9 +235,23 @@ public class ConfigurationValidationUtil {
    * @throws IllegalArgumentException
    */
   @SuppressWarnings("unchecked")
-  private static void validateApplicationEntitlementConfig(SailPointContext context, List<String> approvalLevels,
-      List<String> errorMessages, String applicationName, Map<String, Object> definition)
-      throws IllegalArgumentException {
+  private static void validateApplicationEntitlementConfig(
+      SailPointContext context, 
+      List<String> approvalLevels,
+      List<String> errorMessages, 
+      String applicationName, 
+      Map<String, Object> definition)
+      throws IllegalArgumentException 
+  {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s, approvalLevels = %s, errorMessages = %s, applicationName = %s, definition = %s)", 
+          "validateApplicationEntitlementConfig", 
+          context,
+          approvalLevels,
+          errorMessages,
+          applicationName,
+          definition));
+    }
     List<Map<String, Object>> entitlementConfiguration = (List<Map<String, Object>>) definition.get("EntitlementConfiguration");
     
     if(entitlementConfiguration != null && !entitlementConfiguration.isEmpty()) {
@@ -434,6 +461,10 @@ public class ConfigurationValidationUtil {
         }
       }
     }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "validateApplicationEntitlementConfig", null));
+    }
   }
 
   @SuppressWarnings("unchecked")
@@ -524,6 +555,13 @@ public class ConfigurationValidationUtil {
    */
   private static int checkIdentity(SailPointContext context, List<String> errorMessages, String identityName)
       throws IllegalArgumentException {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s, errorMessages = %s, identityName = %s)", 
+          "checkIdentity", 
+          context,
+          errorMessages,
+          identityName));
+    }
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.addFilter(Filter.eq("name", identityName));
     
@@ -534,6 +572,10 @@ public class ConfigurationValidationUtil {
       String message = String.format("General Error: error while getting identity %s: %s", identityName, e.getMessage());
       log.error(message);
       errorMessages.add(message);
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "checkIdentity", count));
     }
     return count;
   }
@@ -687,6 +729,13 @@ public class ConfigurationValidationUtil {
    */
   private static int checkRule(SailPointContext context, List<String> errorMessages, String ruleName)
       throws IllegalArgumentException {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s, errorMessages = %s, ruleName = %s)", 
+          "checkRule", 
+          context,
+          errorMessages,
+          ruleName));
+    }
     QueryOptions ruleNameOptions = new QueryOptions();
     ruleNameOptions.addFilter(Filter.eq("name", ruleName));
     int objectCount = 0;
@@ -710,6 +759,9 @@ public class ConfigurationValidationUtil {
       errorMessages.add(message);
     }
     
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "checkRule", objectCount));
+    }
     return objectCount;
   }
 
