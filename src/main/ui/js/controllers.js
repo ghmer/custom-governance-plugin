@@ -210,7 +210,7 @@
         approval = [...args.approval];
         notification = [...args.notification];
 
-        if (name === originalName || !GovernancePluginService.isInList($scope.approvalLevelArray, originalName)) {
+        if (name === originalName || !GovernancePluginService.isValueInArray($scope.approvalLevelArray, originalName)) {
           // simple push
           $scope.configObject.approvalLevels[name] = {
             notification: [...notification],
@@ -237,7 +237,7 @@
         var ruleName = args.ruleName;
 
         if (approverName === originalName ||
-          !GovernancePluginService.isInList(Object.keys($scope.configObject.approverLookupRules), originalName)) {
+          !GovernancePluginService.isValueInArray(Object.keys($scope.configObject.approverLookupRules), originalName)) {
           // simple push
           $scope.configObject.approverLookupRules[approverName] = ruleName;
         } else {
@@ -347,171 +347,6 @@
       this.$onInit = function () {
         controller.getSetupInformation();
       }
-    }
-  ]);
-
-  /** ApprovalLevelModalController **/
-  app.controller('ApprovalLevelModalController', ['$scope', '$http', '$timeout', 'GovernancePluginService',
-    function($scope, $http, $timeout, GovernancePluginService) {
-      var controller = this;
-
-      $scope.infoMessage        = null;
-      $scope.showInfoMessage    = false;
-      $scope.successMessage     = null;
-      $scope.showSuccessMessage = false;
-      $scope.showAddApprover    = false;
-      $scope.newApprover        = null;
-      $scope.btnMessages = {
-        "addApprover": {
-          "add": "add approver",
-          "cancel": "cancel"
-        }
-      };
-
-      $scope.user = {
-        name: $scope.approvalName,
-        originalName: $scope.approvalName,
-        approval: [...$scope.approvalConfig],
-        notification: [...$scope.notificationConfig]
-      };
-
-      $scope.approvalLevel = {
-        notification: ["user", "manager", "requester", "securityOfficer"]
-      };
-
-      controller.toggleShowInfoMessage = function(message) {
-        $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
-        $timeout(function() {
-          $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
-        }, 3000);
-      };
-
-      controller.toggleShowSuccessMessage = function(message) {
-        $scope.successMessage = message;
-        $scope.showSuccessMessage = true;
-        $timeout(function() {
-          $scope.successMessage = null;
-          $scope.showSuccessMessage = false;
-        }, 3000);
-      };
-
-      controller.addApprover = function() {
-        if ($scope.newApprover === "none" && $scope.user.approval.length >= 1) {
-          controller.toggleShowInfoMessage("Cannot add none as there are other approvers defined");
-        } else {
-          if ($scope.user.approval.includes($scope.newApprover)) {
-            controller.toggleShowInfoMessage("This entry already belongs to the list of approvers");
-          } else {
-            if ($scope.user.approval.length === 1) {
-              if ($scope.user.approval[0] === "none") {
-                $scope.user.approval.splice(0, 1);
-              }
-            }
-            $scope.user.approval.push($scope.newApprover);
-            $scope.newApprover = null;
-            controller.toggleShowAddApprover();
-          }
-        }
-      };
-
-      controller.toggleShowAddApprover = function() {
-        $scope.showAddApprover = !$scope.showAddApprover;
-      };
-
-      controller.deleteApprover = function(index) {
-        $scope.user.approval.splice(index, 1);
-        if ($scope.user.approval.length <= 0) {
-          $scope.user.approval.push("none");
-        }
-      };
-
-      controller.raise = function(index) {
-        GovernancePluginService.raise($scope.user.approval, index);
-      };
-
-      controller.lower = function(index) {
-        GovernancePluginService.lower($scope.user.approval, index);
-      };
-
-      controller.saveApprovalLevel = function() {
-        if (GovernancePluginService.validateNotInList($scope.usedNames, $scope.user.name)) {
-          if ($scope.user.name !== null) {
-            if ($scope.approvalLevelForm.$valid) {
-              $scope.$emit('saveApprovalEvent', $scope.user);
-              $scope.modalInstance.close('close');
-            }
-          }
-        } else {
-          // is in list
-          controller.toggleShowInfoMessage("This name is already being used. Please chose another one");
-        }
-      };
-
-      controller.close = function() {
-        $scope.modalInstance.close('close');
-      };
-
-      controller.cancel = function() {
-        $scope.modalInstance.dismiss('cancel');
-      };
-    }
-  ]);
-
-  /** ApproverLookupModalController **/
-  app.controller('ApproverLookupModalController', ['$scope', '$http', '$timeout', 'GovernancePluginService',
-    function($scope, $http, $timeout, GovernancePluginService) {
-      var controller = this;
-
-      $scope.infoMessage = null;
-      $scope.showInfoMessage = false;
-      $scope.showAddApprover = false;
-      $scope.newApprover = null;
-      $scope.btnMessages = {
-        "addApprover": {
-          "add": "add approver",
-          "cancel": "cancel"
-        }
-      };
-
-      $scope.user = {
-        approverName: $scope.approverName,
-        originalName: $scope.approverName,
-        ruleName: $scope.ruleName
-      };
-
-      controller.saveApproverLookup = function() {
-        if (GovernancePluginService.validateNotInList($scope.approvers, $scope.user.approverName)) {
-          if ($scope.user.approverName !== null && $scope.user.ruleName !== null) {
-            if ($scope.approverLookupForm.$valid) {
-              $scope.$emit('saveApproverLookupEvent', $scope.user);
-              $scope.modalInstance.close('close');
-            }
-          }
-        } else {
-          // is in list
-          controller.toggleShowInfoMessage("This name is already being used. Please chose another one");
-        }
-      };
-
-      controller.close = function() {
-        $scope.modalInstance.close('close');
-      };
-
-      controller.cancel = function() {
-        $scope.modalInstance.dismiss('cancel');
-      };
-
-      controller.toggleShowInfoMessage = function(message) {
-        $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
-        $timeout(function() {
-          $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
-        }, 3000);
-      };
-
     }
   ]);
 
@@ -640,11 +475,11 @@
       };
 
       controller.raise = function(object, index) {
-        GovernancePluginService.raise(object, index);
+        GovernancePluginService.raisePositionInArray(object, index);
       };
 
       controller.lower = function(object, index) {
-        GovernancePluginService.lower(object, index);
+        GovernancePluginService.lowerPositionInArray(object, index);
       };
 
       controller.saveEntitlementConfiguration = function() {
@@ -677,7 +512,7 @@
           usedApplicationNames = Object.keys($scope.configObject.ApplicationConfiguration);
         }
 
-        var filteredApplicationNames  = GovernancePluginService.removeEntries($scope.applicationNames, usedApplicationNames);
+        var filteredApplicationNames  = GovernancePluginService.getArrayExceptValues($scope.applicationNames, usedApplicationNames);
 
         modalScope.modalInstance      = modalInstance;
         //TODO: remove already created application names from list
@@ -717,7 +552,7 @@
         if($scope.configObject.ApplicationConfiguration !== null) {
           usedApplicationNames = Object.keys($scope.configObject.ApplicationConfiguration);
         }
-        var filteredApplicationNames    = GovernancePluginService.removeEntries($scope.applicationNames, usedApplicationNames);
+        var filteredApplicationNames    = GovernancePluginService.getArrayExceptValues($scope.applicationNames, usedApplicationNames);
 
         modalScope.applicationName      = applicationName;
         modalScope.modalInstance        = modalInstance;
@@ -787,75 +622,5 @@
         controller.getApprovalLevels();
       };
     }
-  ]);
-
-  /** ApproverLookupModalController **/
-  app.controller('AddApplicationModalController', ['$scope', '$http', '$timeout', 'GovernancePluginService',
-    function($scope, $http, $timeout, GovernancePluginService) {
-      var controller = this;
-
-      $scope.object = {
-          "runAfterRule" : false
-      };
-
-      controller.close = function() {
-        $scope.modalInstance.close('close');
-      };
-
-      controller.cancel = function() {
-        $scope.modalInstance.dismiss('cancel');
-      };
-
-      controller.addApplicationDefinition = function() {
-        $scope.$emit('addApplicationEvent', $scope.object);
-        $scope.modalInstance.close('close');
-      };
-
-      controller.toggleShowInfoMessage = function(message) {
-        $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
-        $timeout(function() {
-          $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
-        }, 3000);
-      };
-
-    }
-  ]);
-
-  app.controller('AddEntitlementConfigurationModalController', ['$scope', '$http', '$timeout', 'GovernancePluginService',
-  function($scope, $http, $timeout, GovernancePluginService) {
-    var controller = this;
-    $scope.entitlementConfig = {
-                "ownerSelectionType": "static",
-                "selectionType": "regex",
-    };
-
-    controller.close = function() {
-      $scope.modalInstance.close('close');
-    };
-
-    controller.cancel = function() {
-      $scope.modalInstance.dismiss('cancel');
-    };
-
-    controller.addEntitlementConfiguration = function() {
-      var args = {
-        "config" : $scope.entitlementConfig,
-        "appName": $scope.applicationName
-      };
-      $scope.$emit('addEntitlementConfigurationEvent', args);
-      $scope.modalInstance.close('close');
-    };
-
-    controller.toggleShowInfoMessage = function(message) {
-      $scope.infoMessage = message;
-      $scope.showInfoMessage = true;
-      $timeout(function() {
-        $scope.infoMessage = null;
-        $scope.showInfoMessage = false;
-      }, 3000);
-    };
-  }
   ]);
 }());
