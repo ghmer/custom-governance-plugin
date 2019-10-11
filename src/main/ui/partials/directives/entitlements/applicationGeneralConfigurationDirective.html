@@ -1,8 +1,9 @@
 <div id="ApplicationConfiguration">
-  <h4 class="font-thin">
-    Application General Configuration
-  </h4>
-  <table class="table">
+  <h5 class="font-thin" style="font-weight: bold;" data-ng-click="controller.toggleAppGeneralView(name)">
+    <i data-ng-class="toggleIndicators.showApplicationGeneralConfiguration[name] ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>
+    {{name}}: Application General Configuration
+  </h5>
+  <table class="table" data-ng-show="toggleIndicators.showApplicationGeneralConfiguration[name]">
     <tr>
       <td class="td-lefthand">Default Approval Level</td>
       <td class="td-righthand"> 

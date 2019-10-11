@@ -23,9 +23,9 @@
           <tr data-ng-repeat="entry in user.approval">
             <td>{{entry}}</td>
             <td width="100px">
-              <i class="fa fa-trash-o myIcons" aria-hidden="true" data-ng-click="controller.deleteApprover($index)"></i>&nbsp;
-              <i class="fa fa-arrow-up" aria-hidden="true" data-ng-show="$index > 0" data-ng-click="controller.raise($index)"></i>&nbsp;
+              <i class="fa fa-trash-o myIcons" aria-hidden="true" data-ng-click="controller.deleteApprover($index)"></i>
               <i class="fa fa-arrow-down" aria-hidden="true" data-ng-show="$index &lt; user.approval.length - 1" data-ng-click="controller.lower($index)"></i>
+              <i class="fa fa-arrow-up" aria-hidden="true" data-ng-show="$index > 0" data-ng-click="controller.raise($index)"></i>
             </td>
           </tr>
         </tbody>

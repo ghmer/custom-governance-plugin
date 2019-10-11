@@ -36,16 +36,19 @@
 
       var controller = this;
 
-      $scope.showApplyChangesButton = false;
-      $scope.showApprovalLevels     = false;
-      $scope.showApprovalRules      = false;
-      $scope.showAddNewApprover     = false;
       $scope.rules                  = [];
       $scope.infoMessage            = null;
-      $scope.showInfoMessage        = false;
       $scope.successMessage         = null;
-      $scope.showSuccessMessage     = false;
       $scope.newApproverName        = null;
+      
+      $scope.toggleIndicators = {
+        "showApplyChangesButton"  : false,
+        "showApprovalLevels"      : false,
+        "showApprovalRules"       : false,
+        "showAddNewApprover"      : false,
+        "showInfoMessage"         : false,
+        "showSuccessMessage"      : false
+      };
 
       controller.getGovernanceModel = function() {
         GovernancePluginService.getGovernanceModel().then(function(result) {
@@ -64,28 +67,28 @@
 
       controller.toggleView = function(functionName) {
         if (functionName === 'showApprovalLevels') {
-          $scope.showApprovalLevels = !$scope.showApprovalLevels;
+          $scope.toggleIndicators.showApprovalLevels = !$scope.toggleIndicators.showApprovalLevels;
         }
         if (functionName === 'showApprovalRules') {
-          $scope.showApprovalRules = !$scope.showApprovalRules;
+          $scope.toggleIndicators.showApprovalRules = !$scope.toggleIndicators.showApprovalRules;
         }
       };
 
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
+        $scope.toggleIndicators.showInfoMessage = true;
         $timeout(function() {
           $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
+          $scope.toggleIndicators.showInfoMessage = false;
         }, 3000);
       };
 
       controller.toggleShowSuccessMessage = function(message) {
         $scope.successMessage = message;
-        $scope.showSuccessMessage = true;
+        $scope.toggleIndicators.showSuccessMessage = true;
         $timeout(function() {
           $scope.successMessage = null;
-          $scope.showSuccessMessage = false;
+          $scope.toggleIndicators.showSuccessMessage = false;
         }, 3000);
       };
 
@@ -169,9 +172,9 @@
       controller.applyChanges = function() {
         GovernancePluginService.saveGovernanceModel($scope.configObject).then(function(result) {
           // success getting the setup information
-          $scope.showApplyChangesButton = false;
-          $scope.showApprovalLevels     = false;
-          $scope.showApprovalRules      = false;
+          $scope.toggleIndicators.showApplyChangesButton = false;
+          $scope.toggleIndicators.showApprovalLevels     = false;
+          $scope.toggleIndicators.showApprovalRules      = false;
           controller.toggleShowSuccessMessage("Model successfully saved");
         }, function(result) {
           // something went wrong getting the setup information
@@ -182,19 +185,19 @@
 
       controller.revertChanges = function() {
         controller.getGovernanceModel();
-        $scope.showApprovalLevels     = false;
-        $scope.showApprovalRules      = false;
-        $scope.showApplyChangesButton = false;
+        $scope.toggleIndicators.showApprovalLevels     = false;
+        $scope.toggleIndicators.showApprovalRules      = false;
+        $scope.toggleIndicators.showApplyChangesButton = false;
         controller.toggleShowSuccessMessage("Model successfully reverted");
       };
 
       controller.deleteApproverLookup = function(approver) {
-        $scope.showApplyChangesButton = true;
+        $scope.toggleIndicators.showApplyChangesButton = true;
         delete $scope.configObject.approverLookupRules[approver];
       };
 
       controller.deleteApprovalLevel = function(approvalLevel) {
-        $scope.showApplyChangesButton = true;
+        $scope.toggleIndicators.showApplyChangesButton = true;
         delete $scope.configObject.approvalLevels[approvalLevel];
         $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
           return key;
@@ -224,7 +227,7 @@
           };
         }
 
-        $scope.showApplyChangesButton = true;
+        $scope.toggleIndicators.showApplyChangesButton = true;
 
         $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
           return key;
@@ -245,7 +248,7 @@
           $scope.configObject.approverLookupRules[approverName] = ruleName;
         }
 
-        $scope.showApplyChangesButton = true;
+        $scope.toggleIndicators.showApplyChangesButton = true;
       });
 
       this.$onInit = function () {
@@ -260,12 +263,15 @@
       var controller = this;
 
       $scope.infoMessage        = null;
-      $scope.showInfoMessage    = false;
       $scope.successMessage     = null;
-      $scope.showSuccessMessage = false;
-      $scope.showErrorMessage   = false;
       $scope.errorMessage       = null;
 
+      $scope.toggleIndicators   = {
+          "showInfoMessage"   : false,
+          "successMessage"    : false,
+          "showErrorMessage"  : false
+      };
+      
       $scope.setupInformation = {
           workflow : "",
           steps: [],
@@ -299,19 +305,19 @@
 
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
+        $scope.toggleIndicators.showInfoMessage = true;
         $timeout(function() {
           $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
+          $scope.toggleIndicators.showInfoMessage = false;
         }, 3000);
       };
 
       controller.toggleShowSuccessMessage = function(message) {
         $scope.successMessage = message;
-        $scope.showSuccessMessage = true;
+        $scope.toggleIndicators.showSuccessMessage = true;
         $timeout(function() {
           $scope.successMessage = null;
-          $scope.showSuccessMessage = false;
+          $scope.toggleIndicators.showSuccessMessage = false;
         }, 3000);
       };
 
@@ -322,7 +328,7 @@
           $scope.groupAggregationtasks = [...result.tasks];
         }, function(result) {
           // something went wrong getting the setup information
-          $scope.showErrorMessage   = true;
+          $scope.toggleIndicators.showErrorMessage   = true;
           $scope.errorMessage       = result.data;
         });
       };
@@ -333,7 +339,7 @@
           $scope.setupInformation.integration = true;
         }, function(result) {
           // something went wrong getting the setup information
-          $scope.showErrorMessage   = true;
+          $scope.toggleIndicators.showErrorMessage   = true;
           $scope.errorMessage       = result.data;
         });
       };
@@ -355,13 +361,9 @@
       var controller = this;
 
       $scope.infoMessage          = null;
-      $scope.showInfoMessage      = false;
       $scope.successMessage       = null;
-      $scope.showSuccessMessage   = false;
-      $scope.showErrorMessage     = false;
       $scope.errorMessage         = null;
-      $scope.showApplication      = {};
-      $scope.showDescriptor       = {};
+      
       $scope.selectionTypes       = ["regex",  "rule"];
       $scope.ownerSelectionTypes  = ["static", "rule"];
       $scope.ruleNames            = [];
@@ -370,6 +372,17 @@
       $scope.applicationNames     = [];
       $scope.approvalLevels       = [];
       $scope.configObject         = {};
+      
+      
+      $scope.toggleIndicators = {
+        "showApplicationGeneralConfiguration"     : {},
+        "showApplicationEntitlementConfiguration" : {},
+        "showApplication"     : {},
+        "showDescriptor"      : {},
+        "showInfoMessage"     : false,
+        "showSuccessMessage"  : false,
+        "showErrorMessage"    : false
+      };
 
       controller.logObject = function() {
         console.log($scope.configObject);
@@ -406,60 +419,82 @@
       };
 
       controller.closeAllToggles = function() {
-        for(var key in $scope.showApplication) {
-          $scope.showApplication[key] = false;
+        for(var key in $scope.toggleIndicators.showApplication) {
+          $scope.toggleIndicators.showApplication[key] = false;
         }
 
-        for(var key in $scope.showDescriptor) {
-          $scope.showDescriptor[key] = false;
+        for(var key in $scope.toggleIndicators.showDescriptor) {
+          $scope.toggleIndicators.showDescriptor[key] = false;
         }
       };
 
       controller.toggleView = function(name, descriptor) {
         if(typeof descriptor === 'undefined') {
-          var currentSetting = $scope.showApplication[name];
+          var currentSetting = $scope.toggleIndicators.showApplication[name];
           if(typeof currentSetting === 'undefined') {
             currentSetting = false;
           }
 
-          $scope.showApplication[name] = !currentSetting;
+          $scope.toggleIndicators.showApplication[name] = !currentSetting;
         } else {
-          if(typeof $scope.showDescriptor[name] === 'undefined') {
-            $scope.showDescriptor[name] = {};
+          if(typeof $scope.toggleIndicators.showDescriptor[name] === 'undefined') {
+            $scope.toggleIndicators.showDescriptor[name] = {};
           }
 
-          if(typeof $scope.showDescriptor[name][descriptor] === 'undefined') {
-            $scope.showDescriptor[name][descriptor] = false;
+          if(typeof $scope.toggleIndicators.showDescriptor[name][descriptor] === 'undefined') {
+            $scope.toggleIndicators.showDescriptor[name][descriptor] = false;
           }
 
-          $scope.showDescriptor[name][descriptor] = !$scope.showDescriptor[name][descriptor];
+          $scope.toggleIndicators.showDescriptor[name][descriptor] = !$scope.toggleIndicators.showDescriptor[name][descriptor];
         }
+      };
+      
+      controller.toggleAppGeneralView = function(name) {
+
+        var currentSetting = $scope.toggleIndicators.showApplicationGeneralConfiguration[name];
+        if(typeof currentSetting === 'undefined') {
+          currentSetting = false;
+        }
+
+        $scope.toggleIndicators.showApplicationGeneralConfiguration[name] = !currentSetting;
+      
+      };
+      
+      controller.toggleAppEntitlementView = function(name) {
+        console.log(name);
+        var currentSetting = $scope.toggleIndicators.showApplicationEntitlementConfiguration[name];
+        if(typeof currentSetting === 'undefined') {
+          currentSetting = false;
+        }
+
+        $scope.toggleIndicators.showApplicationEntitlementConfiguration[name] = !currentSetting;
+      
       };
 
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
+        $scope.toggleIndicators.showInfoMessage = true;
         $timeout(function() {
           $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
+          $scope.toggleIndicators.showInfoMessage = false;
         }, 3000);
       };
 
       controller.toggleShowSuccessMessage = function(message) {
         $scope.successMessage = message;
-        $scope.showSuccessMessage = true;
+        $scope.toggleIndicators.showSuccessMessage = true;
         $timeout(function() {
           $scope.successMessage = null;
-          $scope.showSuccessMessage = false;
+          $scope.toggleIndicators.showSuccessMessage = false;
         }, 3000);
       };
 
       controller.toggleShowErrorMessage = function(message) {
         $scope.errorMessage = message;
-        $scope.showErrorMessage = true;
+        $scope.toggleIndicators.showErrorMessage = true;
         $timeout(function() {
           $scope.errorMessage = null;
-          $scope.showErrorMessage = false;
+          $scope.toggleIndicators.showErrorMessage = false;
         }, 3000);
       };
 

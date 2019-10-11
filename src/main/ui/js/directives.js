@@ -110,4 +110,12 @@
     };
   });
   
+  app.directive('applicationEntitlementListing', function() {
+    return {
+      controller: 'EntitlementController',
+      controllerAs: 'controller',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/entitlements/applicationEntitlementListingDirective.html')
+    };
+  });
+  
 }());

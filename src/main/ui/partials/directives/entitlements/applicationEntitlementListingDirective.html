@@ -1,0 +1,28 @@
+<div>
+  <h5 class="font-thin" style="font-weight: bold;" data-ng-click="controller.toggleAppEntitlementView(name)">
+    <i data-ng-class="toggleIndicators.showApplicationEntitlementConfiguration[name] ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>
+    {{name}}: Entitlement Descriptors
+  </h5>
+  <div data-ng-show="toggleIndicators.showApplicationEntitlementConfiguration[name]">
+    <div data-ng-repeat="entitlementConfig in application.EntitlementConfiguration">
+      <table class="table">
+        <tr>
+          <td> 
+            <h5 data-ng-click="controller.toggleView(name, entitlementConfig.descriptor)">
+              <i data-ng-class="toggleIndicators.showDescriptor[name][entitlementConfig.descriptor] ? 'fa fa-minus-square-o myIcons' : 'fa fa-plus-square-o myIcons'" aria-hidden="true"></i>&nbsp;{{entitlementConfig.descriptor}}&nbsp; 
+            </h5>
+            <application-entitlement-configuration></application-entitlement-configuration>
+          </td>
+          <td width="100px">
+            <i class="fa fa-trash-o" aria-hidden="true" data-ng-click="controller.deleteEntitlementConfiguration(application.EntitlementConfiguration, $index)"></i>
+            <i class="fa fa-arrow-down" aria-hidden="true" data-ng-show="$index &lt; application.EntitlementConfiguration.length - 1" data-ng-click="controller.lower(application.EntitlementConfiguration, $index)"></i>
+            <i class="fa fa-arrow-up" aria-hidden="true" data-ng-show="$index > 0" data-ng-click="controller.raise(application.EntitlementConfiguration, $index)"></i>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <br />
+    <hr class="nice-ruler" />
+    <input class="btn btn-link btn-block" type="submit" value="add Entitlement Configuration" data-ng-click="controller.addEntitlementConfiguration(name)" />
+  </div>
+</div>

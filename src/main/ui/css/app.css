@@ -31,13 +31,17 @@ ul, ul li {
     cursor: pointer;
 }
 
+.th-boldHeader {
+  font-size: 1.3em;
+}
+
 td {
-  font-size: 1.2em;
+  font-size: 1.3em;
 }
 
 .td-lefthand {
   width: 200px;
-  font-size: 1em;
+  font-size: 12px;
   font-weight: bold;
 }
 

@@ -3,6 +3,19 @@
   <h3>
     <small>Custom Governance</small> 
   </h3>
+  <p>
+    This is the <i>Entitlement Approval Configuration</i> page. You can create detailed approval definitions for your application's entitlements<br />
+    <i>Default Configuration</i> are the settings that will be applied to all entitlements that
+  </p>
+  <ul>
+    <li>are aggregated by a group aggregation task with the appropriate aggregation rule set</li>
+    <li>belong to an application that has not been defined here, yet</li>
+  </ul>
+  <p>
+    <i>Defined Application</i> both lists existing Application Definitions and lets you create a new Application Definition<br />
+    To access the functions, click on the <i class="fa fa-plus-square-o" aria-hidden="true"></i> icon to open it.<br />
+    After you finished defining your definitions, don't forget to save.<br />
+  </p>
   <div class="alert alert-success" role="alert" data-ng-show="showSuccessMessage">
     {{successMessage}} 
   </div>
@@ -12,7 +25,8 @@
   <div class="alert alert-danger" role="alert" data-ng-show="showErrorMessage">
     {{errorMessage}} 
   </div>
-  <entitlement-general-configuration></entitlement-general-configuration> <defined-entitlement-applications></defined-entitlement-applications> 
+  <entitlement-general-configuration></entitlement-general-configuration>
+  <defined-entitlement-applications></defined-entitlement-applications> 
   <div class="alert alert-success" role="alert" data-ng-show="showSuccessMessage">
     {{successMessage}} 
   </div>
