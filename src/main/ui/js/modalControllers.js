@@ -9,11 +9,15 @@
       var controller = this;
 
       $scope.infoMessage        = null;
-      $scope.showInfoMessage    = false;
       $scope.successMessage     = null;
-      $scope.showSuccessMessage = false;
-      $scope.showAddApprover    = false;
       $scope.newApprover        = null;
+      
+      $scope.toggleIndicators = {
+        "showInfoMessage"     : false,
+        "showSuccessMessage"  : false,
+        "showAddApprover"     : false
+      };
+      
       $scope.btnMessages = {
         "addApprover": {
           "add": "add approver",
@@ -34,19 +38,19 @@
 
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
+        $scope.toggleIndicators.showInfoMessage = true;
         $timeout(function() {
           $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
+          $scope.toggleIndicators.showInfoMessage = false;
         }, 3000);
       };
 
       controller.toggleShowSuccessMessage = function(message) {
         $scope.successMessage = message;
-        $scope.showSuccessMessage = true;
+        $scope.toggleIndicators.showSuccessMessage = true;
         $timeout(function() {
           $scope.successMessage = null;
-          $scope.showSuccessMessage = false;
+          $scope.toggleIndicators.showSuccessMessage = false;
         }, 3000);
       };
 
@@ -70,7 +74,7 @@
       };
 
       controller.toggleShowAddApprover = function() {
-        $scope.showAddApprover = !$scope.showAddApprover;
+        $scope.toggleIndicators.showAddApprover = !$scope.toggleIndicators.showAddApprover;
       };
 
       controller.deleteApprover = function(index) {
@@ -118,9 +122,13 @@
       var controller = this;
 
       $scope.infoMessage = null;
-      $scope.showInfoMessage = false;
-      $scope.showAddApprover = false;
       $scope.newApprover = null;
+      
+      $scope.toggleIndicators = {
+        "showInfoMessage"     : false,
+        "showSuccessMessage"  : false,
+        "showAddApprover"     : false  
+      };
       $scope.btnMessages = {
         "addApprover": {
           "add": "add approver",
@@ -158,10 +166,10 @@
 
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
+        $scope.toggleIndicators.showInfoMessage = true;
         $timeout(function() {
           $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
+          $scope.toggleIndicators.showInfoMessage = false;
         }, 3000);
       };
 
@@ -192,10 +200,10 @@
 
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
+        $scope.toggleIndicators.showInfoMessage = true;
         $timeout(function() {
           $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
+          $scope.toggleIndicators.showInfoMessage = false;
         }, 3000);
       };
 
@@ -229,10 +237,10 @@
   
       controller.toggleShowInfoMessage = function(message) {
         $scope.infoMessage = message;
-        $scope.showInfoMessage = true;
+        $scope.toggleIndicators.showInfoMessage = true;
         $timeout(function() {
           $scope.infoMessage = null;
-          $scope.showInfoMessage = false;
+          $scope.toggleIndicators.showInfoMessage = false;
         }, 3000);
       };
     }
