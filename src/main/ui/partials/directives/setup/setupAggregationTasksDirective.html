@@ -1,0 +1,16 @@
+<div>
+  <label> 
+    <input type="checkbox" data-ng-model="setupInformation.setupTasks" />
+    <strong>Setup Group Aggregation Tasks</strong>
+  </label>
+  <div data-ng-show="setupInformation.setupTasks">
+    <p>
+      This setup step will add the <strong>{{setupInformation.aggregationRule}}</strong> rule to the following tasks. Please uncheck if you don't wish to do this.
+    </p>
+    <ul>
+      <li data-ng-repeat="task in groupAggregationtasks"> <label> 
+      <input type="checkbox" data-checklist-model="setupInformation.tasks" data-checklist-value="task" />
+      &nbsp;{{task}}&nbsp; </label> </li>
+    </ul>
+  </div>
+</div>

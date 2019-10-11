@@ -20,7 +20,7 @@
       controller: 'HomeController',
       controllerAs: 'controller',
       restrict: 'E',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/approvalLevelOverviewDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/approvals/approvalLevelOverviewDirective.html')
     };
   });
 
@@ -29,7 +29,7 @@
       controller: 'HomeController',
       controllerAs: 'controller',
       restrict: 'E',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/approverLookupRulesOverviewDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/approvals/approverLookupRulesOverviewDirective.html')
     };
   });
 
@@ -38,7 +38,7 @@
       controller: 'HomeController',
       controllerAs: 'controller',
       restrict: 'E',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/applyChangesButtonDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/approvals/applyChangesButtonDirective.html')
     };
   });
   
@@ -47,7 +47,34 @@
       controller: 'SetupController',
       controllerAs: 'controller',
       restrict: 'E',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/setupDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/setup/setupDirective.html')
+    };
+  });
+  
+  app.directive('setupWorkflowIntegration', function() {
+    return {
+      controller: 'SetupController',
+      controllerAs: 'controller',
+      restrict: 'E',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/setup/setupWorkflowIntegrationDirective.html')
+    };
+  });
+  
+  app.directive('setupWorkflowApprovalMode', function() {
+    return {
+      controller: 'SetupController',
+      controllerAs: 'controller',
+      restrict: 'E',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/setup/setupWorkflowApprovalModeDirective.html')
+    };
+  });
+  
+  app.directive('setupAggregationTasks', function() {
+    return {
+      controller: 'SetupController',
+      controllerAs: 'controller',
+      restrict: 'E',
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/setup/setupAggregationTasksDirective.html')
     };
   });
   
@@ -55,7 +82,7 @@
     return {
       controller: 'EntitlementController',
       controllerAs: 'controller',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/generalConfigurationDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/entitlements/generalConfigurationDirective.html')
     };
   });
 
@@ -63,7 +90,7 @@
     return {
       controller: 'EntitlementController',
       controllerAs: 'controller',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/applicationGeneralConfigurationDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/entitlements/applicationGeneralConfigurationDirective.html')
     };
   });
 
@@ -71,7 +98,7 @@
     return {
       controller: 'EntitlementController',
       controllerAs: 'controller',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/entitlementConfigurationDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/entitlements/entitlementConfigurationDirective.html')
     };
   });
 
@@ -79,7 +106,7 @@
     return {
       controller: 'EntitlementController',
       controllerAs: 'controller',
-      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/definedApplicationsDirective.html')
+      templateUrl: PluginHelper.getPluginFileUrl('custom_governance_plugin', 'ui/partials/directives/entitlements/definedApplicationsDirective.html')
     };
   });
   

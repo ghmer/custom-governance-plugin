@@ -1,0 +1,24 @@
+<div id="CustomGovernancePluginSetupDiv" data-ng-hide="showErrorMessage">
+  <div id="CustomGovernancePluginSetupRestart" data-ng-show="setupInformation.integration">
+    <div class="alert alert-info">
+      It seems that the integration was already performed. If you want to start over, click on the button.<br />
+      <strong>This does not undo the existing integration, but rather resets this screen to enable the integration function again.</strong> 
+    </div>
+    <input class="btn btn-primary btn-block" type="submit" value="start over" data-ng-click="controller.revertSystemIntegrationStatus()" />
+  </div>
+  <div id="CustomGovernancePluginSetupInformation" data-ng-hide="setupInformation.integration">
+    <h4 class="font-thin">Setup Information</h4>
+    <setup-workflow-integration></setup-workflow-integration>
+    <setup-workflow-approval-mode></setup-workflow-approval-mode>
+    <setup-aggregation-tasks></setup-aggregation-tasks>
+    <hr class="nice-ruler" />
+    <label> 
+      <input type="checkbox" data-ng-model="setupInformation.userAgreement" />
+      <strong>&nbsp;I understand that clicking the button below will alter the System.</strong>
+      <strong>I made a backup of it or am otherwise prepared to restore its original state</strong>
+    </label>
+    <br />
+    <hr class="nice-ruler" />
+    <button type="button" class="btn btn-primary btn-block" value="perform System Integration" data-ng-click="controller.setupSystemIntegration()" data-ng-disabled="!setupInformation.userAgreement">apply changes</button> 
+  </div>
+</div>

@@ -256,9 +256,11 @@ public class CGPRestInterface extends BasePluginResource {
       result.put("newWorkflow", String.format("%s - Custom Governance", lcmAccessRequestWfName));
       result.put("attribute", APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME);
       result.put("rule", CUSTOM_GOVERNANCE_RULE_NAME);
+      result.put("setApprovalMode", true);
       result.put("integration", (isSystemIntegration.equalsIgnoreCase("true") ? true : false));     
       result.put("aggregationRule", GROUP_REFRESH_RULE_NAME);
       result.put("tasks", getGroupAggregationTasks(context));
+      result.put("setupTasks", true);
       
       response = Response.ok().entity(result).build();
     } catch (GeneralException e) {
@@ -344,23 +346,31 @@ public class CGPRestInterface extends BasePluginResource {
       Configuration configuration   = context.getConfiguration();
       
       Boolean performWorkflowIntegration = Util.getBoolean(setupInformation, "wfintegration");
+      Boolean performSetApprovalMode     = Util.getBoolean(setupInformation, "setApprovalMode");
+      Boolean performSetupTasks          = Util.getBoolean(setupInformation, "setupTasks");
+      
+      Workflow workflow     = context.getObject(Workflow.class, (String)setupInformation.get("workflow"));
       if(performWorkflowIntegration) {
-        log.debug("performing workflow integration");
-        Workflow workflow     = context.getObject(Workflow.class, (String)setupInformation.get("workflow"));
         Workflow newWorkflow  = (Workflow) workflow.deepCopy((XMLReferenceResolver)context);
         String newWfName      = String.valueOf(setupInformation.get("newWorkflow"));
         newWorkflow.setId(null);
         newWorkflow.setName(newWfName);
         setupWorkflow(context, newWorkflow, setupInformation);
         configuration.put(CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME, newWfName);
+      } else if(performSetApprovalMode) {
+        setupWorkflow(context, workflow, setupInformation);
       }
       
-      setupAggregationTasks(context, setupInformation);
+      if(performSetupTasks) {
+        setupAggregationTasks(context, setupInformation);
+      }
+      
       configuration.put(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME, "true");
       
       context.saveObject(configuration);
       context.commitTransaction();
       response = Response.ok().entity(true).build();
+
     } catch (GeneralException e) {
       response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
       try {
@@ -588,27 +598,34 @@ public class CGPRestInterface extends BasePluginResource {
 	  
 	  String ruleName      = (String) setupInformation.get("rule");
 	  String approvalMode  = (String) setupInformation.get("approvalMode");
-	  @SuppressWarnings("unchecked")
-    List<String> steps   = (List<String>) setupInformation.get("steps");
 	  
-	  workflow.getVariableDefinition("approvalMode").setInitializer(approvalMode);
+	  Boolean performWorkflowIntegration = Util.getBoolean(setupInformation, "wfintegration");
+    Boolean performSetApprovalMode     = Util.getBoolean(setupInformation, "setApprovalMode");
 	  
-	  for(String stepName : steps) {
-	    Step step = workflow.getStep(stepName);
-	    Boolean found = false;
-	    for(Arg argument : step.getArgs()) {
-        if(argument.getName().equals(APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME)) {
-          argument.setValue(ruleName);
-          found = true;
-          break;
+    if(performWorkflowIntegration) {
+      @SuppressWarnings("unchecked")
+      List<String> steps   = (List<String>) setupInformation.get("steps");
+      for(String stepName : steps) {
+        Step step = workflow.getStep(stepName);
+        Boolean found = false;
+        for(Arg argument : step.getArgs()) {
+          if(argument.getName().equals(APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME)) {
+            argument.setValue(ruleName);
+            found = true;
+            break;
+          }
         }
+        if(!found) {
+          Arg argument = new Arg();
+          step.getArgs().add(argument);
+        }     
       }
-	    if(!found) {
-        Arg argument = new Arg();
-        step.getArgs().add(argument);
-      }	    
-	  }
+    }
 	  
+	  if(performSetApprovalMode) {
+	    workflow.getVariableDefinition("approvalMode").setInitializer(approvalMode);
+	  }
+
 	  context.saveObject(workflow);
 	  
 	  if(log.isDebugEnabled()) {

@@ -1,0 +1,17 @@
+<div id="approvalModeDiv">
+  <label> 
+    <input type="checkbox" data-ng-model="setupInformation.setApprovalMode" />
+    <strong>Set Approval Mode</strong>
+  </label>
+  <div data-ng-show="setupInformation.setApprovalMode">
+    <p>
+      set the approval mode to:&nbsp; 
+      <select name="approvalModeSelect" id="approvalModeSelect" data-ng-model="setupInformation.approvalMode">
+        <option data-ng-repeat="mode in approvalModes" value="{{mode}}">{{mode}}</option>
+      </select>
+    </p>
+    <div class="alert alert-info">
+      {{modeInfo[setupInformation.approvalMode].description}}
+    </div>
+  </div>
+</div>

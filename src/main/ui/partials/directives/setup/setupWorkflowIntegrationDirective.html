@@ -1,0 +1,21 @@
+<div>
+  <label> 
+    <input type="checkbox" data-ng-model="setupInformation.wfintegration" />
+    <strong>Perform Workflow Integration</strong>
+  </label>
+  <div data-ng-show="setupInformation.wfintegration">
+    <p>
+      Based on the System Configuration, the workflow <strong>{{setupInformation.workflow}}</strong> is your current Access Request Workflow.<br />
+      The setup will create a copy with the name <strong>{{setupInformation.newWorkflow}}</strong> and modify the approval steps.
+    </p>
+    <p>
+      The following Steps will be altered:
+    </p>
+    <ul>
+      <li data-ng-repeat="step in setupInformation.steps">{{step}}</li>
+    </ul>
+    <p>
+      Each step will be modified to include the argument <strong>{{setupInformation.attribute}}</strong> with value <strong>{{setupInformation.rule}}</strong>
+    </p>
+  </div>
+</div>
