@@ -11,9 +11,8 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import de.whisperedshouts.identityiq.rest.CGPRestInterface;
 import sailpoint.api.SailPointContext;
-import sailpoint.object.Attributes;
-import sailpoint.object.Custom;
 import sailpoint.object.Filter;
 import sailpoint.object.Identity;
 import sailpoint.object.QueryOptions;
@@ -27,7 +26,6 @@ import sailpoint.tools.GeneralException;
 public class ConfigurationValidationUtil {
   
   private static final Logger log = Logger.getLogger(ConfigurationValidationUtil.class);
-  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
   
   public static Map<String, Object> validate(
       SailPointContext context, 
@@ -65,7 +63,7 @@ public class ConfigurationValidationUtil {
     Map<String, Object> infoMap   = new HashMap<>();
     List<String> approvalLevels   = new ArrayList<>();
     try {
-      approvalLevels   = getApprovalLevels(context);
+      approvalLevels   = CGPRestInterface.getApprovalLevels(context);
     } catch (GeneralException e) {
       log.error(e.getMessage());
     }
@@ -176,7 +174,7 @@ public class ConfigurationValidationUtil {
       log.error(message);
       errorMessages.add(message);
     } else {
-      int count = checkIdentity(context, errorMessages, defaultOwner);
+      int count = checkIdentityCount(context, errorMessages, defaultOwner);
       if(count != 1) {
         String message = String.format("GeneralConfiguration: Application %s has an invalid default owner %s",
             applicationName,
@@ -208,7 +206,7 @@ public class ConfigurationValidationUtil {
           log.error(message);
           errorMessages.add(message);
         } else {
-          int count = checkRule(context, errorMessages, afterRuleName);
+          int count = checkRuleCount(context, errorMessages, afterRuleName);
           
           if(count != 1) {
             String message = String.format("GeneralConfiguration: Application %s has an invalid run after aggregation rule %s",
@@ -320,7 +318,7 @@ public class ConfigurationValidationUtil {
                 log.error(message);
                 errorMessages.add(message);
               } else {
-                int count = checkRule(context, errorMessages, ownerSelectionRuleName);
+                int count = checkRuleCount(context, errorMessages, ownerSelectionRuleName);
                 if(count != 1) {
                   String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid selection rule %s",
                       applicationName,
@@ -341,7 +339,7 @@ public class ConfigurationValidationUtil {
                 log.error(message);
                 errorMessages.add(message);
               } else {
-                int count = checkIdentity(context, errorMessages, staticOwner);
+                int count = checkIdentityCount(context, errorMessages, staticOwner);
                 
                 if(count != 1) {
                   String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid static owner %s",
@@ -393,7 +391,7 @@ public class ConfigurationValidationUtil {
                   log.error(message);
                   errorMessages.add(message);
                 } else {
-                  int count = checkRule(context, errorMessages, selectionRuleName);
+                  int count = checkRuleCount(context, errorMessages, selectionRuleName);
                   
                   if(count != 1) {
                     String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid eligible selection rule %s",
@@ -522,7 +520,7 @@ public class ConfigurationValidationUtil {
         errorMessages.add(message);
       } else {
         String defaultOwner = String.valueOf(generalConfiguration.get("defaultOwner"));
-        int count = checkIdentity(context, errorMessages, defaultOwner);
+        int count = checkIdentityCount(context, errorMessages, defaultOwner);
         if(count != 1) {
           String message = "GeneralConfiguration: Invalid defaultOwner " + defaultOwner;
           log.error(message);
@@ -553,7 +551,7 @@ public class ConfigurationValidationUtil {
    * @return
    * @throws IllegalArgumentException
    */
-  private static int checkIdentity(SailPointContext context, List<String> errorMessages, String identityName)
+  private static int checkIdentityCount(SailPointContext context, List<String> errorMessages, String identityName)
       throws IllegalArgumentException {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(context = %s, errorMessages = %s, identityName = %s)", 
@@ -698,7 +696,7 @@ public class ConfigurationValidationUtil {
         String ruleName = approverLookup.getValue();
         
         approverList.add(approver);
-        int count = checkRule(context, errorMessages, ruleName);
+        int count = checkRuleCount(context, errorMessages, ruleName);
         
         if(count != 1) {
           String message = String.format("configuration contains rule %s for approver %s which seems to be invalid.",
@@ -707,7 +705,7 @@ public class ConfigurationValidationUtil {
           log.error(message);
           errorMessages.add(message);
         }
-        checkRule(context, errorMessages, ruleName);
+        checkRuleCount(context, errorMessages, ruleName);
       }
     }
 
@@ -727,7 +725,7 @@ public class ConfigurationValidationUtil {
    * @param ruleName
    * @throws IllegalArgumentException
    */
-  private static int checkRule(SailPointContext context, List<String> errorMessages, String ruleName)
+  private static int checkRuleCount(SailPointContext context, List<String> errorMessages, String ruleName)
       throws IllegalArgumentException {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(context = %s, errorMessages = %s, ruleName = %s)", 
@@ -763,29 +761,6 @@ public class ConfigurationValidationUtil {
       log.debug(String.format("LEAVING %s(return = %s)", "checkRule", objectCount));
     }
     return objectCount;
-  }
-
-  /**
-   * @param context
-   * @return
-   * @throws GeneralException
-   */
-  public static List<String> getApprovalLevels(SailPointContext context) throws GeneralException {
-    if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s)", "getApprovalLevels", context));
-    }
-    List<String> approvalLevels = new ArrayList<>();
-    Custom governanceModel  = context.getObject(Custom.class, CUSTOM_GOVERNANCE_CONFIG_NAME);
-    Attributes<String, Object> attributes = governanceModel.getAttributes();
-    @SuppressWarnings("unchecked")
-    Map<String, Object> approvalLevelsMap = (Map<String, Object>) attributes.get("approvalLevels");
-    
-    approvalLevels.addAll(approvalLevelsMap.keySet());
-    
-    if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "getApprovalLevels", approvalLevels));
-    }
-    return approvalLevels;
   }
 
 }

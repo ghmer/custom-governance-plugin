@@ -56,16 +56,74 @@ public class CGPRestInterface extends BasePluginResource {
   public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
   
   
-  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
-  private static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME = "governanceApprovalLevel";
   private static final String APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME = "approvalAssignmentRule";
   private static final String CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME = "workflowLCMAccessRequest";
   private static final String CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME = "customApprovalSystemIntegration";
-	private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME = "Requestable Entitlement Configuration";
+  private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME = "Requestable Entitlement Configuration";
+  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
 	private static final String CUSTOM_GOVERNANCE_RULE_NAME = "Custom Governance Model - Approval Assignment Rule";
-	private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
-  private static final Object GROUP_REFRESH_RULE_NAME = "Requestable Entitlements - Group Refresh Rule";
+	private static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME = "governanceApprovalLevel";
+	private static final Object GROUP_REFRESH_RULE_NAME = "Requestable Entitlements - Group Refresh Rule";
+  private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
   
+	/**
+	 * return the currently defined approval levels
+	 * @param context a SailPointContext
+	 * @return a List of Strings representing the approval Levels
+	 * @throws GeneralException upon issue
+	 */
+	public static List<String> getApprovalLevels(SailPointContext context) throws GeneralException {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s)", "getApprovalLevels", context));
+    }
+    List<String> approvalLevels = new ArrayList<>();
+    Custom governanceModel  = context.getObject(Custom.class, CUSTOM_GOVERNANCE_CONFIG_NAME);
+    Attributes<String, Object> attributes = governanceModel.getAttributes();
+    @SuppressWarnings("unchecked")
+    Map<String, Object> approvalLevelsMap = (Map<String, Object>) attributes.get("approvalLevels");
+    
+    approvalLevels.addAll(approvalLevelsMap.keySet());
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "getApprovalLevels", approvalLevels));
+    }
+    return approvalLevels;
+  }
+	
+	/**
+	 * return a List of rule names
+	 * @param context a context to use
+	 * @param type type of rules to query for. all will fetch all rules
+	 * @return a list of Strings
+	 * @throws GeneralException upon issue
+	 */
+	public static List<String> getRuleNames(SailPointContext context, String type) throws GeneralException {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s, type = %s)", "getRuleNames", context, type));
+    }
+    List<String> ruleNames = new ArrayList<>();
+    QueryOptions qo = new QueryOptions();
+    if(!type.equalsIgnoreCase("all")) {
+      log.debug("Adding filter with value " + type);
+      qo.addFilter(Filter.eq("type", type));
+    }
+    Iterator<Object[]> iterator = context.search(Rule.class, qo, "name");
+    while(iterator.hasNext()) {
+      Object[] ruleInfo = iterator.next();
+      log.debug("adding Rule " + String.valueOf(ruleInfo[0]));
+      ruleNames.add(String.valueOf(ruleInfo[0]));
+    }
+    
+    Util.flushIterator(iterator);
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "getRuleNames", ruleNames));
+    }
+    return ruleNames;
+  }
+	
+	
+	
 	/**
 	 * return an array of application names
 	 * @return a Response object encapsulating the json object
@@ -112,7 +170,7 @@ public class CGPRestInterface extends BasePluginResource {
     SailPointContext context = getContext();
     Response response        = null;
     try {
-      List<String> approvalLevels = ConfigurationValidationUtil.getApprovalLevels(context);
+      List<String> approvalLevels = getApprovalLevels(context);
       
       response = Response.ok().entity(approvalLevels).build();
     } catch (GeneralException e) {
@@ -124,8 +182,6 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return response;
   }
-	
-	
 	
 	/**
 	 * returns the entitlement configuration as a json object
@@ -183,15 +239,15 @@ public class CGPRestInterface extends BasePluginResource {
     return response;
   }
 	
-	/* (non-Javadoc)
+  /* (non-Javadoc)
 	 * @see sailpoint.rest.plugin.BasePluginResource#getPluginName()
 	 */
 	@Override
 	public String getPluginName() {
 		return "custom_governance_plugin";
 	}
-	
-	/**
+  
+  /**
 	 * return an array of rule names, matching the given type
 	 * @param type the rule type to query for. all acts as a special handler, returning all rules
 	 * @return a Response object encapsulating the json object
@@ -206,20 +262,7 @@ public class CGPRestInterface extends BasePluginResource {
     SailPointContext context = getContext();
     Response response        = null;
     try {
-      List<String> ruleNames = new ArrayList<>();
-      QueryOptions qo = new QueryOptions();
-      if(!type.equalsIgnoreCase("all")) {
-        log.debug("Adding filter with value " + type);
-        qo.addFilter(Filter.eq("type", type));
-      }
-      Iterator<Object[]> iterator = context.search(Rule.class, qo, "name");
-      while(iterator.hasNext()) {
-        Object[] ruleInfo = iterator.next();
-        log.debug("adding Rule " + String.valueOf(ruleInfo[0]));
-        ruleNames.add(String.valueOf(ruleInfo[0]));
-      }
-      
-      Util.flushIterator(iterator);
+      List<String> ruleNames = getRuleNames(context, type);
       response = Response.ok().entity(ruleNames).build();
     } catch (GeneralException e) {
       response = Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
@@ -272,34 +315,6 @@ public class CGPRestInterface extends BasePluginResource {
   }
 	
 	/**
-	 * returns the names of defined group aggregation tasks
-	 * @param context a SailPointContext to retrieve the tasks
-	 * @return a List of group aggregation task names
-	 * @throws GeneralException when there was an isssue retrieving the tasks
-	 */
-	private List<String> getGroupAggregationTasks(SailPointContext context) throws GeneralException {
-	  if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s)", "getGroupAggregationTasks", context));
-    }
-    List<String> result   = new ArrayList<>();
-    QueryOptions options  = new QueryOptions();
-    
-    options.addFilter(Filter.eq("type", "AccountGroupAggregation"));
-    options.addFilter(Filter.eq("template", false));
-
-    Iterator<Object[]> iterator = context.search(TaskDefinition.class, options, "name");
-    while(iterator.hasNext()) {
-      Object[] taskObject = iterator.next();
-      result.add(String.valueOf(taskObject[0]));
-    }
-    
-    if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "getGroupAggregationTasks", result));
-    }
-    return result;
-  }
-
-  /**
 	 * returns whether or not the given user has the SystemAdministator capability
 	 * @return a Response object encapsulating the json object
 	 */
@@ -325,8 +340,8 @@ public class CGPRestInterface extends BasePluginResource {
 		}
 		return response;
 	}
-	
-	/**
+
+  /**
 	 * executes the given tasks
 	 * @param setupInformation Map containing information on how to setup the system
 	 * @return a Response object encapsulating the json object
@@ -384,28 +399,7 @@ public class CGPRestInterface extends BasePluginResource {
     return response;
   }
 	
-	@SuppressWarnings("unchecked")
-  private void setupAggregationTasks(SailPointContext context, Map<String, Object> setupInformation) throws GeneralException {
-	  if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, setupInformation = %s)", "setupAggregationTasks", context, setupInformation));
-    }
-	  
-	  String ruleName        = String.valueOf(setupInformation.get("aggregationRule"));
-	  List<String> taskNames = (List<String>) setupInformation.get("tasks");
-	  
-	  for(String taskName : taskNames) {
-	    TaskDefinition task = context.getObject(TaskDefinition.class, taskName);
-	    task.setArgument("accountGroupRefreshRule", ruleName);
-	    
-	    context.saveObject(task);
-	  }
-	  
-	  if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "setupAggregationTasks", "null"));
-    }
-  }
-
-  /**
+	/**
 	 * resets the integration status, so that the system integration screen can be displayed again
 	 * @return a Response object encapsulating the json object
 	 */
@@ -433,8 +427,8 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return response;
   }
-
-  /**
+	
+	/**
 	 * updates the Custom object using the supplied map
 	 * @param entitlementConfiguration the entitlement configuration to be saved
 	 * @return a Response object encapsulating the json object
@@ -467,29 +461,6 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return response;
   }
-	
-	@POST
-  @Path("entitlementConfiguration/validate")
-  public Response validateEntitlementConfiguration(Map<String, Object> governanceModelJson) {
-    if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "validateEntitlementConfiguration", governanceModelJson));
-    }
-    
-    SailPointContext context = getContext();
-    Response response        = null;
-    try {
-      Map<String, Object> result = ConfigurationValidationUtil.validate(context, governanceModelJson, "entitlement");
-      
-      response = Response.ok().entity(result).build();
-    } catch (GeneralException e) {
-      response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-    }
-    
-    if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "validateEntitlementConfiguration", response));
-    }
-    return response;
-  }
 
   /**
 	 * updates the Custom object with the given Map
@@ -519,6 +490,29 @@ public class CGPRestInterface extends BasePluginResource {
     
     if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "saveGovernanceModel", response));
+    }
+    return response;
+  }
+
+  @POST
+  @Path("entitlementConfiguration/validate")
+  public Response validateEntitlementConfiguration(Map<String, Object> governanceModelJson) {
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "validateEntitlementConfiguration", governanceModelJson));
+    }
+    
+    SailPointContext context = getContext();
+    Response response        = null;
+    try {
+      Map<String, Object> result = ConfigurationValidationUtil.validate(context, governanceModelJson, "entitlement");
+      
+      response = Response.ok().entity(result).build();
+    } catch (GeneralException e) {
+      response = Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "validateEntitlementConfiguration", response));
     }
     return response;
   }
@@ -570,6 +564,34 @@ public class CGPRestInterface extends BasePluginResource {
   }
 	
 	/**
+	 * returns the names of defined group aggregation tasks
+	 * @param context a SailPointContext to retrieve the tasks
+	 * @return a List of group aggregation task names
+	 * @throws GeneralException when there was an isssue retrieving the tasks
+	 */
+	private List<String> getGroupAggregationTasks(SailPointContext context) throws GeneralException {
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s)", "getGroupAggregationTasks", context));
+    }
+    List<String> result   = new ArrayList<>();
+    QueryOptions options  = new QueryOptions();
+    
+    options.addFilter(Filter.eq("type", "AccountGroupAggregation"));
+    options.addFilter(Filter.eq("template", false));
+
+    Iterator<Object[]> iterator = context.search(TaskDefinition.class, options, "name");
+    while(iterator.hasNext()) {
+      Object[] taskObject = iterator.next();
+      result.add(String.valueOf(taskObject[0]));
+    }
+    
+    if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "getGroupAggregationTasks", result));
+    }
+    return result;
+  }
+
+  /**
    * collects information from the given workflow that can be used later for setup purposes
    * @param workflow the workflow to check
    * @return a Map containing information about the given workflow
@@ -626,6 +648,27 @@ public class CGPRestInterface extends BasePluginResource {
     }
     
     return result;
+  }
+	
+	@SuppressWarnings("unchecked")
+  private void setupAggregationTasks(SailPointContext context, Map<String, Object> setupInformation) throws GeneralException {
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("ENTERING %s(context = %s, setupInformation = %s)", "setupAggregationTasks", context, setupInformation));
+    }
+	  
+	  String ruleName        = String.valueOf(setupInformation.get("aggregationRule"));
+	  List<String> taskNames = (List<String>) setupInformation.get("tasks");
+	  
+	  for(String taskName : taskNames) {
+	    TaskDefinition task = context.getObject(TaskDefinition.class, taskName);
+	    task.setArgument("accountGroupRefreshRule", ruleName);
+	    
+	    context.saveObject(task);
+	  }
+	  
+	  if(log.isDebugEnabled()) {
+      log.debug(String.format("LEAVING %s(return = %s)", "setupAggregationTasks", "null"));
+    }
   }
 	
 	/**
