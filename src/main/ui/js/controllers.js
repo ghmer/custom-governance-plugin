@@ -175,7 +175,6 @@
           if(info.isValid === true) {
             GovernancePluginService.saveGovernanceModel($scope.configObject).then(function(result) {
               // success getting the setup information
-              $scope.toggleIndicators.showApplyChangesButton = false;
               $scope.toggleIndicators.showApprovalLevels     = false;
               $scope.toggleIndicators.showApprovalRules      = false;
               controller.toggleShowSuccessMessage("Model successfully saved");
@@ -200,17 +199,14 @@
         controller.getGovernanceModel();
         $scope.toggleIndicators.showApprovalLevels     = false;
         $scope.toggleIndicators.showApprovalRules      = false;
-        $scope.toggleIndicators.showApplyChangesButton = false;
         controller.toggleShowSuccessMessage("Model successfully reverted");
       };
 
       controller.deleteApproverLookup = function(approver) {
-        $scope.toggleIndicators.showApplyChangesButton = true;
         delete $scope.configObject.approverLookupRules[approver];
       };
 
       controller.deleteApprovalLevel = function(approvalLevel) {
-        $scope.toggleIndicators.showApplyChangesButton = true;
         delete $scope.configObject.approvalLevels[approvalLevel];
         $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
           return key;
@@ -240,8 +236,6 @@
           };
         }
 
-        $scope.toggleIndicators.showApplyChangesButton = true;
-
         $scope.approvalLevelArray = Object.keys($scope.configObject.approvalLevels).map(function(key) {
           return key;
         });
@@ -260,8 +254,6 @@
           delete $scope.configObject.approverLookupRules[originalName];
           $scope.configObject.approverLookupRules[approverName] = ruleName;
         }
-
-        $scope.toggleIndicators.showApplyChangesButton = true;
       });
 
       this.$onInit = function () {
