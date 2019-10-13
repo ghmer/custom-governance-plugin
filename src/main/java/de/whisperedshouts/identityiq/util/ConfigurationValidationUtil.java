@@ -27,6 +27,13 @@ public class ConfigurationValidationUtil {
   
   private static final Logger log = Logger.getLogger(ConfigurationValidationUtil.class);
   
+  /**
+   * @param context a SailPointContext
+   * @param configuration a Map containing the configuration parameters
+   * @param configType the Config Type to be checked. May be approvallevel or entitlement
+   * @return a Map containing information about the validated object
+   * @throws GeneralException in case of an issue
+   */
   public static Map<String, Object> validate(
       SailPointContext context, 
       Map<String, Object> configuration, 
@@ -52,8 +59,16 @@ public class ConfigurationValidationUtil {
     return result;
   }
 
+  /**
+   * @param context a SailPointContext
+   * @param configuration a Map containing the configuration parameters
+   * @return a Map containing information about the validated object
+   */
   @SuppressWarnings("unchecked")
-  private static Map<String, Object> validateEntitlementConfiguration(SailPointContext context, Map<String, Object> configuration) {
+  private static Map<String, Object> validateEntitlementConfiguration(
+      SailPointContext context, 
+      Map<String, Object> configuration) 
+  {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(context = %s, configuration = %s)", 
           "validateEntitlementConfiguration", 
@@ -79,9 +94,19 @@ public class ConfigurationValidationUtil {
     return infoMap;
   }
 
+  /**
+   * @param context a SailPointContext
+   * @param configuration a Map containing the configuration parameters
+   * @param approvalLevels a list of valid approval levels
+   * @param infoMap a Map containing information about the validated object
+   */
   @SuppressWarnings("unchecked")
-  private static void validateEntitlementConfigurationApplicationSection(SailPointContext context, Map<String, Object> configuration,
-      List<String> approvalLevels, Map<String, Object> infoMap) {
+  private static void validateEntitlementConfigurationApplicationSection(
+      SailPointContext context, 
+      Map<String, Object> configuration,
+      List<String> approvalLevels, 
+      Map<String, Object> infoMap) 
+  {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(context = %s, configuration = %s, approvalLevels %s, infoMap = %s)", 
           "validateEntitlementGeneralSection", 
@@ -129,19 +154,29 @@ public class ConfigurationValidationUtil {
   }
 
   /**
-   * @param context
-   * @param approvalLevels
-   * @param errorMessages
-   * @param applicationName
-   * @param definition
-   * @throws IllegalArgumentException
+   * @param context a SailPointContext
+   * @param approvalLevels a list of valid approval levels
+   * @param errorMessages a list of encountered errors
+   * @param applicationName the application name being checked
+   * @param definition the definition of this applications entitlement configuration
+   * @throws IllegalArgumentException if there was an issue
    */
   @SuppressWarnings("unchecked")
-  private static void validateApplicationGeneralConfig(SailPointContext context, List<String> approvalLevels,
-      List<String> errorMessages, String applicationName, Map<String, Object> definition)
-      throws IllegalArgumentException {
+  private static void validateApplicationGeneralConfig(
+      SailPointContext context, 
+      List<String> approvalLevels,
+      List<String> errorMessages, 
+      String applicationName, 
+      Map<String, Object> definition)
+      throws IllegalArgumentException 
+  {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, approvalLevels %s, errorMessages %s, applicationName %s, definition = %s)", 
+      log.debug(String.format(
+          "ENTERING %s(context = %s, "
+          + "approvalLevels %s, "
+          + "errorMessages %s, "
+          + "applicationName %s, "
+          + "definition = %s)", 
           "validateApplicationGeneralConfig", 
           context,
           approvalLevels,
@@ -153,13 +188,15 @@ public class ConfigurationValidationUtil {
     
     String defaultApprovalLevel = String.valueOf(generalConfiguration.get("defaultApprovalLevel"));
     if(defaultApprovalLevel == null || defaultApprovalLevel.isEmpty()) {
-      String message = String.format("GeneralConfiguration: Application %s has empty default approval Level",
+      String message = String.format(
+          "GeneralConfiguration: Application %s has empty default approval Level",
           applicationName);
       log.error(message);
       errorMessages.add(message);
     } else {
       if(!(approvalLevels.contains(defaultApprovalLevel))) {
-        String message = String.format("GeneralConfiguration: Application %s has an invalid default approval level %s",
+        String message = String.format(
+            "GeneralConfiguration: Application %s has an invalid default approval level %s",
             applicationName,
             defaultApprovalLevel);
         log.error(message);
@@ -169,14 +206,16 @@ public class ConfigurationValidationUtil {
     
     String defaultOwner = String.valueOf(generalConfiguration.get("defaultOwner"));
     if(defaultOwner == null || defaultOwner.isEmpty()) {
-      String message = String.format("GeneralConfiguration: Application %s has empty default owner",
+      String message = String.format(
+          "GeneralConfiguration: Application %s has empty default owner",
           applicationName);
       log.error(message);
       errorMessages.add(message);
     } else {
       int count = checkIdentityCount(context, errorMessages, defaultOwner);
       if(count != 1) {
-        String message = String.format("GeneralConfiguration: Application %s has an invalid default owner %s",
+        String message = String.format(
+            "GeneralConfiguration: Application %s has an invalid default owner %s",
             applicationName,
             defaultOwner);
         log.error(message);
@@ -185,14 +224,16 @@ public class ConfigurationValidationUtil {
     }
     
     if(!(generalConfiguration.containsKey("isRequestable"))) {
-      String message = String.format("GeneralConfiguration: Application %s has no selection for is requestable",
+      String message = String.format(
+          "GeneralConfiguration: Application %s has no selection for is requestable",
           applicationName);
       log.error(message);
       errorMessages.add(message); 
     }
     
     if(!(generalConfiguration.containsKey("runAfterRule"))) {
-      String message = String.format("GeneralConfiguration: Application %s has no selection for run after aggregation rule",
+      String message = String.format(
+          "GeneralConfiguration: Application %s has no selection for run after aggregation rule",
           applicationName);
       log.error(message);
       errorMessages.add(message);
@@ -201,7 +242,8 @@ public class ConfigurationValidationUtil {
       if(runAfterRule) {
         String afterRuleName = String.valueOf(generalConfiguration.get("afterRuleName"));
         if(afterRuleName == null || afterRuleName.isEmpty()) {
-          String message = String.format("GeneralConfiguration: Application %s has an empty run after rule",
+          String message = String.format(
+              "GeneralConfiguration: Application %s has an empty run after rule",
               applicationName);
           log.error(message);
           errorMessages.add(message);
@@ -209,7 +251,8 @@ public class ConfigurationValidationUtil {
           int count = checkRuleCount(context, errorMessages, afterRuleName);
           
           if(count != 1) {
-            String message = String.format("GeneralConfiguration: Application %s has an invalid run after aggregation rule %s",
+            String message = String.format(
+                "GeneralConfiguration: Application %s has an invalid run after aggregation rule %s",
                 applicationName,
                 afterRuleName);
             log.error(message);
@@ -225,12 +268,12 @@ public class ConfigurationValidationUtil {
   }
 
   /**
-   * @param context
-   * @param approvalLevels
-   * @param errorMessages
-   * @param applicationName
-   * @param definition
-   * @throws IllegalArgumentException
+   * @param context a SailPointContext
+   * @param approvalLevels a list of valid approval levels
+   * @param errorMessages a list of encountered errors
+   * @param applicationName the name of the application being checked
+   * @param definition the application's entitlement configuration
+   * @throws IllegalArgumentException if there was an issue
    */
   @SuppressWarnings("unchecked")
   private static void validateApplicationEntitlementConfig(
@@ -242,7 +285,13 @@ public class ConfigurationValidationUtil {
       throws IllegalArgumentException 
   {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, approvalLevels = %s, errorMessages = %s, applicationName = %s, definition = %s)", 
+      log.debug(String.format(
+          "ENTERING %s("
+          + "context = %s, "
+          + "approvalLevels = %s, "
+          + "errorMessages = %s, "
+          + "applicationName = %s, "
+          + "definition = %s)", 
           "validateApplicationEntitlementConfig", 
           context,
           approvalLevels,
@@ -256,14 +305,16 @@ public class ConfigurationValidationUtil {
       for(Map<String, Object> entitlementDefinition : entitlementConfiguration) {
         String descriptor = String.valueOf(entitlementDefinition.get("descriptor"));
         if(descriptor == null || descriptor.isEmpty()) {
-          String message = String.format("EntitlementConfiguration: Application %s has a definition with an empty name/descriptor",
+          String message = String.format(
+              "EntitlementConfiguration: Application %s has a definition with an empty name/descriptor",
               applicationName);
           log.error(message);
           errorMessages.add(message);
         }
         
         if(!(entitlementDefinition.containsKey("isRequestable"))) {
-          String message = String.format("EntitlementConfiguration: Application %s has definition %s with no selection for is requestable",
+          String message = String.format(
+              "EntitlementConfiguration: Application %s has definition %s with no selection for is requestable",
               applicationName,
               descriptor);
           log.error(message);
@@ -272,14 +323,16 @@ public class ConfigurationValidationUtil {
         
         String governanceLevel = String.valueOf(entitlementDefinition.get("governanceLevel"));
         if(governanceLevel == null || governanceLevel.isEmpty()) {
-          String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty approval level",
+          String message = String.format(
+              "EntitlementConfiguration: Application %s has definition %s with an empty approval level",
               applicationName,
               descriptor);
           log.error(message);
           errorMessages.add(message);
         } else {
           if(!(approvalLevels.contains(governanceLevel))) {
-            String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid approval level %s",
+            String message = String.format(
+                "EntitlementConfiguration: Application %s has definition %s with an invalid approval level %s",
                 applicationName,
                 descriptor,
                 governanceLevel);
@@ -290,7 +343,8 @@ public class ConfigurationValidationUtil {
        
         String ownerSelectionType = String.valueOf(entitlementDefinition.get("ownerSelectionType"));
         if(ownerSelectionType == null || ownerSelectionType.isEmpty()) {
-          String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty owner selection type",
+          String message = String.format(
+              "EntitlementConfiguration: Application %s has definition %s with an empty owner selection type",
               applicationName,
               descriptor);
           log.error(message);
@@ -300,7 +354,8 @@ public class ConfigurationValidationUtil {
           ownerSelectionTypes.add("rule");
           ownerSelectionTypes.add("static");
           if(!(ownerSelectionTypes.contains(ownerSelectionType))) {
-            String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid owner selection type %s",
+            String message = String.format(
+                "EntitlementConfiguration: Application %s has definition %s with an invalid owner selection type %s",
                 applicationName,
                 descriptor,
                 ownerSelectionType);
@@ -312,7 +367,8 @@ public class ConfigurationValidationUtil {
             case "rule"   : {
               String ownerSelectionRuleName = String.valueOf(entitlementDefinition.get("ownerSelectionRuleName"));
               if(ownerSelectionRuleName == null || ownerSelectionRuleName.isEmpty()) {
-                String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty owner selection rule",
+                String message = String.format(
+                    "EntitlementConfiguration: Application %s has definition %s with an empty owner selection rule",
                     applicationName,
                     descriptor);
                 log.error(message);
@@ -320,7 +376,8 @@ public class ConfigurationValidationUtil {
               } else {
                 int count = checkRuleCount(context, errorMessages, ownerSelectionRuleName);
                 if(count != 1) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid selection rule %s",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an invalid selection rule %s",
                       applicationName,
                       descriptor,
                       ownerSelectionRuleName);
@@ -333,7 +390,8 @@ public class ConfigurationValidationUtil {
             case "static" : {
               String staticOwner = String.valueOf(entitlementDefinition.get("staticOwner"));
               if(staticOwner == null || staticOwner.isEmpty()) {
-                String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty static owner",
+                String message = String.format(
+                    "EntitlementConfiguration: Application %s has definition %s with an empty static owner",
                     applicationName,
                     descriptor);
                 log.error(message);
@@ -342,7 +400,8 @@ public class ConfigurationValidationUtil {
                 int count = checkIdentityCount(context, errorMessages, staticOwner);
                 
                 if(count != 1) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid static owner %s",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an invalid static owner %s",
                       applicationName,
                       descriptor,
                       staticOwner);
@@ -357,7 +416,8 @@ public class ConfigurationValidationUtil {
         
         String selectionType = String.valueOf(entitlementDefinition.get("selectionType"));
         if(selectionType == null || selectionType.isEmpty()) {
-          String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty eligible selection type",
+          String message = String.format(
+              "EntitlementConfiguration: Application %s has definition %s with an empty eligible selection type",
               applicationName,
               descriptor);
           log.error(message);
@@ -367,7 +427,8 @@ public class ConfigurationValidationUtil {
           selectionTypes.add("rule");
           selectionTypes.add("regex");
           if(!(selectionTypes.contains(selectionType))) {
-            String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid eligible selection type %s",
+            String message = String.format(
+                "EntitlementConfiguration: Application %s has definition %s with an invalid eligible selection type %s",
                 applicationName,
                 descriptor,
                 selectionType);
@@ -377,7 +438,8 @@ public class ConfigurationValidationUtil {
             switch(selectionType) {
               case "rule"   : {
                 if(!(entitlementDefinition.containsKey("selectionRuleName"))) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty eligible selection rule",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an empty eligible selection rule",
                       applicationName,
                       descriptor);
                   log.error(message);
@@ -385,7 +447,8 @@ public class ConfigurationValidationUtil {
                 }
                 String selectionRuleName = String.valueOf(entitlementDefinition.get("selectionRuleName"));
                 if(selectionRuleName == null || selectionRuleName.isEmpty()) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty eligible selection rule",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an empty eligible selection rule",
                       applicationName,
                       descriptor);
                   log.error(message);
@@ -394,7 +457,8 @@ public class ConfigurationValidationUtil {
                   int count = checkRuleCount(context, errorMessages, selectionRuleName);
                   
                   if(count != 1) {
-                    String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid eligible selection rule %s",
+                    String message = String.format(
+                        "EntitlementConfiguration: Application %s has definition %s with an invalid eligible selection rule %s",
                         applicationName,
                         descriptor,
                         selectionRuleName);
@@ -406,7 +470,8 @@ public class ConfigurationValidationUtil {
               }
               case "regex" : {
                 if(!(entitlementDefinition.containsKey("selectionRegexAttribute"))) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex attribute",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex attribute",
                       applicationName,
                       descriptor);
                   log.error(message);
@@ -414,7 +479,8 @@ public class ConfigurationValidationUtil {
                 }
                 String selectionRegexAttribute = String.valueOf(entitlementDefinition.get("selectionRegexAttribute"));
                 if(selectionRegexAttribute == null || selectionRegexAttribute.isEmpty()) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex attribute %s",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex attribute %s",
                       applicationName,
                       descriptor,
                       selectionRegexAttribute);
@@ -423,7 +489,8 @@ public class ConfigurationValidationUtil {
                 }
                 
                 if(!(entitlementDefinition.containsKey("selectionRegexValue"))) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex value",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex value",
                       applicationName,
                       descriptor);
                   log.error(message);
@@ -431,7 +498,8 @@ public class ConfigurationValidationUtil {
                 }
                 String selectionRegexValue = String.valueOf(entitlementDefinition.get("selectionRegexValue"));
                 if(selectionRegexValue == null || selectionRegexValue.isEmpty()) {
-                  String message = String.format("EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex value %s",
+                  String message = String.format(
+                      "EntitlementConfiguration: Application %s has definition %s with an empty eligible selection regex value %s",
                       applicationName,
                       descriptor,
                       selectionRegexValue);
@@ -442,7 +510,8 @@ public class ConfigurationValidationUtil {
                     @SuppressWarnings("unused")
                     Pattern pattern = Pattern.compile(selectionRegexValue);
                   } catch(Exception e) {
-                    String message = String.format("EntitlementConfiguration: Application %s has definition %s with an invalid regex %s. Error: %s",
+                    String message = String.format(
+                        "EntitlementConfiguration: Application %s has definition %s with an invalid regex %s. Error: %s",
                         applicationName,
                         descriptor,
                         selectionRegexValue,
@@ -465,11 +534,26 @@ public class ConfigurationValidationUtil {
     }
   }
 
+  /**
+   * @param context a SailPointContext
+   * @param configuration a Map containing the configuration parameters
+   * @param approvalLevels a list of valid approval levels
+   * @param infoMap a map containing information about the object being checked
+   */
   @SuppressWarnings("unchecked")
-  private static void validateEntitlementConfigurationGeneralSection(SailPointContext context, Map<String, Object> configuration,
-      List<String> approvalLevels, Map<String, Object> infoMap) {
+  private static void validateEntitlementConfigurationGeneralSection(
+      SailPointContext context, 
+      Map<String, Object> configuration,
+      List<String> approvalLevels, 
+      Map<String, Object> infoMap) 
+  {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, configuration = %s, approvalLevels %s, infoMap = %s)", 
+      log.debug(String.format(
+          "ENTERING %s("
+          + "context = %s, "
+          + "configuration = %s, "
+          + "approvalLevels %s, "
+          + "infoMap = %s)", 
           "validateEntitlementGeneralSection", 
           context,
           configuration,
@@ -545,20 +629,22 @@ public class ConfigurationValidationUtil {
   }
 
   /**
-   * @param context
-   * @param errorMessages
-   * @param defaultOwner
-   * @return
-   * @throws IllegalArgumentException
+   * @param context a SailPointContext
+   * @param errorMessages a list of encountered errors
+   * @param identityName the name of the identity being checked
+   * @return the number of identities found in the system matching the identityName
+   * @throws IllegalArgumentException if there was an issue
    */
-  private static int checkIdentityCount(SailPointContext context, List<String> errorMessages, String identityName)
-      throws IllegalArgumentException {
+  private static int checkIdentityCount(
+      SailPointContext context, 
+      List<String> errorMessages, 
+      String identityName)
+      throws IllegalArgumentException 
+  {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, errorMessages = %s, identityName = %s)", 
-          "checkIdentity", 
-          context,
-          errorMessages,
-          identityName));
+      log.debug(String.format(
+          "ENTERING %s(context = %s, errorMessages = %s, identityName = %s)", 
+          "checkIdentity", context, errorMessages, identityName));
     }
     QueryOptions queryOptions = new QueryOptions();
     queryOptions.addFilter(Filter.eq("name", identityName));
@@ -567,7 +653,10 @@ public class ConfigurationValidationUtil {
     try {
       count = context.countObjects(Identity.class, queryOptions);
     } catch (GeneralException e) {
-      String message = String.format("General Error: error while getting identity %s: %s", identityName, e.getMessage());
+      String message = String.format(
+          "General Error: error while getting identity %s: %s", 
+          identityName, 
+          e.getMessage());
       log.error(message);
       errorMessages.add(message);
     }
@@ -578,8 +667,16 @@ public class ConfigurationValidationUtil {
     return count;
   }
 
+  /**
+   * @param context a SailPointContext
+   * @param configuration a Map containing the configuration parameters
+   * @return a Map containing information about the object being checked
+   */
   @SuppressWarnings("unchecked")
-  private static Map<String, Object> validateGovernanceConfiguration(SailPointContext context, Map<String, Object> configuration) {
+  private static Map<String, Object> validateGovernanceConfiguration(
+      SailPointContext context, 
+      Map<String, Object> configuration) 
+  {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s(context = %s, configuration = %s)", 
           "validateGovernanceConfiguration", 
@@ -600,6 +697,11 @@ public class ConfigurationValidationUtil {
     return infoMap;
   }
 
+  /**
+   * @param context a SailPointContext
+   * @param configuration a Map containing the configuration parameters
+   * @param infoMap a Map containing information about the object being checked
+   */
   @SuppressWarnings("unchecked")
   private static void validateGovernanceConfigurationApprovalLevels(
       SailPointContext context, 
@@ -660,11 +762,10 @@ public class ConfigurationValidationUtil {
   }
 
   /**
-   * @param context
-   * @param configuration
-   * @param infoMap 
-   * @return
-   * @throws IllegalArgumentException
+   * @param context a SailPointContext
+   * @param configuration a Map containing the configuration parameters
+   * @param infoMap a Map containing information about the object being checked
+   * @throws IllegalArgumentException if there was an issue
    */
   @SuppressWarnings("unchecked")
   private static void validateGovernanceConfigurationApproverLookups(
@@ -719,10 +820,10 @@ public class ConfigurationValidationUtil {
   }
 
   /**
-   * @param context
-   * @param errorMessages
-   * @param approver
-   * @param ruleName
+   * @param context a SailPointContext
+   * @param errorMessages a list of encountered errors
+   * @param ruleName the name of the rule being checked
+   * @return the number of rules matching that name
    * @throws IllegalArgumentException
    */
   private static int checkRuleCount(SailPointContext context, List<String> errorMessages, String ruleName)

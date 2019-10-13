@@ -54,18 +54,17 @@ import sailpoint.tools.xml.XMLReferenceResolver;
 @RequiredRight(value = CGPRestInterface.SPRIGHT_PLUGIN_ACCESS)
 public class CGPRestInterface extends BasePluginResource {
   public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
-  
-  
-  private static final String APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME = "approvalAssignmentRule";
+
+  private static final String APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME          = "approvalAssignmentRule";
   private static final String CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME = "workflowLCMAccessRequest";
   private static final String CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME = "customApprovalSystemIntegration";
-  private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME = "Requestable Entitlement Configuration";
-  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME = "Custom Governance Model";
-	private static final String CUSTOM_GOVERNANCE_RULE_NAME = "Custom Governance Model - Approval Assignment Rule";
-	private static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME = "governanceApprovalLevel";
-	private static final Object GROUP_REFRESH_RULE_NAME = "Requestable Entitlements - Group Refresh Rule";
-  private static final Logger log	= Logger.getLogger(CGPRestInterface.class);
-  
+  private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME           = "Requestable Entitlement Configuration";
+  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME                   = "Custom Governance Model";
+	private static final String CUSTOM_GOVERNANCE_RULE_NAME                     = "Custom Governance Model - Approval Assignment Rule";
+	private static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME                = "governanceApprovalLevel";
+	private static final String GROUP_REFRESH_RULE_NAME                         = "Requestable Entitlements - Group Refresh Rule";
+  private static final Logger log	                                            = Logger.getLogger(CGPRestInterface.class);
+
 	/**
 	 * return the currently defined approval levels
 	 * @param context a SailPointContext
@@ -89,7 +88,7 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return approvalLevels;
   }
-	
+
 	/**
 	 * return a List of rule names
 	 * @param context a context to use
@@ -97,9 +96,15 @@ public class CGPRestInterface extends BasePluginResource {
 	 * @return a list of Strings
 	 * @throws GeneralException upon issue
 	 */
-	public static List<String> getRuleNames(SailPointContext context, String type) throws GeneralException {
+	public static List<String> getRuleNames(
+	    SailPointContext context, 
+	    String type) throws GeneralException 
+	{
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, type = %s)", "getRuleNames", context, type));
+      log.debug(String.format("ENTERING %s(context = %s, type = %s)", 
+          "getRuleNames", 
+          context, 
+          type));
     }
     List<String> ruleNames = new ArrayList<>();
     QueryOptions qo = new QueryOptions();
@@ -121,9 +126,7 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return ruleNames;
   }
-	
-	
-	
+
 	/**
 	 * return an array of application names
 	 * @return a Response object encapsulating the json object
@@ -134,7 +137,7 @@ public class CGPRestInterface extends BasePluginResource {
     if(log.isDebugEnabled()) {
       log.debug(String.format("ENTERING %s()", "getApplicationNames"));
     }
-    
+
     SailPointContext context = getContext();
     Response response        = null;
     try {
@@ -144,19 +147,19 @@ public class CGPRestInterface extends BasePluginResource {
         Object[] appInfo = iterator.next();
         applicationNames.add(String.valueOf(appInfo[0]));
       }
-      
+
       Util.flushIterator(iterator);
       response = Response.ok().entity(applicationNames).build();
     } catch (GeneralException e) {
       response = Response.status(Status.NOT_FOUND).entity(e.getMessage()).build();
     }
-    
+
     if(log.isDebugEnabled()) {
       log.debug(String.format("LEAVING %s(return = %s)", "getApplicationNames", response));
     }
     return response;
   }
-	
+
 	/**
 	 * returns the approval Levels as an array
 	 * @return a Response object encapsulating the json object
@@ -171,18 +174,20 @@ public class CGPRestInterface extends BasePluginResource {
     Response response        = null;
     try {
       List<String> approvalLevels = getApprovalLevels(context);
-      
+
       response = Response.ok().entity(approvalLevels).build();
     } catch (GeneralException e) {
       response = Response.status(Status.NOT_FOUND).build();
     }
-    
+
     if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "getApprovalLevels", response));
+      log.debug(String.format("LEAVING %s(return = %s)", 
+          "getApprovalLevels", 
+          response));
     }
     return response;
   }
-	
+
 	/**
 	 * returns the entitlement configuration as a json object
 	 * @return a Response object encapsulating the json object
@@ -207,11 +212,13 @@ public class CGPRestInterface extends BasePluginResource {
     }
 
     if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "getEntitlementConfiguration", response));
+      log.debug(String.format("LEAVING %s(return = %s)", 
+          "getEntitlementConfiguration", 
+          response));
     }
     return response;
   }
-	
+
 	/**
 	 * gets the governance model and returns it as a json object
 	 * @return a Response object encapsulating the json object
@@ -238,7 +245,7 @@ public class CGPRestInterface extends BasePluginResource {
     }
     return response;
   }
-	
+
   /* (non-Javadoc)
 	 * @see sailpoint.rest.plugin.BasePluginResource#getPluginName()
 	 */
@@ -246,7 +253,7 @@ public class CGPRestInterface extends BasePluginResource {
 	public String getPluginName() {
 		return "custom_governance_plugin";
 	}
-  
+
   /**
 	 * return an array of rule names, matching the given type
 	 * @param type the rule type to query for. all acts as a special handler, returning all rules
@@ -288,20 +295,14 @@ public class CGPRestInterface extends BasePluginResource {
     SailPointContext context     = getContext();
     try {
       Configuration configuration   = context.getConfiguration();
-      String lcmAccessRequestWfName = (String) configuration.get(CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME);
-      String isSystemIntegration    = (String) configuration.get(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME);
+      String lcmAccessRequestWfName = getLCMWorkflowName(configuration);
+      Boolean isSystemIntegration   = hasSystemIntegrationRun(configuration);
       Workflow lcmAccessRequestWf   = context.getObject(Workflow.class, lcmAccessRequestWfName);
-      Map<String, Object> result    = getSetupInformation(lcmAccessRequestWf);
-      result.put("workflow", lcmAccessRequestWfName);
-      result.put("wfintegration", true);
-      result.put("newWorkflow", String.format("%s - Custom Governance", lcmAccessRequestWfName));
-      result.put("attribute", APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME);
-      result.put("rule", CUSTOM_GOVERNANCE_RULE_NAME);
-      result.put("setApprovalMode", true);
-      result.put("integration", (isSystemIntegration.equalsIgnoreCase("true") ? true : false));     
-      result.put("aggregationRule", GROUP_REFRESH_RULE_NAME);
-      result.put("tasks", getGroupAggregationTasks(context));
-      result.put("setupTasks", true);
+      
+      Map<String, Object> result    = buildSetupInformationMap(context, 
+                                                               lcmAccessRequestWfName, 
+                                                               isSystemIntegration,
+                                                               lcmAccessRequestWf);    
       
       response = Response.ok().entity(result).build();
     } catch (GeneralException e) {
@@ -312,6 +313,47 @@ public class CGPRestInterface extends BasePluginResource {
       log.debug(String.format("LEAVING %s(return = %s)", "getSetupInformation", response));
     }
     return response;
+  }
+
+  /**
+   * @param context
+   * @param lcmAccessRequestWfName
+   * @param isSystemIntegration
+   * @param lcmAccessRequestWf
+   * @return
+   * @throws GeneralException
+   */
+  private Map<String, Object> buildSetupInformationMap(SailPointContext context, String lcmAccessRequestWfName,
+      Boolean isSystemIntegration, Workflow lcmAccessRequestWf) throws GeneralException {
+    Map<String, Object> result    = getSetupInformation(lcmAccessRequestWf);
+    result.put("workflow",        lcmAccessRequestWfName);
+    result.put("newWorkflow",     String.format("%s - Custom Governance", lcmAccessRequestWfName));
+    result.put("attribute",       APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME);
+    result.put("rule",            CUSTOM_GOVERNANCE_RULE_NAME);      
+    result.put("aggregationRule", GROUP_REFRESH_RULE_NAME);
+    result.put("tasks",           getGroupAggregationTasks(context));
+    result.put("setupTasks",      true);
+    result.put("wfintegration",   true);
+    result.put("setApprovalMode", true);
+    result.put("integration",     isSystemIntegration);
+    return result;
+  }
+
+  /**
+   * @param configuration
+   * @return
+   */
+  private Boolean hasSystemIntegrationRun(Configuration configuration) {
+    String isSystemIntegration = (String) configuration.get(CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME);
+    return isSystemIntegration.equalsIgnoreCase("true") ? true : false; 
+  }
+
+  /**
+   * @param configuration
+   * @return
+   */
+  private String getLCMWorkflowName(Configuration configuration) {
+    return (String) configuration.get(CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME);
   }
 	
 	/**
@@ -350,7 +392,9 @@ public class CGPRestInterface extends BasePluginResource {
   @Path("setup/performIntegration")
   public Response performIntegration(Map<String, Object> setupInformation) {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(setupInformation = %s)", "performIntegration", setupInformation));
+      log.debug(String.format("ENTERING %s(setupInformation = %s)", 
+          "performIntegration", 
+          setupInformation));
     }
     Response response            = null;
     SailPointContext context     = getContext();
@@ -437,7 +481,9 @@ public class CGPRestInterface extends BasePluginResource {
   @Path("entitlementConfiguration/update")
   public Response saveEntitlementConfiguration(Map<String, Object> entitlementConfiguration) {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(entitlementConfiguration = %s)", "saveEntitlementConfiguration", entitlementConfiguration));
+      log.debug(String.format("ENTERING %s(entitlementConfiguration = %s)", 
+          "saveEntitlementConfiguration", 
+          entitlementConfiguration));
     }
     
     SailPointContext context = getContext();
@@ -457,7 +503,9 @@ public class CGPRestInterface extends BasePluginResource {
     }
     
     if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "saveEntitlementConfiguration", response));
+      log.debug(String.format("LEAVING %s(return = %s)", 
+          "saveEntitlementConfiguration", 
+          response));
     }
     return response;
   }
@@ -471,7 +519,9 @@ public class CGPRestInterface extends BasePluginResource {
   @Path("governanceModel/update")
   public Response saveGovernanceModel(Map<String, Object> governanceModelJson) {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "saveGovernanceModel", governanceModelJson));
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", 
+          "saveGovernanceModel", 
+          governanceModelJson));
     }
     
     SailPointContext context = getContext();
@@ -498,13 +548,16 @@ public class CGPRestInterface extends BasePluginResource {
   @Path("entitlementConfiguration/validate")
   public Response validateEntitlementConfiguration(Map<String, Object> governanceModelJson) {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "validateEntitlementConfiguration", governanceModelJson));
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", 
+          "validateEntitlementConfiguration", 
+          governanceModelJson));
     }
     
     SailPointContext context = getContext();
     Response response        = null;
     try {
-      Map<String, Object> result = ConfigurationValidationUtil.validate(context, governanceModelJson, "entitlement");
+      Map<String, Object> result = 
+          ConfigurationValidationUtil.validate(context, governanceModelJson, "entitlement");
       
       response = Response.ok().entity(result).build();
     } catch (GeneralException e) {
@@ -512,7 +565,9 @@ public class CGPRestInterface extends BasePluginResource {
     }
     
     if(log.isDebugEnabled()) {
-      log.debug(String.format("LEAVING %s(return = %s)", "validateEntitlementConfiguration", response));
+      log.debug(String.format("LEAVING %s(return = %s)", 
+          "validateEntitlementConfiguration", 
+          response));
     }
     return response;
   }
@@ -521,13 +576,16 @@ public class CGPRestInterface extends BasePluginResource {
   @Path("governanceModel/validate")
   public Response validateGovernanceModel(Map<String, Object> governanceModelJson) {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "validateGovernanceModel", governanceModelJson));
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", 
+          "validateGovernanceModel", 
+          governanceModelJson));
     }
     
     SailPointContext context = getContext();
     Response response        = null;
     try {
-      Map<String, Object> result = ConfigurationValidationUtil.validate(context, governanceModelJson, "approvallevel");
+      Map<String, Object> result = 
+          ConfigurationValidationUtil.validate(context, governanceModelJson, "approvallevel");
       
       response = Response.ok().entity(result).build();
     } catch (GeneralException e) {
@@ -548,7 +606,9 @@ public class CGPRestInterface extends BasePluginResource {
   @SuppressWarnings("unchecked")
   private List<Object> getApprovalLevels(Map<String, Object> governanceModelJson) {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", "getApprovalLevels", governanceModelJson));
+      log.debug(String.format("ENTERING %s(governanceModelJson = %s)", 
+          "getApprovalLevels", 
+          governanceModelJson));
     }
     
     List<Object> result = new ArrayList<>();
@@ -651,9 +711,17 @@ public class CGPRestInterface extends BasePluginResource {
   }
 	
 	@SuppressWarnings("unchecked")
-  private void setupAggregationTasks(SailPointContext context, Map<String, Object> setupInformation) throws GeneralException {
+  private void setupAggregationTasks(
+      SailPointContext context, 
+      Map<String, Object> setupInformation) throws GeneralException 
+	{
 	  if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, setupInformation = %s)", "setupAggregationTasks", context, setupInformation));
+      log.debug(String.format("ENTERING %s("
+          + "context = %s, "
+          + "setupInformation = %s)", 
+          "setupAggregationTasks", 
+          context, 
+          setupInformation));
     }
 	  
 	  String ruleName        = String.valueOf(setupInformation.get("aggregationRule"));
@@ -678,9 +746,20 @@ public class CGPRestInterface extends BasePluginResource {
 	 * @param setupInformation the Map containing the setup information
 	 * @throws GeneralException when there was an issue
 	 */
-	private void setupWorkflow(SailPointContext context, Workflow workflow, Map<String, Object> setupInformation) throws GeneralException {
+	private void setupWorkflow(
+	    SailPointContext context, 
+	    Workflow workflow, 
+	    Map<String, Object> setupInformation) throws GeneralException 
+	{
 	  if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, workflow = %s, setupInformation = %s)", "setupWorkflow", context, workflow, setupInformation));
+      log.debug(String.format("ENTERING %s("
+          + "context = %s, "
+          + "workflow = %s, "
+          + "setupInformation = %s)", 
+          "setupWorkflow", 
+          context, 
+          workflow, 
+          setupInformation));
     }
 	  
 	  String ruleName      = (String) setupInformation.get("rule");
@@ -726,10 +805,17 @@ public class CGPRestInterface extends BasePluginResource {
    * @param governanceModelJson a Map containing a governance model
    * @throws GeneralException when there was an issue updating the model
    */
-  private void updateGovernanceModel(SailPointContext context, Map<String, Object> governanceModelJson)
-      throws GeneralException {
+  private void updateGovernanceModel(
+      SailPointContext context, 
+      Map<String, Object> governanceModelJson) throws GeneralException 
+  {
     if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, governanceModelJson = %s)", "updateGovernanceModel", context, governanceModelJson));
+      log.debug(String.format("ENTERING %s("
+          + "context = %s, "
+          + "governanceModelJson = %s)", 
+          "updateGovernanceModel", 
+          context, 
+          governanceModelJson));
     }
     
     Custom governanceModel  = context.getObject(Custom.class, CUSTOM_GOVERNANCE_CONFIG_NAME);
@@ -753,9 +839,23 @@ public class CGPRestInterface extends BasePluginResource {
 	 * @param allowedValues the allowed values to set
 	 * @throws GeneralException when there was an issue with the SailPointObjects
 	 */
-	private void updateObjectConfig(SailPointContext context, String objectConfigName, String attributeName, List<Object> allowedValues) throws GeneralException {
+	private void updateObjectConfig(
+	    SailPointContext context, 
+	    String objectConfigName, 
+	    String attributeName, 
+	    List<Object> allowedValues) throws GeneralException 
+	{
 	  if(log.isDebugEnabled()) {
-      log.debug(String.format("ENTERING %s(context = %s, objectConfigName = %s, attributeName = %s, allowedValues = %s)", "updateObjectConfig", context, objectConfigName, attributeName, allowedValues));
+      log.debug(String.format("ENTERING %s("
+          + "context = %s, "
+          + "objectConfigName = %s, "
+          + "attributeName = %s, "
+          + "allowedValues = %s)", 
+          "updateObjectConfig", 
+          context, 
+          objectConfigName, 
+          attributeName, 
+          allowedValues));
     }
 	  
 	  ObjectConfig objectConfig = context.getObject(ObjectConfig.class, objectConfigName);
@@ -769,5 +869,4 @@ public class CGPRestInterface extends BasePluginResource {
       log.debug(String.format("LEAVING %s(return = %s)", "updateObjectConfig", null));
     }
 	}
-
 }
