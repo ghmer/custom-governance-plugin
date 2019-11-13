@@ -114,8 +114,9 @@ public List processApprovalSet(
     }
   }
 
-  workflow.put("notificationScheme", 
-        Util.listToCsv((List)approvalVariables.get("notificationScheme"), true));
+  Set notificationScheme = (Set) approvalVariables.get("notificationScheme");
+  List newNotifications  = new ArrayList(notificationScheme);
+  workflow.put("notificationScheme", Util.listToCsv((List) newNotifications, true));
   if (log.isDebugEnabled()) {
     log.debug(String.format("LEAVING %s(return = %s)", "processApprovalSet", finalApprovals));
   }
@@ -306,7 +307,7 @@ private void determineApprovalAndNotificationSchemes(
     Map governanceLevel = (HashMap) governanceLevels.get(approvalLevel);
     approverList                        = (List)  governanceLevel.get(approvalVariables.get("approvalKey"));
     customNotificationScheme            = (List)  governanceLevel.get(approvalVariables.get("notificationKey"));
-    Set notificationScheme      = (Set) approvalVariables.get("notificationScheme");
+    Set notificationScheme              = (Set) approvalVariables.get("notificationScheme");
 
     if (Util.isEmpty(customNotificationScheme)) {
       log.warn("No notification scheme set for specified governance level");
