@@ -30,15 +30,15 @@
           </tr>
         </tbody>
       </table>
-      <div id="addApprover" data-ng-show="showAddApprover">
+      <div id="addApprover" data-ng-show="toggleIndicators.showAddApprover">
         <span>Add Approver:&nbsp;</span> 
-        <select name="repeatSelect" id="repeatSelect" data-ng-model="newApprover">
+        <select class="form-control" name="newApprover" id="newApprover" data-ng-model="newApprover">
           <option data-ng-repeat="approver in approvers" value="{{approver}}">{{approver}}</option>
         </select>
-        <input class="btn btn-primary" type="submit" value="add" data-ng-click="controller.addApprover()" />
+        <input class="btn btn-primary btn-block" type="submit" value="add" data-ng-click="controller.addApprover()" />
       </div>
       <input class="btn btn-primary btn-block" type="submit" 
-             value="{{showAddApprover ? btnMessages.addApprover.cancel : btnMessages.addApprover.add}}" 
+             value="{{toggleIndicators.showAddApprover ? btnMessages.addApprover.cancel : btnMessages.addApprover.add}}" 
              data-ng-click="controller.toggleShowAddApprover()" />
       <div>
         <h5>
