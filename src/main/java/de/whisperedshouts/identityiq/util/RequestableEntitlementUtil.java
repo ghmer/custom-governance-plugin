@@ -109,7 +109,7 @@ public class RequestableEntitlementUtil {
         runAfterRule = Boolean.valueOf(String.valueOf(appDefaultConfig.get("runAfterRule")));
       }
       if(runAfterRule) {
-        String afterRuleName  = String.valueOf(appDefaultConfig.get("runAfterRule"));
+        String afterRuleName  = String.valueOf(appDefaultConfig.get("afterRuleName"));
         accountGroup          = (ManagedAttribute) runRule(accountGroup, resourceObject, groupApplication, afterRuleName);
       }
       
