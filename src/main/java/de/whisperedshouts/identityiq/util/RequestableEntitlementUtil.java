@@ -172,11 +172,11 @@ public class RequestableEntitlementUtil {
       String fallbackOwnerName, 
       String governanceAttribute) throws GeneralException 
   {    
-    String   appGovValue    = (String) configuration.get("governanceLevel");
-    String   selectionType  = (String) configuration.get("ownerSelectionType");
-    String   staticOwner    = (String) configuration.get("staticOwner");
-    String   ruleName       = (String) configuration.get("ownerSelectionRuleName");
-    Boolean isRequestable   = Boolean.valueOf((String) configuration.get("isRequestable"));
+    String  appGovValue   = (String) configuration.get("governanceLevel");
+    String  selectionType = (String) configuration.get("ownerSelectionType");
+    String  staticOwner   = (String) configuration.get("staticOwner");
+    String  ruleName      = (String) configuration.get("ownerSelectionRuleName");
+    Boolean isRequestable = Boolean.valueOf((String) configuration.get("isRequestable"));
     
     String ownerName = null;
     
