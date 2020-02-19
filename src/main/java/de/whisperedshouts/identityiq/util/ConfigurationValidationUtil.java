@@ -647,7 +647,10 @@ public class ConfigurationValidationUtil {
           "checkIdentity", context, errorMessages, identityName));
     }
     QueryOptions queryOptions = new QueryOptions();
-    queryOptions.addFilter(Filter.eq("name", identityName));
+    queryOptions.addFilter(Filter.and(
+        Filter.eq("name", identityName),
+        Filter.or(Filter.eq("workgroup", true), Filter.eq("workgroup", false))
+        ));
     
     int count = 0;
     try {
