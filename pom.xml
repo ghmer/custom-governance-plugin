@@ -6,7 +6,7 @@
     <version>1.11.0</version>
   </parent>
   <artifactId>custom-governance-plugin</artifactId>
-  <version>1.0</version>
+  <version>1.1</version>
   <name>custom-governance-plugin</name>
   <description>IdentityIQ Plugin to add custom approval levels</description>
   <dependencies>
