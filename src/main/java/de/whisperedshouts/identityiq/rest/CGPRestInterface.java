@@ -55,14 +55,14 @@ import sailpoint.tools.xml.XMLReferenceResolver;
 public class CGPRestInterface extends BasePluginResource {
   public static final String SPRIGHT_PLUGIN_ACCESS = "CGPPluginAccess";
 
-  private static final String APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME          = "approvalAssignmentRule";
-  private static final String CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME = "workflowLCMAccessRequest";
-  private static final String CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME = "customApprovalSystemIntegration";
-  private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME           = "Requestable Entitlement Configuration";
-  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME                   = "Custom Governance Model";
-	private static final String CUSTOM_GOVERNANCE_RULE_NAME                     = "Custom Governance Model - Approval Assignment Rule";
-	private static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME                = "governanceApprovalLevel";
-	private static final String GROUP_REFRESH_RULE_NAME                         = "Requestable Entitlements - Group Refresh Rule";
+  private static final String APPROVAL_ASSIGNMENT_RULE_ARGUMENT_NAME            = "approvalAssignmentRule";
+  private static final String CONFIGURATION_LCM_ACCESS_REQUEST_ATTRIBUTE_NAME   = "workflowLCMAccessRequest";
+  private static final String CONFIGURATION_SYSTEM_INTEGRATION_ATTRIBUTE_NAME   = "customApprovalSystemIntegration";
+  private static final String CUSTOM_ENTITLEMENT_CONFIGURATION_NAME             = "Requestable Entitlement Configuration";
+  private static final String CUSTOM_GOVERNANCE_CONFIG_NAME                     = "Custom Governance Model";
+  private static final String CUSTOM_GOVERNANCE_RULE_NAME                       = "Custom Governance Model - Approval Assignment Rule";
+  private static final String GOVERNANCE_OBJECT_ATTRIBUTE_NAME                  = "governanceApprovalLevel";
+  private static final String GROUP_REFRESH_RULE_NAME                           = "Requestable Entitlements - Group Refresh Rule";
   private static final Logger log	                                            = Logger.getLogger(CGPRestInterface.class);
 
 	/**
@@ -139,7 +139,8 @@ public class CGPRestInterface extends BasePluginResource {
     }
 
     SailPointContext context = getContext();
-    Response response        = null;
+    Response response = null;
+    
     try {
       List<String> applicationNames = new ArrayList<>();
       Iterator<Object[]> iterator = context.search(Application.class, new QueryOptions(), "name");

@@ -13,7 +13,7 @@
 		<dependency>
 			<groupId>sailpoint.library</groupId>
 			<artifactId>identityiq</artifactId>
-			<version>7.1</version>
+			<version>7.3p1</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

@@ -36,10 +36,10 @@
 			<filtered>true</filtered>
 		</fileSet>
 		<fileSet>
-			<directory>${basedir}/src/main/ui/images</directory>
-			<outputDirectory>/ui/images</outputDirectory>
-			<filtered>false</filtered>
-		</fileSet>
+            <directory>${basedir}/src/main/ui/images</directory>
+            <outputDirectory>/ui/images</outputDirectory>
+            <filtered>false</filtered>
+        </fileSet>
 	</fileSets>
 	<files>
 		<file>
@@ -48,8 +48,12 @@
 			<filtered>true</filtered>
 		</file>
 		<file>
-			<source>${basedir}/target/${artifactId}-${version}.jar</source>
-			<outputDirectory>/jars</outputDirectory>
-		</file>
+            <source>${basedir}/LICENSE</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
+            <source>${basedir}/target/${artifactId}-${version}.jar</source>
+            <outputDirectory>/jars</outputDirectory>
+        </file>
 	</files>
 </assembly>
